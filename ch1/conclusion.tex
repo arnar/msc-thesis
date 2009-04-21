@@ -1,0 +1,57 @@
+\section{Discussion and future work}
+\label{sec:conclusion}
+
+We have presented both a formal semantics and an implementation of TMI over the
+Haskell STM system. During this work, we discovered that there are many design
+decisions to be made and the design we have presented here is only one of many
+possibilities. The variants we experimented with in the design process did not
+always exhibit the behaviour that we expected or wanted. For this task, defining
+the formal semantics proved to be an essential tool to understand and evaluate
+different design decisions as well as spotting special cases that were not so
+obvious in the actual implementation. 
+Indeed, constructing the semantics helped us discover bugs
+and unexpected behaviour in the code, even after weeks of careful consideration.
+In addition the formal semantics give a clear and unambiguous
+description of the TMI architecture.
+
+%
+% What do you mean by 'the design' ?  Do you mean the TMI architecture (which
+% we describe and clearly isn't limited in this way), or the formal semantics,
+% or the Haskell implementation?  If it is the last (which I think it is), then
+% it isn't quite true, since we have the privilege stuff.
+%
+% Also, this is kind of a downer to end on.  Why not just skip, or say that we would
+% like to explore better implementations for stateful policies (although our semantics supports it).
+%
+
+The TMI architecture, as described in Section~\ref{ssub:overview_of_tmi}, 
+can support the enforcement of stateful security policies that depend on the 
+execution history over multiple transactions.  In our paper \cite{tmi}, we have experimented 
+with such policies in another implementation of the TMI architecture.  
+However, we have not explored the addition of such facilities here, 
+in order to simplify the exposition of our semantics and Haskell implementation.
+
+The privilege amplification by nested TMI actions naturally relies on the programmer
+to ensure that the nested authorization manager does not violate the enclosing
+policy. The objective of the TMI architecture is to provide facilities for writing
+policy enforcement code, not to prevent injection of malicious code. In the case of library
+development where one deals with untrusted code, such nesting may not be desirable and can
+be disabled. We have experimented with other ways of implementing privilege amplification
+without relying on this nesting, with good results.
+% The policy state must be protected by the STM mechanisms to avoid
+% race conditions or interference between threads, but we must take care that the accesses
+% to this state are only performed by trusted code, as they cannot be subject to authorization,
+% lest we introduce a circular dependency.
+
+In our implementation we are maintaining the introspection log by hand. This works well for
+prototypical purposes, but we would like to investigate the possibility of making use
+of the real underlying transaction log. This requires modifications to the STM framework
+provided in the GHC runtime library. Having the formal semantics as the definition of the desired
+behaviour should make such an implementation easier to construct and check.
+
+Future work in this context also involves writing or porting complex software to the
+architecture to obtain realistic performance measurements.
+
+Most importantly, we think that having clear semantics for TMI and an implementation
+over a production-ready STM system, further validates our claim that TMI architecture
+is very relevant to practical software development.

@@ -1,0 +1,294 @@
+\section{Formal semantics of TMI} % (fold)
+\label{sec:formal_semantics_of_tim}
+
+\input{ch1/contextfig}
+
+To formalize the semantics of TMI, we build on the semantics for the Haskell STM
+presented in~\cite{haskellstm}. The semantics is a structural operational semantics
+in the style of Plotkin~\cite{plotkin_04_structural}. 
+For the sake of completeness and to help the reader understand our extensions,
+we give a cursory
+explanation of the concepts of the semantics from~\cite{haskellstm} 
+so that a reader not familiar with it may understand our extensions.
+
+Figures~\ref{fig:sosadmin} through \ref{fig:sos2} give the operational rules that describe the steps a program may
+take. At the top level, a program transforms a state of the form $P;\Theta$ via labelled transition.
+\[
+    P;\,\Theta \stackrel{a}{\tarrow} Q;\,\Theta'
+\]
+$P$ represents a program term in the syntax of Figure~\ref{fig:syntax2} while $\Theta$ stands for a
+memory store, a partial function from variable names to annotated terms. An annotated value is a tuple
+$(t,d)$ where $t$ is a program term and $d$ is a value that holds the security relevant description of
+the relevant variable. The labels on transitions represent the programs input and output actions. $Q$
+and $\Theta'$ represent the term that is left unevaluated and the updated store after a transition, 
+respectively.
+
+To model atomicity of transactions, separate relations represent the top level I/O transitions
+and the STM actions. We extend this by adding a third relation representing the security relevant TMI
+actions. Furthermore we add a simple relation for evaluation of security managers under the context of
+an immutable transaction log.
+
+Execution of a program proceeds by
+non-deterministically
+picking a program term from a collection of terms, each representing
+a separate thread of execution. One I/O transition of this term combined with the current store is performed
+and then the process is repeated. This models interleaved concurrency at the level of I/O transitions.
+STM transitions however can only be performed as a required premise of the \lstinline+atomically+ operator
+at the I/O level, and thus appear in this model as a single atomic step.
+
+As mentioned in~\cite{haskellstm} there is no need to represent rollback, but contrary to the semantics
+in that paper,
+our extensions do need to formalize the notion of the transaction log as it is no longer purely an 
+implementation detail. For simplicity though, we only model the log for security sensitive operations as
+they are the only ones relevant to the semantics of TMI.
+
+\input{ch1/sosadminfig}
+\input{ch1/sosfig}
+\input{ch1/sosfig2}
+
+\subsection{Syntax, states and evaluation contexts} % (fold)
+\label{sub:syntax}
+
+The syntax of terms for a subset of STM Haskell is given in Figure~\ref{fig:syntax2} with our TMI-related
+extensions (highlighted). Terms and values are standard except that the application of some monadic
+operators are considered values, a technique again lifted from~\cite{haskellstm}. The \lstinline+do+-notation
+used up until now is standard syntactic sugar for the monad bind and return operations.
+
+\vspace{0.5em}
+\begin{tabular}{rcl}
+    \lstinline[mathescape=true]+do {$x$<-$e$; $Q$}+ & $\equiv$ &
+    \lstinline[mathescape=true]+$e$ >>= ($\backslash x$ -> do {$Q$})+ \\
+
+    \lstinline[mathescape=true]+do {$e$; $Q$}+ & $\equiv$ &
+    \lstinline[mathescape=true]+$e$ >>= ($\backslash$_ -> do {$Q$})+ \\
+
+    \lstinline[mathescape=true]+do {$e$}+ & $\equiv$ &
+    \lstinline[mathescape=true]+$e$+
+\end{tabular}
+\vspace{0.5em}
+
+Figure~\ref{fig:contexts} defines some symbols used in the semantics. The metavariable $D$ represents a set
+of terms used to describe the security properties of variables. We extend this set with an invalid value $\bot$ and
+write $D_\bot$ for the extended set. A state of a computation is a pair $(M,\Theta)$ of a term that remains
+to be evaluated and a store $\Theta$. The store maps variable names to terms and their variable descriptor. If
+a variable does not have a suitable descriptor, we use $\bot$ as a fill-in.
+
+The set of access types, $T$, consists of three constants, each
+representing an operation performed on variables. An introspection log $\Sigma$
+is a list monoid of pairs $(t,d)$ where $t$ is an access type and $d$ is a descriptor term; we use $[]$ for the empty
+list and $\oplus$ for concatenation, and in the semantics we use $[\cdot]$ as a constructor.
+Other symbols are conventional and taken from~\cite{haskellstm}.
+
+For a (partial) function $f$ whose co-domain is a cross-product of two or more sets, and an integer $i$;
+we write $f_i$ instead of $\pi_i \circ f$ where $\pi_i$ is the standard $i$-th projection function.
+For convenience, we introduce the following notation for filtering logs. If $\Delta$ is a store and $\Sigma$ is
+an introspection log, we define the \emph{$\Delta$-restriction of $\Sigma$}, indicated by $\Sigma |_\Delta$, thus
+\[
+    \begin{array}{rl}
+        [] |_\Delta &= [] \\
+        ([(t,d)] \oplus \Sigma')|_\Delta &=
+        \begin{cases}
+            [(t,d)] \oplus \Sigma'|_\Delta & \textrm{if $d \in \img(\Delta_2)$} \\
+            \Sigma'|_\Delta & \textrm{otherwise}
+        \end{cases}
+    \end{array}
+\]
+Intuitively, $\Sigma|_\Delta$ is the list of entries from $\Sigma$ which apply to variables defined by $\Delta$,
+where variables are identified by their security descriptors.
+
+Interleaving of operations is modelled with the evaluation context $\mathbb{P}$, often referred to as
+a {\em thread soup}. Through this evaluation context the semantics can non-deterministically choose a
+term for reduction from the parallel construct, each term representing a thread. Haskell terms are usually
+reduced according to the evaluation context $\mathbb{E}$, which allows for reductions of the right
+hand side of the \lstinline+>>=+ operator as well as the body of a \lstinline+catch+ term. However,
+since we want to handle exceptions in a specific manner for STM and TMI actions, we will use the
+simpler context $\mathbb{S}$ which requires the operational semantics rules to specify explicitly
+how \lstinline+catch+ terms are handled.
+
+% subsection syntax (end)
+
+\subsection{Operational semantics} % (fold)
+\label{sub:operational_semantics}
+
+Figures~\ref{fig:sosadmin} through \ref{fig:sos2} detail the transition relations of our semantics.
+Figures~\ref{fig:sosadmin} and \ref{fig:sos1} are mostly the same as in the semantics
+of~\cite{haskellstm}, parts added for TMI are indicated with a darker ink. 
+The semantics uses several different
+transition systems that are layered such that a sequence of reductions in one layer becomes one reduction
+in the next layer above. Namely, there are three main layers - the top level I/O context, the STM context
+and the TMI context. An auxiliary transition system is used to reduce authorization functions.
+
+\paragraph{\emph{Values and I/O transitions:}}
+The {\em admin} transitions of Figure~\ref{fig:sosadmin} 
+define the evaluation of terms to values via a function $\mathcal{V}$. This
+function is standard and its definition omitted here. Administrative transitions also include the
+behaviour of the monadic bind operator \lstinline+>>=+.
+
+The top level I/O actions are described
+by the labelled $\tarrow$ relation. They 
+operate on the $\mathbb{P}$ context, which allows for picking any program
+term from the thread soup for reduction. The first two rules are I/O primitives. The rule {\em FORK} is used
+to create a new thread and enter it into the thread soup. The rules {\em CATCH1} and {\em CATCH2} 
+deal with exception
+handling as described in the appendix of the post-publication, extended version of the Haskell
+semantics~\cite{haskellstm}.
+The {\em ADMIN} rule
+allows for lifting of administrative transitions to the I/O transition relation.
+This is done to reduce
+repetition, as the administrative 
+rules also apply to the STM and TMI transition relations, which have a similar
+lifting rule.
+Finally, the rules {\em ARET} and {\em ATHROW} 
+enable the use of the \lstinline+atomic+ combinator to lift a sequence
+of reductions in the STM transition relation to a single I/O transition.
+
+If the series of STM reductions results in a \lstinline+return+ value, the effects on the store are retained.
+If it however results in an exception (i.e. a \lstinline+throw+ value), the modifications to existing variables
+are discarded but any new allocations are retained. This is necessary as the exception value may hold references
+to newly allocated variables.
+
+\paragraph{\emph{STM transitions:}}
+The STM transitions define the behavior of STM actions. The states used in this transitions is extended
+from the I/O transitions by adding a separate store for new allocations $\Delta$, and an introspection log
+$\Sigma$. A transition of the form
+\[
+M;\,\Theta, \Delta,\Sigma \tdarrow N;\,\Theta',\Delta',\Sigma'
+\]
+represents a reduction of the term $M$ to the term $N$. Some variables in $\Theta$ may be introduced
+or altered to yield $\Theta'$. $\Delta$ is a store similar to $\Theta$, that only tracks newly allocated
+variables while $\Sigma$ is a log of accesses to TMI variables. $\Delta$ and $\Sigma$ are transaction
+local, i.e. they are reset at the start of each atomic sequence of reductions in the STM system, see
+e.g. rule~$\soslbl{ARET}$.
+
+The first three rules define actions on transactional variables. They operate on the store
+$\Theta$ but only on those variables where the second component (i.e. the security descriptor) is $\bot$.
+This is what differentiates regular transactional variables from security sensitive variables. 
+
+Other rules in the STM transition system define the behavior of STM combinators as described in
+Section~\ref{sub:haskell_stm}. We have used the revised semantics of exception handling from the
+later versions of~\cite{haskellstm}, namely the rule {\em XTM2} ensure that when a term reduction
+results in a caught exception, all effects of that reduction are rolled back except for new 
+allocations.
+
+% Ég er ekkert rosa happy með þessi paragraph heading, en það verður að brjóta eitthvað upp þessa 
+% blaðsíðu einhvernvegin
+\paragraph{\emph{TMI transitions:}}
+A key TMI addition to the STM transitions is the handling of \lstinline+authorized+.
+The rules {\em AURETn} and {\em AUTHROWn} specify that for a term of the form {\tt (authorized}
+$N\;M${\tt )}
+if $M$ evaluates to a \lstinline+return+ or \lstinline+throw+ value, then that value is propagated only
+if $N$ evaluates to a \lstinline+return+ value under the authorization relation (see later) 
+If evaluation of the {\em authorization term} $N$ raises an exception, a fixed exception containing
+no information about the local transaction state is thrown. This triggers a rollback of any updates
+performed during that invocation of \lstinline+authorized+.
+
+We should note that in the case of an exception, including authorization failure, new allocations
+are retained for the reason described above. In the implementation, this is not done explicitly
+as deallocation of references are handled by the garbage collector. Any new allocations that are
+actually referenced by exception values are thus retained, but others are discarded. Thus, since
+we don't allow any variable references in our special exception for authorization failures, no
+new allocations will leak in practice.
+
+Figure~\ref{fig:sos2} shows the two new TMI transition relations. The first one deals with
+TMI actions and is indicated by the symbol $\tddarrow$. The configurations of this transition
+system are identical to those of the STM system.
+Indeed, TMI actions behave very much like STM actions, the main difference is that variable
+operations in TMI actions can operate on security sensitive variables. A variable $v$ is security
+sensitive if and only if $\Theta_2(v) \neq \bot$.
+The first three rules of
+Figure~\ref{fig:sos2} describe the variable operations. 
+When these operations are performed, a log entry is added to
+$\Sigma$ with the contents of the variable's security descriptor. Another addition over STM
+behavior is rule {\em LIFTSTM}. This rule states that any sequence of STM reductions can be lifted
+to the TMI level. 
+This is necessary to allow TMI code to access regular transactional variables, and should be 
+possible, since TMI actions are always performed in the context of an enclosing STM action.
+
+Finally, we add a separate transition system to evaluate authorization functions. In this system
+a transition of the form
+\[
+\Sigma \vdash M \leadsto N
+\]
+represents the reduction term $M$ to term $N$, under the context of an introspection log $\Sigma$.
+The reason for this notation is that the introspection log is fixed, i.e. read-only, for these
+transitions.
+This system only allows pure operations and monad binding via the administrative transitions, the
+usual exception handling and one special term \lstinline+getlog+. 
+The \lstinline+getlog+ term is reduced to a list representation (in the Haskell sense) of the access
+log $\Sigma$. The terms reduced with this system can thus examine the log and make decisions based
+on its contents.
+
+\paragraph{\emph{An example:}}
+As an example of reading and applying the rules, consider the program
+\begin{lstlisting}[style=small]
+atomically 
+  (
+     authorized (assert (isEmpty getlog)) 
+                (writeTMIVar x 10)
+  )
+\end{lstlisting}
+Working from the inside out, we can see that the innermost expression of \lstinline+writeTMIVar x 10+
+will update the value of $x$ in $\Theta$ as well as enter an entry to the introspection log $\Sigma$, by applying
+rule $\soslbl{TMIWRITE}$. The resulting term is \lstinline+return ()+. % breaks accross lines
+As the resulting log is non-empty, the authorization term 
+\lstinline+assert (isEmpty getlog)+ will throw an exception. Thus, for the \lstinline+authorized+
+term, rule $\soslbl{AURET2}$ is the only applicable one, so that term evaluates to
+\lstinline+throw UnauthorizedError+. The \lstinline+atomically+ term is therefore evaluated to
+the same via rule $\soslbl{ATHROW}$, but this rule does not preserve updates to the store $\Theta$,
+meaning the transaction has been aborted.
+
+\paragraph{\emph{Nested TMI actions:}} As we mentioned in the previous section, the capability
+of lifting STM actions up to the TMI levels allows us to nest TMI actions. An inner TMI action
+can be authorized with a separate authorization term. Consider the following example of an
+action that provides a student with information about her grade for a course, as well as the
+average of all grades of other students. 
+Naturally, the student doesn't have access to other students' grades
+but for the purpose of calculating the average we may allow such access in a nested action.
+
+Assume that we have defined the following terms.
+\begin{mybullet}
+\item \lstinline+ownGradesRead s+ is an authorization term that succeeds only if
+    the input log only contains reading of grades that belong to student \lstinline+s+
+\item \lstinline+allGradesRead+ is an authorization term that succeeds only if the log only contains
+    reading of grades, but regardless of the owner of the grades. This may be considered
+    a kind of a {\em system} read access to grades.
+\item \lstinline+readGrade s+ is a TMI action that reads a grade of a student from the
+    relevant \lstinline+TMIVar+ and returns it. The introspection log will contain an 
+    appropriate entry afterwards.
+\item \lstinline+averageGrades+ is a TMI action that reads grades of all students from the
+    appropriate \lstinline+TMIVars+ and returns their average. The introspection log will 
+    contain an entry for every read grade.
+\end{mybullet}
+Now it is possible to define the following TMI action that provides a student with her
+own grade as well as the average grades of all students.
+\begin{lstlisting}[style=small]
+gradeInformation :: Student -> TMI (Grade, Grade)
+gradeInformation s =
+  do own <- readGrade s
+     avg <- liftSTM (authorized allGradesRead
+                                averageGrades)
+     return (own, avg)
+\end{lstlisting}
+Now this function may be called used with the appropriate authorization function,
+namely one that only allows a student access to her own grades.
+\begin{lstlisting}[style=small]
+atomically (authorized (ownGradesRead s)
+                       (gradeInformation s))
+\end{lstlisting}
+
+By applying the operational semantics rules to this term, one can find that the innermost action
+\lstinline+averageGrades+ will by authorized by \lstinline+allGradesRead+ {\em before}
+turning it into an STM transition. This may, for example, happen through rule $\soslbl{AURET1}$.
+Note that such a rule does not keep the log entries of already authorized actions, i.e.
+the $\Sigma$ is not affected in the $\Rightarrow$ transition below the line. 
+Thus the log of the nested
+action is not contained in the log authorized by the outer authorization function
+\lstinline+ownGradesRead+.
+
+This use of nesting constitutes a {\em privilege amplification} 
+in a manner similar to stack inspection~\cite{GordonFournetPOPL}.
+
+% subsection operational_semantics (end)
+
+
+% section formal_semantics_of_tim (end)

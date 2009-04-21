@@ -1,0 +1,196 @@
+\begin{figure*}
+\flushleft{\begin{minipage}{\textwidth}
+    \small
+
+\color{old}
+
+\center{\framebox{I/O transitions $\qquad P;\,\Theta \stackrel{a}{\tarrow} Q;\,\Theta'$}}
+\begin{gather*}
+\begin{array}{rcll}
+    \PP[\prg{putChar } c];\, \Theta & \stackrel{!c}{\tarrow}
+                                       & \PP[\prg{return ()}];\, \Theta
+                                       & \soslbl{PUTC} \\
+    \PP[\prg{getChar }];\, \Theta& \stackrel{?c}{\tarrow}
+                                       & \PP[\prg{return } c];\, \Theta
+                                       & \soslbl{GETC} \\
+    \PP[\prg{forkIO } M];\, \Theta& \tarrow
+                                       & (\PP[\prg{return } t] \,|\, M_t);\, \Theta
+                                            \quad t\notin \PP, \Theta, M
+                                       & \soslbl{FORK} \\
+    \PP[\prg{catch }(\prg{return }M)\, N];\,\Theta& \tarrow 
+                                       & \PP[\prg{return } M];\,\Theta
+                                       & \soslbl{CATCH1} \\
+    \PP[\prg{catch }(\prg{throw }M)\, N];\,\Theta& \tarrow 
+                                      & \PP[N\,M];\,\Theta
+                                      & \soslbl{CATCH2}
+\end{array}
+\\
+\sos{M \tarrow N}
+    {\PP[M];\, \Theta \tarrow \PP[N];\, \Theta}
+\quad\soslbl{ADMIN}
+\\
+%
+% <<< Atomic
+%
+\sos{M;\,\Theta,\emptyset
+     \stackrel{*}{\tdarrow}
+     \prg{return }N;\, \Theta',\Delta'}
+   {\PP[\prg{atomically }M];\,\Theta \tarrow
+    \PP[\prg{return }N];\,\Theta'}
+  \quad\soslbl{ARET}
+\qquad
+\sos{M;\,\Theta,\emptyset
+     \stackrel{*}{\tdarrow}
+     \prg{throw }N;\, \Theta',\Delta'}
+   {\PP[\prg{atomically }M];\,\Theta \tarrow
+    \PP[\prg{throw }N];\,\Theta\cup\Delta'}
+  \quad\soslbl{ATHROW}
+%\\
+%\sos{M;\,\Theta,\emptyset
+%     \stackrel{*}{\tdarrow}
+%     \prg{abort }N;\, \Theta',\Delta',\Sigma'}
+%   {\PP[\prg{atomically }M];\,\Theta \tarrow
+%    \PP[\prg{throw }N];\,\Theta\cup\Delta'}
+%  \quad\soslbl{ATHROW1}
+% >>>
+\end{gather*}
+
+\rule{0.95\linewidth}{0.5pt}
+
+\center{\framebox{STM transitions $\qquad M;\,\Theta, \Delta\new{,\Sigma}
+                                 \tdarrow N;\,\Theta',\Delta'\new{,\Sigma'}$}}
+\begin{gather*}
+\begin{array}{rclll}
+%
+   \SS[\prg{readTVar } r];\,\Theta,\Delta\new{,\Sigma}
+ & \tdarrow
+ & \SS[\prg{return }\Theta_1(r)];\,\Theta,\Delta\new{,\Sigma}
+ & \textrm{if $r\in \dom(\Theta)$ \new{and $\Theta_2(s) = \bot$}}
+ & \soslbl{READ} \\
+%
+   \SS[\prg{writeTVar } r\;M];\,\Theta,\Delta\new{,\Sigma}
+ & \tdarrow
+ & \SS[\prg{return ()}];\,\Theta[r\mapsto \new{(}M\new{,\bot)}],\Delta\new{,\Sigma}
+ & \textrm{if $r\in \dom(\Theta)$ \new{and $\Theta_2(s) = \bot$}}
+ & \soslbl{WRITE} \\
+%
+   \SS[\prg{newTVar } M];\,\Theta,\Delta\new{,\Sigma}
+ & \tdarrow
+ & \SS[\prg{return }r];\,\Theta[r\mapsto \new{(}M\new{,\bot)}],\Delta[r\mapsto \new{(}M\new{,\bot)}]\new{,\Sigma}
+ & \textrm{$r\notin \dom(\Theta)$}
+ & \soslbl{NEW} \\
+%
+\end{array}
+%
+\\
+\sos{M \tarrow N}
+    {\SS[M];\,\Theta,\Delta\new{,\Sigma} \tdarrow \SS[N];\,\Theta,\Delta\new{,\Sigma}}
+    \quad\soslbl{AADMIN}
+\\[5pt]
+\sos{M_1;\,\Theta,\Delta\new{,\Sigma} \stackrel{*}{\tdarrow} 
+      \prg{return }N;\,\Theta',\Delta'\new{,\Sigma'}}
+      {\SS[M_1 \prg{ `orElse` } M_2];\,\Theta,\Delta\new{,\Sigma} \tdarrow 
+      \SS[\prg{return }N];\,\Theta',\Delta'\new{,\Sigma'}} 
+    \quad\soslbl{OR1}
+\\[5pt]
+\sos{M_1;\,\Theta,\Delta\new{,\Sigma} \stackrel{*}{\tdarrow} 
+      \prg{throw }N;\,\Theta',\Delta'\new{,\Sigma'}}
+      {\SS[M_1 \prg{ `orElse` } M_2];\,\Theta,\Delta\new{,\Sigma} \tdarrow 
+      \SS[\prg{throw }N];\,\Theta',\Delta'\new{,\Sigma'}} 
+    \quad\soslbl{OR2}
+\\[5pt]
+\sos{M_1;\,\Theta,\Delta\new{,\Sigma} \stackrel{*}{\tdarrow} 
+      \prg{retry};\,\Theta',\Delta'\new{,\Sigma'}}
+      {\SS[M_1 \prg{ `orElse` } M_2];\,\Theta,\Delta\new{,\Sigma} \tdarrow 
+      \SS[M_2];\,\Theta,\Delta\new{,\Sigma}} 
+    \quad\soslbl{OR3}
+\\[5pt]
+%
+% <<< XSTM catch
+%
+\sos{M;\,\Theta,\emptyset\new{,[]}
+     \stackrel{*}{\tdarrow}
+     \prg{return }M';\, \Theta', \Delta'\new{,\Sigma'}}
+    {\SS[\prg{catch }M\;N];\,\Theta,\Delta\new{,\Sigma} \tdarrow
+     \SS[\prg{return }M'];\, \Theta',\Delta\cup\Delta'\new{,\Sigma\oplus\Sigma'}}
+    \quad\soslbl{XSTM1}
+\\[5pt]
+\sos{M;\,\Theta,\emptyset\new{,[]}
+     \stackrel{*}{\tdarrow}
+     \prg{throw }M';\, \Theta', \Delta'\new{, \Sigma'}}
+    {\SS[\prg{catch }M\;N];\,\Theta,\Delta\new{,\Sigma} \tdarrow
+     \SS[N \,M'];\, \Theta\cup\Delta',\Delta\cup\Delta'\new{,\Sigma\oplus(\Sigma'|_{\Delta'})}}
+    \quad\soslbl{XSTM2}
+\\[5pt]
+\sos{M;\,\Theta,\emptyset\new{,[]}
+     \stackrel{*}{\tdarrow}
+     \prg{retry};\, \Theta', \Delta'\new{, \Sigma'}}
+    {\SS[\prg{catch }M\;N];\,\Theta,\Delta\new{,\Sigma} \tdarrow
+     \SS[\prg{retry}];\, \Theta,\Delta\new{,\Sigma}}
+    \quad\soslbl{XSTM3}
+\\[5pt]
+% >>>
+% <<< Authorized
+%
+\new{
+\sos{M;\,\Theta,\emptyset,[]
+     \stackrel{*}{\tddarrow}
+     \prg{return }M';\, \Theta',\Delta',\Sigma'
+   \qquad
+   \Sigma' \vdash N \stackrel{*}{\leadsto} \prg{return }N' }
+   {\SS[\prg{authorized }N\;M];\,\Theta,\Delta,\Sigma \tdarrow
+    \SS[\prg{return }M'];\Theta',\Delta',\Sigma}
+  \quad\soslbl{AURET1}
+}
+\\[5pt]
+\new{
+\sos{M;\Theta,\emptyset,[]
+     \stackrel{*}{\tddarrow}
+     \prg{throw }M';\, \Theta',\Delta',\Sigma'
+   \qquad
+   \Sigma' \vdash N \stackrel{*}{\leadsto} \prg{return }N' }
+   {\SS[\prg{authorized }N\;M];\,\Theta,\Delta,\Sigma \tdarrow
+    \SS[\prg{throw }M'];\,\Theta',\Delta',\Sigma}
+  \quad\soslbl{AUTHROW1}
+}
+\\[5pt]
+\new{
+\sos{M;\,\Theta,\emptyset,[]
+     \stackrel{*}{\tddarrow}
+     \prg{return }M';\, \Theta',\Delta',\Sigma'
+   \qquad
+   \Sigma' \vdash N \stackrel{*}{\leadsto} \prg{throw }N' }
+   {\SS[\prg{authorized }N\;M];\,\Theta,\Delta,\Sigma \tdarrow
+    \SS[\prg{throw UnathorizedError}];\Theta',\Delta',\Sigma}
+  \quad\soslbl{AURET2}
+}
+\\[5pt]
+\new{
+\sos{M;\Theta,\emptyset,[]
+     \stackrel{*}{\tddarrow}
+     \prg{throw }M';\, \Theta',\Delta',\Sigma'
+   \qquad
+   \Sigma' \vdash N \stackrel{*}{\leadsto} \prg{throw }N' }
+   {\SS[\prg{authorized }N\;M];\,\Theta,\Delta,\Sigma \tdarrow
+    \SS[\prg{throw UnauthorizedError}];\,\Theta',\Delta',\Sigma}
+  \quad\soslbl{AUTHROW1}
+}
+\\[5pt]
+\new{
+\sos{M;\Theta,\emptyset,[]
+     \stackrel{*}{\tddarrow}
+     \prg{retry};\, \Theta',\Delta',\Sigma'
+   }
+   {\SS[\prg{authorized }N\;M];\,\Theta,\Delta,\Sigma \tdarrow
+    \SS[\prg{retry}];\,\Theta',\Delta'\Sigma}
+  \quad\soslbl{AURETRY}
+}
+% >>>
+%
+\end{gather*}
+
+\end{minipage}}
+\caption{Operational semantics for IO and STM actions}
+\label{fig:sos1}
+\end{figure*}
+

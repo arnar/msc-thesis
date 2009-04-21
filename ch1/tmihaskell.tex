@@ -1,0 +1,235 @@
+\documentclass[preprint,natbib,10pt]{sigplanconf}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+
+\ifpdf
+\usepackage{pdfsync}
+\fi
+
+\usepackage{rotating}
+
+\usepackage{color}
+
+\makeatletter
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+  {}
+
+\newenvironment{figurehere}
+  {\def\@captype{figure}}
+  {}
+\makeatother
+
+% Other packages and settings
+\usepackage{fancyvrb}
+\usepackage{shortvrb}
+\usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{listings}
+
+% Listings setup
+\lstset{%
+  language=Haskell,
+  aboveskip=0.5\baselineskip,
+  belowskip=0.5\baselineskip,
+  basicstyle=\ttfamily,
+  commentstyle=\itshape,
+  emphstyle=\spotcolor,
+  numberstyle=\scriptsize,
+  breaklines=true,
+  basewidth=0.5em,
+  numbersep=8pt,
+  fontadjust=true,
+  flexiblecolumns=true,
+  keepspaces=false,
+  extendedchars=true,
+  tabsize=4,
+  upquote=true}
+\lstdefinestyle{small}{basicstyle=\small\ttfamily}
+\lstdefinestyle{numbered}{numbers=left,stepnumber=1}
+
+\lstdefinelanguage{pseudo}{%
+    morekeywords={function, if, return, try, catch, main, program, transaction, declare, sensitive, array, of},
+}
+
+%------------------------------------------------------------------------------
+%                                Space savers. 
+%------------------------------------------------------------------------------
+%
+% Space saving List environment for enumerations. Does not indent any of the
+% items.
+\newcounter{myctrsquish}
+\newenvironment{mylistsquish}{\begin{list}{(\textbf{\arabic{myctrsquish}})}
+{\usecounter{myctrsquish}
+\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\itemindent}{0mm}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{-2mm}
+\setlength{\leftmargin}{0mm}}}{\end{list}}
+
+% This mylist environment indents items, and saves less space than the above.
+\newcounter{myctr}
+\newenvironment{mylist}{\begin{list}{(\textbf{\arabic{myctr}})}
+{\usecounter{myctr}
+\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\listparindent}{\parindent}
+\setlength{\itemindent}{-.5ex}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{-2mm}
+\setlength{\leftmargin}{0mm}}}{\end{list}}
+
+% Space saving List environment for itemizing.
+\newenvironment{mybullet}{\begin{list}{$\bullet$}
+{\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\listparindent}{\parindent}
+\setlength{\itemindent}{0mm}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{15mm}
+\setlength{\leftmargin}{4mm}}}{\end{list}}
+
+% Space saving List environment for subitemizing.
+\newenvironment{mysubbullet}{\begin{list}{--}
+{\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\itemindent}{0mm}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{15mm}
+\setlength{\leftmargin}{4mm}}}{\end{list}}
+
+
+% Definitions for SOS rules
+
+\newcommand{\sos}[2]{\frac{#1}{#2}}
+\newcommand{\trans}[1]{\;#1\;}
+\newcommand{\prg}[1]{\texttt{#1}}
+\newcommand{\soslbl}[1]{\textit{(#1)}}
+
+\newcommand{\alt}{\;\;|\;\;}
+
+\newcommand{\tarrow}{\trans{\rightarrow}}
+\newcommand{\tdarrow}{\trans{\Rightarrow}}
+\newcommand{\tddarrow}{\trans{\rightharpoonup}}
+
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\EE}{\mathbb{E}}
+\renewcommand{\SS}{\mathbb{S}}
+
+\DeclareMathOperator{\img}{img}
+\DeclareMathOperator{\dom}{dom}
+
+\newcommand{\lsem}{[\![}
+\newcommand{\rsem}{]\!]}
+
+\newcommand{\nequiv}{\not\equiv}
+
+% Comment this out if we prefer slashed o:
+\renewcommand{\emptyset}{\{\}}
+
+% for shading the background
+%\definecolor{old}{gray}{0}
+%\definecolor{newcolor}{gray}{0.85}
+%\newcommand{\new}[1]{\colorbox{newcolor}{#1}}
+
+% for coloring the text
+%\definecolor{old}{gray}{0}
+%\definecolor{newcolor}{rgb}{0.8,0,0}
+%\newcommand{\new}[1]{\textcolor{newcolor}{#1}}
+
+% new is black, old is gray
+\definecolor{old}{gray}{0.3}
+\newcommand{\new}[1]{\textcolor{black}{#1}}
+
+\newcommand{\todo}[1]{[{\textcolor{red}{\bf TODO:}} #1]}
+
+\begin{document}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\conferenceinfo{PLAS '09}{June 15, Dublin.} 
+\copyrightyear{2009} 
+\copyrightdata{[to be supplied]} 
+
+\titlebanner{}        % These are ignored unless
+\preprintfooter{TMI Semantics and Haskell implementation}   % 'preprint' option specified.
+
+\title{An Implementation and Semantics for Transactional Memory Introspection in Haskell}
+\subtitle{}
+
+\authorinfo{Arnar Birgisson}
+           {Reykjav\'{\i}k University}
+           {arnarb07@ru.is}
+\authorinfo{\'Ulfar Erlingsson}
+           {Reykjav\'{\i}k University \\ Microsoft Research, Silicon Valley}
+           {ulfar@ru.is}
+
+\maketitle
+
+\begin{abstract}
+    Transactional Memory Introspection (TMI) is a novel 
+    reference monitor architecture that provides 
+    complete mediation,
+    freedom from {\em time of check to time of use} bugs and 
+    improved failure handling for authorization.
+    TMI builds on and integrates with implementations of the 
+    Software Transactional Memory (STM) architecture~\cite{harrisFraserSTM}. 
+    In this paper we present a formal
+    definition of TMI and a concrete implementation over the Haskell STM.
+We find that this specification and reference implementation
+    establishes clear semantics for the TMI architecture.
+In particular, they help identify and resolve ambiguities 
+    that apply to implementations
+    such in our prior work~\cite{tmi}.
+\end{abstract}
+
+\category{D.4.6}{Operating Systems}{Access controls}
+\category{D.1.3}{Software}{Concurrent programming}
+
+\terms {Languages, Security}
+
+\keywords {Reference monitors, Transactional memory}
+
+\input{intro}
+\input{background}
+\input{informal}
+\input{formal}
+\input{implementation}
+\input{conclusion}
+
+%\appendix
+%\section{Appendix Title}
+%
+%This is the text of the appendix, if you need one.
+
+\acks
+
+We would like to thank Luca Aceto for his helpful comments on our
+use of Structural Operational Semantics. We also thank 
+Wouter Swierstra and Josef Svenningsson for their detailed comments
+on our Haskell code. 
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+%\begin{thebibliography}{}
+%
+%\bibitem{smith02}
+%Smith, P. Q. reference text
+%
+%\end{thebibliography}
+
+\end{document}
+

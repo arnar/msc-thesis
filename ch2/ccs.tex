@@ -1,0 +1,79 @@
+\section{Computations and CCS} % (fold)
+\label{sec:preliminaries}
+
+The following definitions come mostly from~\cite{DeNicola:1990}.
+
+\begin{definition}[Labelled transition system]
+    A \emph{labelled transition system} (LTS)
+    is a triple $\langle P,A,\trans{}\rangle$ where
+    \begin{itemize}
+        \item $P$ is a set of process names
+        \item $A$ is a set of action names, not including a \emph{silent action}
+              $\tau$. We write $A_\tau$ for $A\cup \{\tau\}$.
+        \item $\trans{}\subseteq P\times A\times P$ is the \emph{transition
+              relation}, we call its elements \emph{transitions} and
+              usually write $p\trans{a}p'$ to mean that $(p,a,p')\in\trans{}$.
+    \end{itemize}
+    We let $p,q,\dots$ range over $P$, $a,b,\dots$ over $A$ and $\alpha,\beta,\dots$
+    over $A_\tau$.
+\end{definition}
+
+\begin{definition}[Sequences and computations]
+    For any set $S$ we let $\seq S$ be the set of finite sequences of elements
+    from $S$. Concatenation of sequences is represented by juxtaposition.
+    $\lambda$ denotes the empty sequence and $\abs\sigma$ the length of a
+    sequence $\sigma$.
+
+    Given an LTS $\T = \langle P,A,\trans{} \rangle$, we define a
+    \emph{path from $p_0$} to be a sequence of transitions
+    \[
+        p_0\trans{\alpha_0}p_1,
+        p_1\trans{\alpha_1}p_2, \dots ,
+        p_n\trans{\alpha_{n-1}}p_n
+    \]
+    and usually write this as
+    \[
+        p_0 \trans{\alpha_0} p_1
+            \trans{\alpha_1} p_2
+            \trans{\alpha_2} \cdots
+            \trans{\alpha_{n-1}}p_n.
+    \]
+    We use $\pi,\mu,...$ to range over paths.
+    A \emph{computation from $p$} is a pair $(p,\pi)$ where $\pi$ is a path
+    from $p$ and
+    we use $\rho,\sigma,\dots$ to
+    range over computations.
+    $\C_\T(p)$ or simply $\C(p)$ is the set of computations from $p$ and
+    $\C_\T$ is the set of all computations in $\T$.
+
+    For a computation $\rho = (p_0,\pi)$
+    where $\pi = p_0 \trans{\alpha_0} p_1 \trans{\alpha_1} p_2 \trans{\alpha_2}
+    \cdots \trans{\alpha_{n-1}}p_n$ we define
+    \begin{align*}
+        \first(\rho) &= p_0 \\
+        \last(\rho) &= p_n \\
+        \trace(\rho) &= (\alpha_0,\dots,\alpha_{n-1}) \in \seq{A_\tau} \\
+        \abs{\rho} &= \abs{\pi} = n
+    \end{align*}
+    We will refer to  elements of $\seq A$
+    as \emph{traces}. Note that the length
+    of a computation is the length of its trace, not the number of processes.
+
+    Concatenation of computations $\rho$ and $\rho'$
+    is denoted by their juxtaposition
+    $\rho\rho'$ and is defined iff $\last(\rho)=\first(\rho')$.
+    When $\last(\rho) = p$ we will
+    write $\rho(p\trans{\alpha} q)$ as a shorthand for the slightly longer
+    $\rho(p, p\trans{\alpha} q)$.
+    We also use $\rho \trans{\alpha} \rho'$ to denote that
+    there exists a computation
+    $\sigma = (p, p \trans\alpha p')$, for some processes $p$ and $p'$,
+    such that $\rho' = \rho\sigma$.
+\end{definition}
+
+\begin{note}
+    Representing computations with a pair $(p,\pi)$ might seem redundant at
+    first, since $\pi$ must start with $p$. However, an empty computation
+    $(p,\lambda)$ is also valid and must be distinguished from $(q,\lambda)$
+    if $p\ne q$.
+\end{note} 

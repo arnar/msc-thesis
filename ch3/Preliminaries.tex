@@ -1,0 +1,88 @@
+\section{\label{sec::pre}Preliminaries}
+
+In this section we present, for sake of completeness, some standard definitions from
+the meta-theory of SOS that will be used in the remainder of the paper.
+
+\begin{definition}[Signature and terms]
+    We let $V$ represent an infinite set of variables and use $x,x',x_i,y,y',y_i,\dots$ to range over elements of $V$.
+    A \emph{signature} $\Sigma$ is a set of function symbols, each with a fixed arity. We call these symbols
+    \emph{operators} and usually represent them by $f,g,\dots$. An operator with arity zero is called a
+    \emph{constant}. We define the set $\Terms\Sigma$ of \emph{terms} over $\Sigma$ as the smallest set satisfying the following constraints.
+    \begin{bullets}
+        \item A variable $x\in V$ is a term.
+        \item If $f\in \Sigma$ has arity $n$ and $t_1,\dots,t_n$ are terms, then $f(t_1,\dots,t_n)$ is a term.
+    \end{bullets}
+    We use $t,t',t_i,\dots$ to range over terms. We write $t_1 \equiv t_2$ if $t_1$ and $t_2$ are syntactically equal.
+    The function $vars : \Terms\Sigma \rightarrow 2^V$ gives the set of variables appearing in a term.
+    The set $\CTerms\Sigma \subseteq \Terms\Sigma$ is the set of \emph{closed terms}, i.e., terms that contain no variables.
+    We use $p,p',p_i,\dots$ to range over closed terms.
+    A \emph{substitution} $\sigma$ is a function of type $V \rightarrow \Terms\Sigma$. We extend the domain of substitutions to terms
+    homomorphically. If the range of a substitution lies in $\CTerms\Sigma$, we say that it is a \emph{closing substitution}.
+\end{definition}
+
+\begin{definition}[Transition System Specifications (TSS), formulae and transition relations]
+    A \emph{transition system specification} is a triplet $(\Sigma, L, D)$ where
+    \begin{bullets}
+        \item $\Sigma$ is a signature.
+        \item $L$ is a set of labels. If $l \in L$, and $t,t'\in \Terms\Sigma$
+              we say that $t \trans{l} t'$ is a \emph{positive formula} and
+              $t \ntrans{l}$ is a \emph{negative formula}. A formula, typically denoted by $\phi$, $\psi$, $\phi'$, $\phi_i$, $\ldots$
+              is either a negative formula or a positive one.
+        \item $D$ is a set of \emph{deduction rules}, i.e., tuples of the form $(\Phi,\phi)$ where $\Phi$ is a set of
+              formulae and $\phi$ is a positive formula. We call the formulae contained in $\Phi$ the \emph{premises} of the rule and $\phi$ the
+              \emph{conclusion}.
+    \end{bullets}
+    We write $\vars{r}$ to denote the set of variables appearing in a deduction rule $\DR{r}$.
+    We say a formula is \emph{closed} if all of its terms are closed. Substitutions are also extended to formulae
+    and sets of formulae in the natural way. A set of positive closed formulae is called a \emph{transition relation}.
+\end{definition}
+
+We often refer to a formula $t \trans{l} t'$ as a \emph{transition} with $t$ being its \emph{source}, $l$ its label, and $t'$
+its \emph{target}.
+A deduction rule $(\Phi,\phi)$ is typically written as $\frac{\Phi}{\phi}$. For a deduction rule $r$, we write $\conc{r}$ to denote its conclusion and $\prem{r}$ to denote its premises.
+We call a deduction rule $f$-\emph{defining} when the outermost function symbol appearing in its source of the conclusion is $f$.
+
+
+The meaning of a TSS is defined by the following notion of least three-valued stable model.
+To define this notion, we need two auxiliary definitions, namely provable transition rules and contradiction, which are given below.
+
+\begin{definition}[Provable Transition Rules]
+A deduction rule is called a \emph{transition rule} when it is of the form $\frac{N}{\phi}$ with $N$ a set of {\em negative formulae}. A TSS $\tss$ \emph{proves} $\frac{N}{\phi}$, denoted by $\tss \vdash \frac{N}{\phi}$, when there is a well-founded upwardly branching tree with formulae as nodes and of which
+\begin{itemize}
+\item the root is labelled by $\phi$;
+\item if a node is labelled by $\psi$ and the nodes above it form the set $K$ then:
+\begin{itemize}
+\item $\psi$ is a negative formula and $\psi \in N$, or
+\item $\psi$ is a positive formula and $\frac{K}{\psi}$ is an instance of a deduction rule in $\tss$.
+\end{itemize}
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Contradiction and Contingency]
+Formula $t \trans{l} t'$ is said to \emph{contradict} $t \ntrans{l}$, and vice versa.
+For two sets $\Phi$ and $\Psi$ of formulae,
+$\Phi$ \emph{contradicts} $\Psi$, denoted by $\Phi \nvDash \Psi$, when there is a $\phi \in \Phi$ that contradicts a $\psi \in \Psi$.
+$\Phi$ is \emph{contingent} w.r.t.\ $\Psi$, denoted by $\Phi \vDash \Psi$, when $\Phi$ does not contradict $\Psi$.
+\end{definition}
+
+It immediately follows from the above definition that contradiction and contingency are symmetric relations on (sets of) formulae.
+We now have all the necessary ingredients to define the semantics of TSSs in terms of three-valued stable models.
+
+\begin{definition}[The Least Three-Valued Stable Model]
+A pair $(C, U)$ of sets of positive closed transition formulae is called a \emph{three-valued stable model} for a TSS $\tss$ when
+\begin{itemize}
+\item  for all $\phi \in C$, $\tss \vdash \frac{N}{\phi}$ for a set $N$ such that $C \cup U \vDash N$, and
+\item  for all $\phi \in U$, $\tss \vdash \frac{N}{\phi}$ for a set $N$ such that $C \vDash N$.
+\end{itemize}
+$C$ stands for {\em Certainly} and $U$ for {\em Unknown}; the third value is determined by the formulae not in $C \cup U$.
+The \emph{least} three-valued stable model is a three valued stable model which is the least with respect to the ordering on
+pairs of sets of formulae defined as $(C,U) \leq (C', U')$ iff $C \subseteq C'$ and $U' \subseteq U$.
+When for the least three-valued stable model it holds that $U=\emptyset$, we say that $\tss$ is \emph{complete}.
+\end{definition}
+
+
+Complete TSSs univocally define a transition relation, i.e., the $C$ component of their least three-valued stable model.
+Completeness is central to almost all meta-results in the SOS meta-theory and,
+as it turns out, it also plays an essential role in our meta-results concerning determinism and idempotency.
+All practical instances of TSSs are complete and
+there are syntactic sufficient conditions guaranteeing completeness, see for example \cite{Groote93}.

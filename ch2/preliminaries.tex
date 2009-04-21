@@ -1,0 +1,168 @@
+%!TEX root = compose.tex
+
+\section{Preliminaries}\label{sec:preliminaries}
+\subsection{Computations and CCS} % (fold)
+The following definitions come mostly from~\cite{DeNicola:1990}.
+
+\begin{definition}[Labelled transition system]
+    A \emph{labelled transition system} (LTS)
+    is a triple $\langle P,A,\trans{}\rangle$ where
+    \begin{itemize}
+        \item $P$ is a set of process names.
+        \item $A$ is a finite set of action names, not including a \emph{silent action}
+              $\tau$. We write $A_\tau$ for $A\cup \{\tau\}$.
+        \item $\trans{}\subseteq P\times A\times P$ is the \emph{transition
+              relation}, we call its elements \emph{transitions} and
+              usually write $p\trans{a}p'$ to mean that $(p,a,p')\in\trans{}$.
+    \end{itemize}
+    We let $p,q,\dots$ range over $P$, $a,b,\dots$ over $A$ and $\alpha,\beta,\dots$
+    over $A_\tau$.
+\end{definition}
+
+\begin{definition}[Sequences and computations]
+    For any set $S$ we let $\seq S$ be the set of finite sequences of elements
+    from $S$. Concatenation of sequences is represented by juxtaposition.
+    $\lambda$ denotes the empty sequence and $\abs\sigma$ stands for the length of a
+    sequence $\sigma$.
+
+    Given an LTS $\T = \langle P,A,\trans{} \rangle$, we define a
+    \emph{path from $p_0$} to be a sequence of transitions
+    \[
+        p_0\trans{\alpha_0}p_1,
+        p_1\trans{\alpha_1}p_2, \dots ,
+        p_n\trans{\alpha_{n-1}}p_n
+    \]
+    and usually write this as
+    \[
+        p_0 \trans{\alpha_0} p_1
+            \trans{\alpha_1} p_2
+            \trans{\alpha_2} \cdots
+            \trans{\alpha_{n-1}}p_n.
+    \]
+    We use $\pi,\mu,...$ to range over paths.
+    A \emph{computation from $p$} is a pair $(p,\pi)$ where $\pi$ is a path
+    from $p$ and
+    we use $\rho,\sigma,\dots$ to
+    range over computations.
+    $\C_\T(p)$,
+    or simply $\C(p)$ when the LTS $\T$ is clear from the context,
+    is the set of computations from $p$ and
+    $\C_\T$ is the set of all computations in $\T$.
+
+    For a computation $\rho = (p_0,\pi)$
+    where $\pi = p_0 \trans{\alpha_0} p_1 \trans{\alpha_1} p_2 \trans{\alpha_2}
+    \cdots \trans{\alpha_{n-1}}p_n$ we define
+    \begin{align*}
+        \first(\rho) &= p_0 \\
+        \last(\rho) &= p_n \\
+        \trace(\rho) &= (\alpha_0\dots\alpha_{n-1}) \in \seq{A_\tau} \\
+        \abs{\rho} &= \abs{\pi} = n
+    \end{align*}
+    We will refer to  elements of $\seq A$
+    as \emph{traces}. 
+    %Note that the length
+    %of a computation is the length of its trace, not the number of processes.
+
+    Concatenation of computations $\rho$ and $\rho'$
+    is denoted by their juxtaposition
+    $\rho\rho'$ and is defined iff $\last(\rho)=\first(\rho')$.
+    When $\last(\rho) = p$ we will
+    write $\rho(p\trans{\alpha} q)$ as a shorthand for the slightly longer
+    $\rho(p, p\trans{\alpha} q)$.
+    We also use $\rho \trans{\alpha} \rho'$ to denote that
+    there exists a computation
+    $\sigma = (p, p \trans\alpha p')$, for some processes $p$ and $p'$,
+    such that $\rho' = \rho\sigma$.
+\end{definition}
+
+\begin{remark}
+    Representing computations with a pair $(p,\pi)$ might seem redundant at
+    first, since $\pi$ must start with $p$. However, an empty computation
+    $(p,\lambda)$ is also valid and must be distinguished from $(q,\lambda)$
+    if $p\ne q$.
+\end{remark}
+
+\subsection{Hennessy-Milner Logic with Past}
+
+
+\begin{definition}[Hennessy Milner logic with past]
+    Let $\T=\langle P,A,\rightarrow \rangle$ be an LTS. The set $\HMLpast(A)$,
+    or simply $\HMLpast$, of
+    \emph{Hennessy-Milner logic formulas with past} is defined by the following grammar,
+    where $\alpha\in A$.
+    \[
+        \phi,\psi \,::=\, \true \alt \phi\land\psi
+                                \alt \neg\phi
+                                \alt \dmnd{\alpha} \phi
+                                \alt \dmndback{\alpha} \phi.
+    \]
+    We define the \emph{satisfaction relation} $\vDash\,\subseteq \C_\T \times \HMLpast$
+    as the least relation that satisfies the following clauses:
+    \begin{itemize}
+        \item $\rho\vDash\true$ for all $\rho\in\C_\T$,
+        \item $\rho\vDash\phi\land\psi$ iff $\rho\vDash\phi$ and $\rho\vDash\psi$,
+        \item $\rho\vDash\neg\phi$ iff not $\rho\vDash\phi$,
+        \item $\rho\vDash\dmnd{\alpha}\phi$ iff
+              $\rho\trans{\alpha}\rho'$ and $\rho'\vDash\phi$ for some $\rho'\in\C_\T$,
+        \item $\rho\vDash\dmndback{\alpha}\phi$ iff
+              $\rho'\trans{\alpha}\rho$ and $\rho'\vDash\phi$ for some $\rho'\in\C_\T$.
+    \end{itemize}
+    The satisfaction relation $\vDash\,\subseteq P\times\HMLpast$ is defined by
+    $p\vDash\phi$ if and only if $(p,\lambda)\vDash \phi$.
+\end{definition}
+
+We will make use of some standard shorthands for Hennessy-Milner type logics.
+\begin{align*}
+    \phi \lor \psi &= \neg(\neg\phi \land \neg\psi) \\
+    \bx{\alpha}\phi &= \neg\dmnd{\alpha}(\neg\phi) \\
+    \bxback{\alpha}\phi &= \neg\dmndback{\alpha}(\neg\phi) \\
+\end{align*}
+For a finite set of actions $A$, we will also use the following notation.
+\begin{align*}
+    \dmnd{A}\phi &= \bigvee_{\alpha\in A} \dmnd{\alpha} \phi  &
+    \dmndback{A}\phi &= \bigvee_{\alpha\in A} \dmndback{\alpha} \phi \\
+    \bx{A}\phi &= \bigwedge_{\alpha\in A} \bx{\alpha} \phi  &
+    \bxback{A}\phi &= \bigwedge_{\alpha\in A} \bxback{\alpha} \phi \\
+\end{align*}
+Intuitively, $\rho\vDash\dmndback{\alpha}\phi$ means the last action of $\rho$
+{\em is} labelled with $\alpha$ and the preceding computation satisifies $\phi$, while
+$\rho\vDash\bxback{\alpha}\phi$ means that {\em if} the last computation is labelled
+with $\alpha$, then the preceding computation satisfies $\phi$. Specifically, a
+computation with an empty path, i.e. the initial state, can never satisfy the former
+while it will always vacuously satisfy the latter.
+
+\subsubsection{Determinism of the past}
+\label{sec:determinism_of_the_past}
+
+It is worth mentioning that the operators $\dmnd\cdot$ and $\dmndback\cdot$ are
+not entirely symmetric. The future is non-deterministic, i.e. at any point we may
+have a choice of multiple ways for a computation to proceed. 
+In our semantics for \HMLpast{}, the past however is
+always deterministic; there is always at most one transition that was the last
+transition to occur. This is by design, and we could have chosen to model the past
+as nondeterministic as well, i.e. to take a possibilistic view where we would consider
+all possible histories. 
+
+This would make the forward and backwards diamond
+operators symmetric in their view of the process graph. However, we are more
+interested in properties about the actual past of a computation, especially
+w.r.t. modelling epistemic properties, which rely on observations of some aspects
+of the computation so far. (We do not discuss such properties in the
+current paper.) We have thus reached the same conclusion as \cite{Laroussinie00},
+that the deterministic view is more appropriate for our purposes. They list two other
+properties of their model of the past in addition to being deterministic, namely that
+the past is finite (there is a fixed initial state) and that past is cumulative (each
+transition the history gains information). We make implicit use of the latter property 
+in our proofs and find that the former is a natural property of the processes we
+want to model.
+
+Treating the past as deterministic might suggest that it is unnecessary to index
+the operator $\dmndback{\alpha}$ with the action and instead provide an operator
+$\dmndback{\,}$ which matches any action (since there is at most one). However this
+turns out to be insufficient, as such a logic could not distinguish between the
+two computations
+\[
+    (r, r\trans\alpha t) \quad \textrm{and} \quad (r, r\trans\beta s)
+\]
+when $\alpha\ne\beta$. For our intended purposes, it is important that we are
+able to tell these two apart.

@@ -1,0 +1,31 @@
+\begin{figure}
+\flushleft{\begin{minipage}{\linewidth}
+\small
+\color{old}
+\begin{gather*}
+\begin{array}{rcl}
+    x,y & \in & Variable \\
+    r,t & \in & Name \\
+    c & \in & Char \\
+\\
+V & ::= & r \alt c \alt \backslash x\prg{->}M \\
+& | & \prg{return }M \alt M \,\prg{>{}>=}, N \\
+& | & \prg{putChar }c \alt \prg{getChar} \\
+& | & \prg{throw }M \alt \prg{catch }M\;N \\
+& | & \prg{retry} \alt M \;\textrm{\lstinline{`orElse`}}\; N \\
+& | & \prg{forkIO }M \alt \prg{atomically }M \\
+& | & \prg{newTVar }M \\
+& | & \prg{readTVar } r \alt \prg{writeTVar }r\;M \\
+& | & \new{ \prg{newTMIVar }N\;M } \\
+& | & \new{ \prg{readTMIVar } r } \alt \new{ \prg{writeTMIVar }r\;M } \\
+& | & \new{ \prg{authorized }N\;M } \alt \new{ \prg{liftSTM } M} \\
+& | & \new{ \prg{getlog} } \alt \new{ \prg{UnauthorizedError} } \\
+% \alt \new{ \prg{abort} }\\
+\\
+M,N & ::= & x \alt V \alt M\;N \alt \dots \\
+\end{array}
+\end{gather*}
+\end{minipage}}\caption{Syntax of values ($V$) and terms ($N,M$)}
+\label{fig:syntax2}
+\end{figure}
+

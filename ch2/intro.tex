@@ -1,0 +1,21 @@
+\section{Introduction}
+State-space explosion is a major obstacle in model-checking logical properties.
+One approach to combat this problem is compositional reasoning,
+where properties of a system as a whole are deduced from the properties of its components.
+Decompositional reasoning \cite{Giannakopoulou05,Xie05} improves upon compositional reasoning by
+automatically decomposing the global property into local properties of (possibly unknown) components.
+In the context of process algebras, as the specification language, and Hennessy-Milner logic, as the logical formalism for properties,
+decompositional reasoning techniques date back to the seminal work of Larsen and Xinxin in early 90's \cite{Larsen91},
+which is further developed in \cite{Simpson04,Fokkink06}.
+However, we are not aware of any such decomposition technique which applies to reasoning about ``past''.
+This is particularly interesting in the light of recent developments concerning reversible processes and
+knowledge representation (epistemic aspects) inside process algebra,
+all of which involve some notion of specification and reasoning about past.
+
+
+In this paper, we tackle this problem and present a decomposition technique for Hennesy Milner logic with past.
+As the specification language, we use a subset CCS with parallel composition, non-deterministic choice, action prefixing
+and the inaction constant.
+
+The rest of this paper is structured as follows.
+

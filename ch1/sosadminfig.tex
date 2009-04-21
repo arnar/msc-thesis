@@ -1,0 +1,47 @@
+\begin{figure}
+\flushleft{\begin{minipage}{\linewidth}
+    \small
+\color{old}
+
+\center{\framebox{Administrative transitions $\qquad M \tarrow N $}}
+\begin{gather*}
+    M \quad\tarrow\quad V  \quad \textrm{if $\,\mathcal{V}\lsem M \rsem = V$ and $M \nequiv V$}
+    \qquad\soslbl{EVAL}
+\\
+\begin{array}{rcll}
+\prg{return }N \,\prg{>{}>=}\, M
+    & \tarrow
+    & M\;N
+    & \soslbl{BIND}
+    \\
+\prg{throw }N \,\prg{>{}>=}\, M
+    & \tarrow
+    & \prg{throw }N
+    & \soslbl{THROW}
+    \\
+\prg{retry >{}>=}\, M
+    & \tarrow
+    & \prg{retry}
+    & \soslbl{RETRY}
+%\prg{catch retry }N
+%    & \tarrow
+%    & \prg{retry}
+%    & \soslbl{CATCH3}
+%    \\
+%\prg{abort }N\,\prg{>{}>=}\, M
+%    & \tarrow
+%    & \prg{abort }N
+%    & \soslbl{ABORT}
+%    & &
+%\prg{catch }(\prg{abort }M)\,N
+%    & \tarrow
+%    & \prg{abort }M
+%    & \soslbl{CATCH4}
+\end{array}
+%
+\end{gather*}
+
+\end{minipage}}\caption{Evaluation of terms and monad operations}
+\label{fig:sosadmin}
+\end{figure}
+

@@ -1,0 +1,156 @@
+\section{Background} % (fold)
+\label{sec:background}
+
+\subsection{STM and TMI} % (fold)
+\label{sub:stm_and_tmi}
+
+STM provides attractive guarantees for multithreaded software, namely atomicity,
+consistency and isolation of {\em transactions}, specifically marked blocks of code.
+In general, STM implementations must do so by performing
+
+\begin{mybullet}
+    \item careful monitoring of the resources that are accessed within a transaction,
+    \item validation of the accesses of concurrent transactions, and
+    \item complete rollback of the effects of aborted transactions.
+\end{mybullet}
+
+TMI builds on this machinery and allows security enforcement to benefit from
+the STM guarantees. TMI helps the programmer to write correct enforcement mechanisms
+and simplifies error-handling. In~\cite{tmi} we outline three main benefits of TMI:
+
+\paragraph{Complete mediation.} TMI provides complete mediation by implicitly invoking
+the reference monitor before any effects of a transaction are permanently committed. The
+reference monitor validation checks
+are able to inspect the resource access logs of the STM and may veto the
+commit if an application specific policy is violated. 
+In general, this requires that STM mechanisms provide
+strong atomicity, i.e. resources marked for transactional scrutiny may not be accessed outside
+the scope of a transaction.
+
+\paragraph{Freedom from TOCTTOU bugs.} {\em Time of check to time of use} (TOCTTOU) bugs arise
+in conventional enforcement mechanisms when interleaved threads may affect the policy decisions
+of each other. For example, a thread may make a policy-based decision to allow access to a
+certain resource, e.g. reading a memory location. Before that operation is actually performed, 
+execution may be preempted by another thread. That thread can change the global state so that the 
+policy decision becomes invalid,
+e.g. by writing privileged information into the memory location.
+
+This problem is implicitly solved by using STM, which guarantees that transactions are 
+isolated and cannot affect the policy decisions of each other.
+
+\paragraph{Simplified error handling.} In the event of an authorization failure, TMI uses the STM
+facilities to completely roll back the effects of the transaction in question and raise an appropriate
+exception to the code that initiated the transaction. This frees the programmer from having to
+undo state changes leading up to the unauthorized operation, a common source of 
+errors~\cite{errorHandlingMistakes}.
+
+% subsection stm_and_tmi (end)
+
+\subsection{Haskell STM} % (fold)
+\label{sub:haskell_stm}
+
+For a formal treatment, we build our semantics and implementation on those of the Haskell STM~\cite{haskellstm},
+which in turn is built on Concurrent Haskell~\cite{concurrenthaskell}. Concurrent Haskell is an extension to Haskell 98,
+a lazy (i.e. call-by-name), pure, functional language. It supports concurrent threads and communications
+between them. Non-pure computations are modelled with {\em monads}~\cite{monads}, this includes computations
+with side-effects such as input/output and mutable state.
+
+The main entry to a Haskell program is an instantiation of the I/O monad, i.e. a value that represents an
+{\em action} of the type \lstinline+IO ()+. An action of this type can, in addition to performing pure
+computation, perform other I/O actions by way of composing smaller actions into larger ones. For an example,
+Haskell standard libraries define the basic I/O actions \lstinline+getChar+ and \lstinline+putChar+, which
+read from standard input and write to standard output, respectively. The most common composition is simple
+sequencing. For example the composed I/O action
+\begin{lstlisting}[style=small]
+main = do { c <- getChar; putChar c; putChar c }
+\end{lstlisting}
+defines an action, that when executed will perform the three actions listed in sequence.
+
+In general a value of type \lstinline+IO a+ represents an action that when executed, may perform some
+I/O operations as defined by the Haskell libraries and then result in a value of type \lstinline+a+.
+Pure functions cannot execute such actions without jeopardizing their purity and this is neatly enforced
+by the Haskell type system. Naturally, I/O actions are however free to run pure computations. Thus
+the only way to get at the value of an action, is if it is a part of a bigger I/O action. The Haskell
+runtime bootstraps the whole process by executing the special I/O action called \lstinline+main+.
+
+In addition to conventional input and output, I/O actions can perform reads and updates of mutable memory
+cells. The type \lstinline+IORef a+ represents a mutable cell that contains a value of type \lstinline+a+. 
+Haskell provides the basic I/O actions \lstinline+newIORef+, \lstinline+readIORef+ and \lstinline+writeIORef+
+for manipulation of such cells. As with other I/O actions, these operations can only be used when composing
+larger I/O actions.
+
+Concurrent Haskell supports explicit forking of threads through the I/O action \lstinline+forkIO+.
+\begin{lstlisting}[style=small]
+forkIO :: IO a -> IO ThreadID
+\end{lstlisting}
+\lstinline+forkIO+ takes another I/O action as a parameter and spawns a new thread to execute the action, 
+immediately
+returning a newly allocated thread identifier. For further discussion of concurrency we refer to~\cite{awkward}
+or tutorials such as~\cite{partutorial}.
+
+The Haskell STM is based on a monadic type similar to the one for I/O actions, namely \lstinline+STM a+.
+A value of this type represents an {\em STM action}, which when executed may perform smaller STM actions and
+result in a value of type \mbox{\lstinline+a+.} %  dot falls on a second line. I tried mbox (dunno if it works)
+STM actions may contain pure computations as well, but note that
+they {\em cannot} contain e.g. I/O actions. The main STM actions provided are actions that allow manipulations
+of another kind of memory cells, which have the type \mbox{\lstinline+TVar a+}, % This breaks accross lines, tried mbox
+where \lstinline+a+ is the type of
+value that the cell holds. The actions are \lstinline+newTVar+, \lstinline+readTVar+ and \lstinline+writeTVar+,
+so they have the same power as their I/O counterparts. The important thing to note is that sets of \lstinline+IORef+s
+and \lstinline+TVar+s are kept separate, one can only be used in I/O actions and the other in STM actions.
+
+STM actions can be composed. Similar to I/O actions, the most common composition is sequencing,
+but in addition Haskell STM provides the basic STM action \lstinline+retry+ and a combinator
+\lstinline+orElse+. The action \lstinline+retry+ is a blocking operation for 
+STM actions, which restarts the current transaction with potentially updated \lstinline+TVar+ contents. 
+By issuing \lstinline+retry+, the programmer is stating
+that the current transaction cannot finish for the state of \lstinline+TVar+s it started in. 
+The Haskell STM provides an optimized implementation of \lstinline+retry+. This implementation captures
+the set of \lstinline+TVar+s that a transaction has read before the retry, and suspends the transaction
+until at least one of those \lstinline+TVar+s has been updated.
+This makes sense because the {\em only} outside factors that can
+affect the execution of an STM action are the values of the \lstinline+TVar+s it reads.
+
+If \lstinline+t1+ and \lstinline+t2+ are STM actions, then \lstinline+t1 `orElse` t2+
+is an STM action that first tries performing \lstinline+t1+ on its own. 
+If \lstinline+t1+ invokes the \lstinline+retry+ action,
+then the combined action rolls back the effects of \lstinline+t1+ 
+and tries \lstinline+t2+ instead. If that one retries also, the whole
+action retries, but waits for updates on the variables read by {\em both} \lstinline+t1+ and \lstinline+t2+.
+
+For an example how the above can be used for synchronization primitives such as communication channels, see Section
+4 of~\cite{haskellstm}.
+
+While the basic STM actions and their compositions give us a way to build larger STM actions, we have not
+discussed how those actions can be run or how they relate to transactions. For this, STM Haskell provides us
+with the \lstinline+atomically+ function\footnote{While~\cite{haskellstm} uses the name \lstinline+atomic+, the actual implementation
+of the Glasgow Haskell Compiler uses \lstinline+atomically+.}. This function has the type
+\begin{lstlisting}[style=small]
+atomically :: STM a -> IO a
+\end{lstlisting}
+This function gives an I/O action that, when performed, will execute the input STM action.
+The atomicity comes from the fact that STM Haskell will guarantee that the effects that the STM action has on
+\lstinline+TVar+s are atomic, i.e. they all become visible at once and that what happens
+inside the STM action is not affected by concurrent threads.  
+
+The Haskell STM system does this by monitoring concurrent invocations of STM actions, taking care of rolling
+them back if they conflict with each other and retrying them.
+As an example, the following program creates
+a transactional variable holding a counter and spawns three threads that each increments the counter atomically.
+\begin{lstlisting}[style=small]
+increment :: TVar Int -> STM ()
+increment counter = do x <- readTVar counter
+                       writeTVar counter (x + 1)
+
+main = do c <- atomically (newTVar 0)
+          forkIO (atomically (increment c))
+          forkIO (atomically (increment c))
+          forkIO (atomically (increment c))
+\end{lstlisting}
+The \lstinline+increment+ action is a classical example of where a race condition might occur 
+in a traditional setting,
+but in our situation the STM system will guarantee the atomicity of each invocation.
+
+% subsubsection haskell_stm (end)
+
+% section background (end)

@@ -1,0 +1,263 @@
+\newpage
+\section{Proof of Theorem \ref{th::det}}
+\label{proof::det}
+
+In this section, we present a proof of Theorem \ref{th::det}.\footnote{Due to space restrictions, the proofs are omitted from the main text. They are provided as an appendix, however, for reviewers' convenience. If the paper is accepted, the full version of the paper, including the proofs, will appear as a technical report and will be made publicly available.}
+%\begin{proof}
+Instead of proving that $C$ is deterministic for each $l \in L$, we establish the following more general result.
+We prove that, for each $l \in L$, if $p \trans{l} p' \in C \cup U$ and $p \trans{l} p'' \in C$, then $p' \equiv p''$.
+
+Since $p \trans{l} p' \in C \cup U$, then there exists a provable transition rule, such that
+$\tss \vdash \frac{N}{p \trans{l} p'}$, for some set $N$ of negative formulae such that $C \vDash N$.
+We show the claim by an induction on the proof structure
+for the transition rule $\frac{N}{p \trans{l} p'}$.
+Consider the last deduction rule $\DR{r}$ and substitution $\sigma$
+used in the proof structure for $\frac{N}{p \trans{l} p'}$.
+
+%\AB{I need a little help in stating the induction hypothesis explicitly here, if needed.}
+
+Since $p \trans{l} p'' \in C$,
+there also exists a proof structure such that $\tss \vdash \frac{N'}{p \trans{l} p''}$
+for some set $N'$ of negative formulae such that $C \cup U \vDash N'$.
+Again, consider the last deduction rule $\DR{r'}$ and substitution $\sigma'$ used in the proof structure for $\tss \vdash \frac{N'}{p \trans{l} p''}$.
+
+We first consider the case when $\DR{r}$ and $\DR{r'}$ are the same rule, say $\frac{\Phi}{t\trans{l}t'}$.
+Obviously $\sigma(t)\equiv\sigma'(t)$ since both must be equal to $p$.
+Since $\sigma(t')$ and $\sigma'(t')$ are equal to $p'$ and $p''$ respectively, we need to
+show that $\sigma(t') \equiv \sigma'(t')$.
+
+% If the proof structure for $\frac{N}{p\trans{l}p'}$ consists of only one rule,
+% $\DR{r}$ is an axiom and thus contains no premises. This means, since all variables
+% in $t'$ are source dependent, that they must appear in the source $t$.
+% Since $\sigma(t)\equiv p \equiv\sigma'(t)$ we obtain
+% that $\sigma(t')\equiv\sigma'(t')$ also holds.
+
+%If the proof structure is more complex, i.e. the set of premises $\Phi$ is non-empty.
+
+We define the distance of a source-dependent variable as the length of the shortest backward path from the variable, via premises with a label in $L$, to the variables in the source of conclusion. A variable in the source of the conclusion is thus of distance 0.
+
+For each variable $v$ that is source dependent via  a subset of $\{ \trans{l} \mid l \in  L\}$, we proceed with another induction
+on the distance of $v$ to show that $\sigma(v) \equiv \sigma'(v)$. If we show this, then it follows that $\sigma(t') \equiv \sigma'(t')$ since
+all variables in $t'$ are source dependent by the first constraint of our rule format.
+
+We consider the two possible reasons for $v$ being source dependent.
+\begin{enumerate}
+    \item Assume that $v$ appears in $t$. In this case, $\sigma(v)\equiv\sigma'(v)$ since $\sigma(t)\equiv\sigma'(t)$.
+    \item Assume that $v$ appears in the target of some premise $t_i \trans{l_i} t_i' \in \Phi$ where $l_i \in L$
+          and all variables in $t_i$ are source dependent via  a subset of $\{ \trans{l} \mid l \in  L\}$.
+          Each variable $w \in vars(t_i)$ has a distance smaller than that of $v$. Therefore, the induction
+          hypothesis (on the distance of variables) applies and we have that $\sigma(w) \equiv\sigma'(w)$.
+          This means that $\sigma(t_i)\equiv\sigma'(t_i)$. This allows
+          us to apply the induction hypothesis on the proof structure, since $\sigma(t_i \trans{l_i} t_i')$ has a proof structure
+          that is smaller than the one for $p \trans{l} p'$, to conclude that $\sigma(t'_i) \equiv \sigma'(t'_i)$.
+          Since $v$ appears in $t_i'$ it must hold that $\sigma(v)\equiv\sigma'(v)$.
+\end{enumerate}
+In either case, $\sigma$ and $\sigma'$ agree on the value of $v$. Since this holds for all variables of $t'$,
+we reach the conclusion we seek, namely that $\sigma(t')\equiv\sigma'(t')$.
+
+We now consider the case where the rules $\DR{r}$ and $\DR{r'}$ are distinct.
+We first show that $(\sigma, \sigma')$ is determinism-respecting w.r.t.\ $(\Phi, \Phi')$ and $L$.
+
+Assume,  towards a contradiction, that our claim concerning determinism-respecting substitutions does not hold.
+Then there exist  two positive formulae $s_i \trans{l} s'_i$ and $t_i \trans{l} t'_i$ for some $l \in L$ among the premises of $\DR{r}$ and
+$\DR{r'}$, respectively, such that
+$\sigma(s_i) \equiv \sigma'(t_i)$ but it does not hold that $\sigma(s'_i) \equiv \sigma'(t'_i)$.
+Since $s_i \trans{l} s'_i$  is a premise of $\DR{r}$ $\sigma(s_i \trans{l} s'_i) \in C \cup U$ and it has a smaller proof structure than $p \trans{l} p' \in C \cup U$. Following a similar reasoning, $\sigma'(t_i \trans{l} t'_i) \in C$.
+But the induction hypothesis (on the proof structure) applies and hence, we have $\sigma(s'_i) \equiv \sigma'(t'_i)$, which contradicts our earlier conclusion that $\sigma(s'_i) \equiv \sigma'(t'_i)$ does not hold. Hence, we conclude that  $(\sigma, \sigma')$ is determinism-respecting w.r.t.\ $(\Phi, \Phi')$ and $L$.
+
+Since we have shown that $(\sigma, \sigma')$ is determinism respecting,
+it then follows from the second condition of the determinism format that either $\sigma(conc(r)) \equiv \sigma'(conc(r'))$,
+which was to be shown, or
+there exist premises $\phi_i \equiv s_i \trans{l_i} s'_i$  in one deduction rule and
+$\phi'_i \equiv t_i \ntrans{l_i}$ in the other deduction rule such that
+$\sigma(\phi_i)$ contradicts $\sigma'(\phi'_i)$.
+We show that the latter possibility leads to a contradiction, thus completing the proof.
+Since $\sigma(\phi_i)$ contradicts $\sigma'(\phi'_i)$, we have that $\sigma(s_i) \equiv \sigma'(t_i)$.
+We distinguish the following two cases based on the status of the positive and negative contradicting premises with respect to $\DR{r}$ and $\DR{r'}$.
+
+\begin{enumerate}
+\item
+Assume that the positive formula is a premise of $\DR{r}$.
+Then, $\sigma(s_i \trans{l_i} s'_i) \in C \cup U$ but  from $C \cup U \vDash N'$ and $\sigma'(\phi'_i) \in N'$, it follows that
+for no $p''$, we have that $\sigma(s_i) \equiv \sigma'(t_i) \trans{l_i} p'' \in C \cup U$, thus reaching a contradiction.
+
+\item
+Assume that the positive formula is a premise of $\DR{r'}$.
+Then, $\sigma'(s_i) \trans{l_i} \sigma(s'_i) \in C$ but from $C \vDash N$ and $\sigma(\phi'_i) \in N$, it follows that
+for no $p_1$, we have that $\sigma(t_i) \equiv \sigma'(s_i) \trans{l_i} p_1 \in C$, hence reaching a contradiction. \hfill\qed
+\end{enumerate}
+%\end{proof}
+
+\section{Proof of Theorem~\ref{th::simplifiedImpliesHard}}
+\label{proof::simpImpHard}
+
+Let $\tss$ be a normalized TSS in the syntactic determinism format w.r.t. $L$.
+Condition 1
+of Definition~\ref{def::detHard} is satisfied since $\tss$ is normalized. To
+see this, consider item 2 of Definition~\ref{def::normalized}, by taking $\DR{r}$ and $\DR{r'}$ to be the same rule.
+
+To prove condition 2 of Definition~\ref{def::detHard}
+let $(r) = \frac{\Phi_0}{t_0\trans{l}t_0'}$ and
+$(r') = \frac{\Phi_1}{t_1\trans{l}t_1'}$ be distinct rules of $\tss$ and $(\sigma,\sigma')$
+be a determinism-respecting pair of substitutions w.r.t. $(\Phi_0, \Phi_1)$ and $L$
+such that $\sigma(t_0) \equiv \sigma'(t_1)$. Since $\tss$ is normalized,
+both $\DR{r}$ and $\DR{r'}$ are $f$-defining for some function symbol $f$, i.e., $t_0 = f(\overrightarrow{s})$
+and $t_1 = f(\overrightarrow{t})$.
+Furthermore, since $f(\overrightarrow{s}) \equiv f(\overrightarrow{t})$ we have that
+$\sigma$ and $\sigma'$
+agree on all variables appearing
+in $f(\overrightarrow{s}) = f(\overrightarrow{t})$.
+
+For each variable $v \in \vars{r} \cap \vars{r'}$, we define
+its {\em common source distance} to be the source distance of $v$
+when only taking the formulae in $\Phi_0 \cap \Phi_1$ into account.
+Note that such a source distance exists since by constraint 3 of Definition \ref{def::normalized}
+all $v \in \vars{r} \cap \vars{r'}$ are source dependent via a subset of $\{ \trans{l} \mid l \in  L\}$ included in $\Phi_0 \cap \Phi_1$.
+
+We prove for each $v \in \vars{r} \cap \vars{r'}$ that $\sigma(v) \equiv \sigma'(v)$ by
+an induction on the common source distance of variables $v$.
+Suppose that we show the above claim, then we can prove the theorem as follows.
+It follows from Definition \ref{def::simplifiedDet} that either $t_0' \equiv t'_1$ or $\Phi_0$ contradicts $\Phi_1$.
+If $t'_0 \equiv t'_1$, then variables in $\vars{t'_0} = \vars{t'_1}$ are all source dependent via transitions in $L$
+that are common to both $\Phi_0$ and $\Phi_1$
+(by constraint 3 of Definition \ref{def::normalized}).
+By the above-mentioned claim, $\sigma(t'_0) \equiv \sigma'(t'_1)$, thus, constraint 2 of Definition \ref{def::detHard} follows, which was to be shown.
+If  $\Phi_0$ contradicts $\Phi_1$, then assume that the premises negating each other are $\phi_j \equiv s_j \trans{l_j} s'_j$ and $\phi_{j'} \equiv t_{j'} \ntrans{l_j}$ and it holds that $s_j \equiv t_{j'}$.
+All variables in $t_j \equiv s_j$ are source dependent via transitions in $L$ (by constraint 3   of Definition \ref{def::normalized}).
+It follows from the claim that $\sigma(s_j) \equiv \sigma'(t_{j'})$
+and thus, $\sigma(\phi_j)$ contradicts $\sigma'(\phi_{j'})$, which implies constraint 2 of Definition \ref{def::detHard}.
+
+
+Hence, it only remains to prove, by an induction on the common source distance of $v$, that $\sigma(v) \equiv \sigma'(v)$.
+If $v\in vars(f(\overrightarrow s))$ then we know that $\sigma(v) \equiv \sigma'(v)$ (since $t_0 \equiv t_1$ and $\sigma(t_0) \equiv \sigma'(t_1)$.
+Otherwise, since $v$ is source dependent in $(r)$
+via transitions with labels in $L$,
+there is a positive premise
+$u \trans{l} u'$ in $\Phi_0$ with $l\in L$
+such that $v\in vars(u')$ and all variables in $u$ are source
+dependent with a shorter common source distance.
+Furthermore,
+since $v$ appears in both rules, i.e., $v \in vars(r) \cap vars(r')$,
+this premise also appears in $\Phi_1$ according
+to item 3 of Definition~\ref{def::normalized} and thus $\vars{u} \subseteq vars(r) \cap vars(r')$.
+By the induction hypothesis we have that $\sigma(u)\equiv \sigma'(u)$ and since $(\sigma,\sigma')$
+is determinism-respecting w.r.t. $(\Phi_0, \Phi_1)$ and $L$, we know that
+$\sigma(u') \equiv \sigma'(u')$. Specifically, the substitutions
+must agree on the value of $v$, i.e.
+$\sigma(v) \equiv \sigma'(v)$. \hfill\qed
+
+
+\iffalse
+Now assume that $\sigma(t_0') \not\equiv \sigma'(t_1')$.
+To prove condition 2 of definition~\ref{def::detHard} we show that
+$\sigma(\Phi_0)$ must contradict $\sigma'(\Phi_1)$.
+The first step is to show that $t_0' \not\equiv t_1'$ must hold.
+%We show by an induction
+Assume, towards
+a contradiction, that $t_0' \equiv t_1'$ and take $v\in vars(t_0')$.
+If $v\in vars(f(\overrightarrow s))$ then we know that $\sigma(v) \equiv \sigma'(v)$.
+If not, then because $v$ is source dependent in $(r)$
+via transitions with labels in $L$
+there is a positive premise
+$u \trans{l} u'$ in $\Phi_0$ with $l\in L$
+such that $v\in vars(u')$ and all variables in $u$ are source
+dependent by a shorter distance.
+Furthermore,
+since $v$ appears in both rules, i.e. $v \in vars(r) \cap vars(r')$,
+this premise also appears in $\Phi_1$ according
+to item 3 of definition~\ref{def::normalized} and thus $u \in vars(r) \cap vars(r')$.
+By induction we can argue that $\sigma(u)\equiv \sigma'(u)$ and since $(\sigma,\sigma')$
+is determinism-respecting w.r.t. $(\Phi_0, \Phi_1)$ and $L$, we know that
+$\sigma(u')\equiv\sigma'(u')$. Specifically, the substitutions
+must agree on the value of $v$, i.e.
+$\sigma(v) \equiv \sigma'(v)$.
+Since we have this for all variables in $t_0'\equiv t_1'$ we obtain that
+$\sigma(t_0') \equiv \sigma'(t_1')$. This provides the direct contradiction we seek
+and thus proves that $t_0' \not\equiv t_1'$.
+
+Since $\tss$ is in the syntactic determinsism format, the fact that $t_0' \not\equiv t_1'$
+means that $\Phi_0$ must contradict $\Phi_1$. Without loss of generality we can assume that
+there is a positive premise $w \trans{l} w' \in \Phi_0$ and a negative premise
+$w \ntrans{l} \in \Phi_1$. We now use the same argument as we
+used to obtain the contradiction above to show that
+$\sigma(w) \equiv \sigma'(w)$.
+By condition 2 of definition~\ref{def::normalized} any variable
+$v' \in vars(w)$ is source dependent in $(r')$ via a set of transisitions with labels from
+$L$. If $v'$ appears in the source of the conclusion of $(r')$, and therefore also $(r)$
+we have immediately that $\sigma(v') \equiv \sigma'(v')$. If it does not appear in the
+source of the conlusion then there again exists a positive premise
+$u \trans{l} u'$ in $\Phi_1$
+with $l\in L$ and $v' \in vars(u')$.%
+\footnote{Note that we are re-using the names $u, u'$ and $l$. They do not necessarily refer
+to the same terms or label as in the previous paragraph}
+Since $w \in vars(r) \cap vars(r')$ this premise also appears in $\Phi_0$.
+Again we may inductively reason that $\sigma(u)
+\equiv \sigma'(u)$ and since $(\sigma,\sigma')$ is determinism-respecting w.r.t $(\Phi_0,
+\Phi_1)$ and $L$, we have that $\sigma(u')\equiv\sigma'(u')$, in particular $\sigma(v')
+\equiv \sigma'(v')$. Since this holds for any variable $v' \in vars(w)$ we find that
+$\sigma(w)\equiv \sigma'(w)$. Specifically this means that $\sigma(\Phi_0)$ contradicts
+$\sigma'(\Phi_1)$, i.e. condition 2 of definition~\ref{def::detHard} is met.
+
+Since both conditions of definition~\ref{def::detHard} are met, $\tss$ is in the
+determinism format with respect to $L$. \hfill\qed
+\fi
+
+\section{Proof of Theorem \ref{thm:idempotent}}
+\label{proof:idempotent}
+%\begin{proof}
+First define the relation $\eqidem \subseteq \CTerms\Sigma \times \CTerms\Sigma$ as follows.
+\[
+    \eqidem = \{ (p,p), (p,f(p,p)), (f(p,p),p) \,|\, p \in \CTerms\Sigma \}
+\]
+To prove the theorem it suffices to show that $\eqidem$ is a bisimulation relation. If it is, then $f(p,p)\bisim p$ for any closed term $p$ and since $\bisim \subseteq \sim$ we obtain the theorem.
+
+Let $(C,U)$ be the least three-valued stable model for the TSS under consideration.
+First consider a closed term $p$ s.t. $p \trans{l} p' \in C$ for some $l$ and $p'$ (note that $U=\emptyset$ since the TSS is complete).
+Next, we argue that $f(p,p) \trans{l} p''$ for some $p''$ such that  $p' \eqidem p''$.
+Since $p \trans{l} p' \in C$, there exists a provable transition rule of the form $\frac{N}{p \trans{l} p'}$ for some set of negative formulae $N$ such that $C \vDash N$.
+In particular, that means that $p \ntrans{l} \notin N$.
+In this case we make use of the requirement that there exists at least one rule of a starred form for label $l$. If there exists a
+rule of the form $1_l^*$, i.e.
+\[
+    \sosrule[i\in\{0,1\}]{x_i\trans{l}x'}{f(x_0,x_1)\trans{l}x'}
+\]
+then we can instantiate it to prove that $f(p,p)\trans{l}p'\in C$.
+In particular, it does not matter if $i=0$ or $i=1$.
+Since $\eqidem$ is reflexive, $p'\eqidem p'$ holds.
+If there exists a rule of the form $2_{l,l}^*$, we observe that $\gamma(l,l) = l$ so the transition rule becomes
+\[
+    \sosrule{x_0\trans{l}x_0' \quad x_1\trans{l}x_1'}{f(x_0,x_1) \trans{l} f(x_0',x_1')},
+\]
+where $x'_0 \equiv x'_1$ or $\trans{l}$ is deterministic.
+Now we can use the existence of $p\trans{l}p'$ to satisfy both premises and obtain that $f(p,p)\trans{l}f(p',p')$.
+By the definition of $\eqidem$ we also have that $p' \eqidem f(p',p')$.
+In either case, if $p \trans{l} p'\in C$, then there exists a $p''$ s.t. $f(p,p) \trans{l} p'' \in C$ and $p' \eqidem p''$.
+
+Now assume that $f(p,p) \trans{k} p' \in C$. Then there exists a provable transition rule $\frac{N}{f(p,p) \trans{k} p'}$
+for some set of negative formulae $N$ such that $C\vDash N$. Since all rules for $f$ are either of the form $1_l$ or $2_{l_0,l_1}$,
+this provable transition rule must be based on a rule of those forms. We analyze each possibility separately, showing that
+in each case $p \trans{k} p''$ for some $p''$ such that $p' \eqidem p''$.
+
+If the rule is based on a rule of form $1_l$, its positive premises must also be provable. In particular it must hold that
+$p\trans{k} p' \in C$ since both $x_0$ and $x_1$ in the rule are instantiated to $p$. The other premises are of no
+consequence to this conclusion and, again, we observe that $p'\eqidem p'$.
+
+Now consider the case where the transition is a consequence of a rule of the form $2_{l_0,l_1}$.
+If $t_0\equiv t_1$, say both are equal to $p''$, we must consider two cases, namely $k=l_0$ and $k=l_1$.
+If $k=l_0$ then the first premise of the rule actually states that $p\trans{k}p''$.
+If $k=l_1$ then the second premise similarly states that $p\trans{k}p''$.
+In either case, we note that $p'\equiv f(p'',p'')$ must hold and again by the definition of $\eqidem$ we have
+that $f(p'',p'')\eqidem p''$.
+
+If however $t_0\not\equiv t_1$ the side condition requires that $l_0=l_1 = k$, which also implies $\gamma(l_0,l_1)=l_0=k$,
+and that the transition relation $\trans{l_0}$ is deterministic.
+In this case it is easy to see that the right-hand sides of the first two premises, namely $t_0$ and $t_1$, evaluate to
+the same closed term in the proof structure, say $p''$.
+The conclusion then states that $k=l_0$ and $p'\equiv f(p'',p'')$.
+It must thus hold that $p\trans{k}p''\in C$ and $f(p'',p'')\eqidem p''$ as before.
+
+From this we obtain that if $f(p,p) \trans{k} p' \in C$ then there exists
+a $p''$ such that $p \trans{k} p'' \in C$ and $p' \eqidem p''$.
+Thus, $\eqidem$ is a bisimulation. \hfill \qed
+%\end{proof}
+

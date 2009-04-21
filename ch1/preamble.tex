@@ -1,0 +1,109 @@
+% Listings setup
+\lstset{%
+  language=Haskell,
+  aboveskip=0.5\baselineskip,
+  belowskip=0.5\baselineskip,
+  basicstyle=\ttfamily,
+  commentstyle=\itshape,
+  emphstyle=\spotcolor,
+  numberstyle=\scriptsize,
+  breaklines=true,
+  basewidth=0.5em,
+  numbersep=8pt,
+  fontadjust=true,
+  flexiblecolumns=true,
+  keepspaces=false,
+  extendedchars=true,
+  tabsize=4,
+  upquote=true}
+\lstdefinestyle{small}{}
+\lstdefinestyle{numbered}{numbers=left,stepnumber=1}
+
+\lstdefinelanguage{pseudo}{%
+    morekeywords={function, if, return, try, catch, main, program, transaction, declare, sensitive, array, of},
+}
+
+% Note that listings doesn't play well with utf8. To use
+% national chars with listings, the file must be saved
+% in latin1 encoding and the argument to inputenc changed
+% accordingly.
+
+%------------------------------------------------------------------------------
+%                                Space savers. 
+%------------------------------------------------------------------------------
+%
+% Space saving List environment for enumerations. Does not indent any of the
+% items.
+\newcounter{myctrsquish}
+\newenvironment{mylistsquish}{\begin{list}{(\textbf{\arabic{myctrsquish}})}
+{\usecounter{myctrsquish}
+\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\itemindent}{0mm}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{-2mm}
+\setlength{\leftmargin}{0mm}}}{\end{list}}
+
+% This mylist environment indents items, and saves less space than the above.
+\newcounter{myctr}
+\newenvironment{mylist}{\begin{list}{(\textbf{\arabic{myctr}})}
+{\usecounter{myctr}
+\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\listparindent}{\parindent}
+\setlength{\itemindent}{-.5ex}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{-2mm}
+\setlength{\leftmargin}{0mm}}}{\end{list}}
+
+% Space saving List environment for itemizing.
+\newenvironment{mybullet}{\begin{list}{$\bullet$}
+{\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\listparindent}{\parindent}
+\setlength{\itemindent}{0mm}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{15mm}
+\setlength{\leftmargin}{4mm}}}{\end{list}}
+
+% Space saving List environment for subitemizing.
+\newenvironment{mysubbullet}{\begin{list}{--}
+{\setlength{\topsep}{1mm}\setlength{\itemsep}{0.5mm}
+\setlength{\parsep}{0.5mm}
+\setlength{\itemindent}{0mm}\setlength{\partopsep}{0mm}
+\setlength{\labelwidth}{15mm}
+\setlength{\leftmargin}{4mm}}}{\end{list}}
+
+% Definitions for SOS rules
+
+\newcommand{\sos}[2]{\frac{#1}{#2}}
+\newcommand{\transition}[1]{\;#1\;}
+\newcommand{\prg}[1]{\texttt{#1}}
+\newcommand{\soslbl}[1]{\textit{(#1)}}
+
+\newcommand{\alt}{\;\;|\;\;}
+
+\newcommand{\tarrow}{\transition{\rightarrow}}
+\newcommand{\tdarrow}{\transition{\Rightarrow}}
+\newcommand{\tddarrow}{\transition{\rightharpoonup}}
+
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\EE}{\mathbb{E}}
+\renewcommand{\SS}{\mathbb{S}}
+
+\DeclareMathOperator{\img}{img}
+\DeclareMathOperator{\dom}{dom}
+
+% Comment this out if we prefer slashed o:
+\renewcommand{\emptyset}{\{\}}
+
+% for shading the background
+%\definecolor{old}{gray}{0}
+%\definecolor{newcolor}{gray}{0.85}
+%\newcommand{\new}[1]{\colorbox{newcolor}{#1}}
+
+% for coloring the text
+%\definecolor{old}{gray}{0}
+%\definecolor{newcolor}{rgb}{0.8,0,0}
+%\newcommand{\new}[1]{\textcolor{newcolor}{#1}}
+
+% new is black, old is gray
+\definecolor{old}{gray}{0.5}
+\newcommand{\new}[1]{\textcolor{black}{#1}}

@@ -1,0 +1,46 @@
+\section{Introduction}
+Structural Operational Semantics (SOS) \cite{Plotkin04a} is a popular method for assigning a rigorous meaning to
+specification and programming languages.
+The meta-theory of SOS provides powerful tools for proving semantic properties for such languages
+without investing too much time on the actual proofs; it offers syntactic templates for SOS rules, called
+\emph{rule formats},
+which guarantee semantic properties once the SOS rules conform to the templates
+(see, e.g., the references~\cite{Aceto01,Mousavi07-TCS} for surveys on the meta-theory of SOS).
+There are various rule formats  in the literature for many different semantic properties, ranging from basic properties such as commutativity \cite{Mousavi05-IPL} and associativity \cite{Mousavi08-CONCUR} of operators, and congruence of behavioral equivalences (see, e.g., \cite{Verhoef95}) to more technical and involved ones such as non-interference \cite{Tini04} and (semi-)stochasticity \cite{Lanotte05}.
+In this paper, we propose rule formats for two (related) properties, namely, determinism and idempotency.
+
+Determinism is a semantic property of (a  fragment of) a language
+that specifies that a program cannot evolve operationally in several different ways.
+It holds for sub-languages of many process calculi and programming languages,
+and it is also a crucial property for many formalisms for the description of timed systems, where time transitions are required to be deterministic, because the passage of time should not resolve any choice.
+
+Idempotency is a property of binary composition operators requiring
+that the composition of two identical specifications or programs
+will result in a piece of specification or program that is equivalent to the original components.
+Idempotency of a binary operator $f$ is concisely expressed by the following algebraic equation.
+\[
+f(x, x) = x
+\]
+Determinism and idempotency may seem unrelated at first sight.
+However, it turns out that in order to obtain a powerful rule format
+for idempotency, we need to have the determinism of certain transition relations in place. Therefore,
+having a syntactic condition for determinism, apart from its intrinsic value,
+results in a powerful, yet syntactic framework for idempotency.
+
+
+To our knowledge, our rule format for idempotency has no precursor in the literature.
+As for determinism, in \cite{Fokkink03a}, a rule format for bounded nondeterminism is presented but the case for determinism is not studied.
+Also, in \cite{Ulidowski97b} a rule format is proposed to guarantee several time-related properties, including time determinism, in the settings of
+Ordered SOS. In case of time determinism, their format corresponds to a subset of our rule format when translated to the setting of ordinary SOS, by means of the recipe given in \cite{Mousavi06-FSTTCS}.
+
+We made a survey of existing deterministic process calculi and
+of idempotent binary operators in the literature and we have applied our formats to them.
+Our formats could cover all practical cases that we have discovered so far,
+which is an indication of its expressiveness and relevance.
+
+The rest of this paper is organized as follows. In Section \ref{sec::pre} we recall some basic definitions from the meta-theory of SOS.
+In Section \ref{sec::det}, we present our rule format for determinism and prove that it does guarantee determinism for certain transition relations.
+Section \ref{sec:idempotency} introduces a rule format for idempotency and proves it correct.
+In Sections \ref{sec::det} and \ref{sec:idempotency},  we also provide several examples to motivate
+the constraints of our rule formats and to demonstrate their practical applications.
+Finally, Section \ref{sec::conc} concludes the paper and presents some directions for future research. 

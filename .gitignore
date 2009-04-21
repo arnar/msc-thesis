@@ -1,0 +1,13 @@
+*.swp
+*.log
+*.latexmain
+master.pdf
+*.out
+*.blg
+*.bbl
+*.aux
+*.fdb_latexmk
+*.synctex.gz
+.DS_Store
+*.pdfsync
+*.toc

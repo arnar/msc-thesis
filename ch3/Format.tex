@@ -1,0 +1,312 @@
+\section{\label{sec:idempotency}Idempotency}
+Our order of business in this section is to present a rule format
+that guarantees the idempotency of certain binary operators.
+In the definition of our rule format, we rely implicitly on the work presented in the previous section.
+
+
+\subsection{Format}
+
+\begin{definition}[Idempotency]
+\label{def:idem}
+A binary operator $f \in \Sigma$ is \emph{idempotent w.r.t.\ an equivalence} $\sim$ on closed terms if and only if  for each $p \in \CTerms{\Sigma}$, it holds that $f(p,p) \sim p$.
+\end{definition}
+
+Idempotency is  defined with respect to a notion of behavioral equivalence.
+There are various notions of behavioral equivalence defined in the literature,
+which are by and large, weaker than bisimilarity defined below.
+Thus, to be as general as possible, we prove our idempotency result
+for all notions that contain, i.e., are weaker than, bisimilarity.
+
+
+\begin{definition}[Bisimulation]
+\label{def:bisim}
+Let $\tss$ be a TSS with signature $\Sigma$.
+A relation $\rel \subseteq \CTerms{\Sigma} \times \CTerms{\Sigma}$ is a \emph{bisimulation relation}
+if and only if $\rel$ is symmetric
+%\leaveout{(i.e.\ $\forall_{p_0,p_1 \in \CTerms{\Sigma}}~p_0 \rel  p_1 \Leftrightarrow p_1\rel p_0$)}
+and for all $p_0,p_1,p'_0 \in \CTerms{\Sigma}$ and $l \in L$
+$$(p_0 \Rel p_1 \wedge \tss \vdash p_0 \trans{l} p_0') \Rightarrow \exists_{p_1' \in \CTerms{\Sigma}} (\tss \vdash p_1 \trans{l} p_1'\wedge p_0' \Rel p_1' ).$$
+Two terms $p_0, p_1 \in \CTerms{\Sigma}$ are called \emph{bisimilar}, denoted by $p_0 \bisim p_1$, when there exists a bisimulation relation $\Rel$ such that
+$p_0 \rel p_1$.
+\end{definition}
+
+
+\begin{definition}[The Idempotency Rule Format]
+\label{def::format}
+Let $\gamma: L \times L \rightarrow L$ be a partial function such that $\gamma(l_0,l_1) \in \{l_0,l_1\}$ if it is defined.
+We define the following two rule forms.
+
+\paragraph{$1_l$. Choice rules}
+\[
+    \sosrule[i\in\{0,1\}]{\{x_i\trans{l}t\}\cup\Phi}{f(x_0,x_1)\trans{l}t} \\
+\]
+\paragraph{$2_{l_0,l_1}$. Communication rules}
+\[
+    \sosrule[t_0\equiv t_1 \mbox{ or } (l_0=l_1 \mbox{ and }  \trans{l_0}\textrm{ is deterministic } )]{\{x_0\trans{l_0}t_0,\, x_1\trans{l_1}t_1\}\cup\Phi}{f(x_0,x_1)\trans{\gamma(l_0,l_1)}f(t_0,t_1)}
+\]
+In each case, $\Phi$ can be an arbitrary, possibly empty set of (positive or negative) formulae.
+
+In addition, we define the starred version of each form, $1_l^*$ and $2_{l_0,l_1}^*$. The starred version of each rule is the
+same as the unstarred one except that $t, t_0$ and $t_1$ are restricted to be concrete variables and the set $\Phi$ must be
+empty in each case.
+
+A TSS is in \emph{idempotency format w.r.t. a binary operator $f$} if each \mbox{$f$-defining} rule, i.e., a deduction rule with $f$ appearing in the source of the conclusion, is of the forms $1_l$
+or $2_{l_0,l_1}$, for some $l, l_0, l_1 \in L$, and for each label $l \in L$ there exists at least one rule of the forms $1_l^*$ or $2_{l,l}^*$.
+\end{definition}
+
+We should note that the starred versions of the forms are special cases of their unstarred counterparts; for example a rule
+which has form $1_l^*$ also has form $1_l$.
+
+
+\begin{theorem}\label{thm:idempotent}
+Assume that  a TSS is complete and is in the idempotency format with respect to a binary operator $f$. Then,  $f$ is idempotent w.r.t. to
+any equivalence $\sim$ such that  $\bisim \subseteq{\sim}$.
+% I.e. for all $p\in\CTerms\Sigma$ it holds that $f(p,p) \sim p$.
+\end{theorem}
+
+%\begin{proof}
+%For review purposes the proof is given in Appendix \ref{proof:idempotent}. \hfill \qed
+%\end{proof}
+
+
+\subsection{Relaxing the restrictions} % (fold)
+
+In this section we consider the constraints of the idempotency rule format and show that they cannot be dropped without jeopardizing the meta-theorem.
+
+% Rule forms $1_l$ and $2_l$ only allow for variables in the targets. To see why arbitrary terms are not allowed, consider the
+% following rule where $a$ is a process term.
+% \[
+%     \sosrule{x \trans{l} a}{f(x,y) \trans{l} a}
+% \]
+% If this is the only \mbox{$f$-defining} rule and the only outgoing transition for $a$ is $a \trans{l} b$, then the processes
+% $a$ and $f(a,a)$ are not bisimilar as the former can do an \mbox{$l$-transition} but the latter is stuck.
+
+First of all we note that, in rule form $1_l$, it is necessary that the label of the premise matches
+the label of the conclusion.
+If it does not, in general, we cannot prove that $f(p,p)$ simulates $p$ or vice versa.
+This requirement can be stated more generally for both rule forms in Definition \ref{def::format};
+the label of the conclusion must be among the labels of the premises.
+The requirement that $\gamma(l,l') \in \{l,l'\}$ exists to ensure this constraint for form $2_{l,l'}$.
+A simple synchronization rule provides a counter-example that shows why this restriction is needed.
+Consider the following TSS with constants $0$, $\tau$, $a$ and $\bar{a}$ and two binary operators $+$ and $\parallel$.
+\[
+\begin{array}{c}
+    \sosrule{}{\alpha \trans{\alpha} 0} \quad
+    \sosrule{x \trans{\alpha} x'}{x + y \trans{\alpha} x' } \quad \sosrule{y \trans{\alpha} y'}{x + y \trans{\alpha} y' }
+    \quad \sosrule{x \trans{a} x' \quad  y \trans{\bar{a}} y'}{x \parallel y \trans{\tau} x' \parallel y'}
+\end{array}
+\]
+where $\alpha$ is $\tau$, $a$ or $\bar{a}$.
+Here it is easy to see that although
+$(a + \bar{a}) \parallel (a + \bar{a})$ has an outgoing \mbox{$\tau$-transition}, $a + \bar{a}$ does not afford such a transition.
+
+The condition that for each $l$ at least one rule of the forms $1_l^*$ or $2_{l,l}^*$ must exist comprises a few constraints on the rule format.
+First of all, it says there must be at least one \mbox{$f$-defining} rule.
+If not, it is easy to see that there could exist a process $p$ where $f(p,p)$
+deadlocks (since there are no \mbox{$f$-defining} rules) but $p$ does not.
+It also states that there must be at
+least one rule in the starred form,
+where the targets are restricted to variables.
+To motivate these constraints, consider the following TSS.
+\[
+    \sosrule{}{a \trans{a} 0} \quad
+    \sosrule{x \trans{a} a}{f(x,y) \trans{a} a}
+\]
+The processes
+$a$ and $f(a,a)$ are not bisimilar as the former can do an \mbox{$a$-transition} but the latter is stuck.
+The starred forms also require that $\Phi$ is empty, i.e. there is no testing. This is necessary in the proof because in the presence
+of extra premises, we cannot in general instantiate such a rule to show that $f(p,p)$ simulates $p$.
+Finally, the condition requires that if we rely on a rule of the form $2_{l,l'}^*$
+and $t_0 \equiv\!\!\!\!\!/~ t_1$, then the labels $l$ and $l'$ in the premises of the rule must coincide. To
+see why, consider a TSS containing a {\em left synchronize} operator $\rrfloor$, one that synchronizes a step from each operand
+but uses the label of the left one. Here we let $\alpha\in\{a,\bar{a}\}$.
+\begin{equation*}
+    \sosrule{}{\alpha \trans{\alpha} 0} \quad
+    \sosrule{x \trans{\alpha} x'}{x + y \trans{\alpha} x' } \quad \sosrule{y \trans{\alpha} y'}{x + y \trans{\alpha} y' } \quad
+    \sosrule{x \trans{a} x' \quad y \trans{\bar{a}} y'}{x\rrfloor\, y \trans{a} x'\rrfloor\, y'}
+\end{equation*}
+In this TSS the processes $(a + \bar{a})$ and $(a + \bar{a})\rrfloor\, (a + \bar{a})$ are not bisimilar
+since the latter does not
+afford an $\bar{a}$-transition whereas the former does.
+
+% \MAR{Can the above problem be solved by requiring presence of a rule $5_{l',l}$? In the example, presence of a deduction rule
+% \begin{equation}
+%     \sosrule[]{x \trans{l'} x' \quad y \trans{l} y'}{f(x,y) \trans{l'} f(x',y')}
+% \end{equation}
+% solves the problem (given the requirement that $x' \equiv y'$!}
+%
+% \AB{Yes, I believe it can. The condition would then be: $1_l^* \lor 2_{l,l}^* \lor (2_{l,l'}^* \land 2_{l',l}^*)$. Should we go
+% with that instead, or present it as an extension later?}
+
+% AB: I liked this example of the trace operator, but it doesn't really apply to the new format
+%
+% For rules of type $3_{l,l'}$ we require that $\gamma(l,l')=l$ or that $t\equiv t'$. If neither of these conditions hold the format supports the following rule, defining the {\sf trace} operator found in some functional programming languages.
+% \[
+% \sosrule{x \trans{l} x' \quad y \trans{l'} 0}{\textsf{trace}(x,y) \trans{l'} x'}
+% \]
+% The idea here is that $\textsf{trace}(p,q)$ performs the input and output of $q$ while evaluating to the value of $p$.
+% This operator  is not idempotent as witnessed by the (CCS style) process $p = a.0 + b.c.0$, because while
+% $\textsf{trace}(p,p) \trans{a} c.0$ the only possible $a$-successor of $p$ is the nil process. The similar constraint
+% on form $4_{l,l'}$ is necessary for the same reasons.
+
+For rules of form $2_{l,l'}$ we require that either $t_0\equiv t_1$, or that the mentioned labels are the same and the
+associated transition
+relation is deterministic. This requirement is necessary in the proof to ensure that the
+target of the conclusion fits our definition of $\eqidem$, i.e. the operator is applied to two identical terms.
+Consider the following TSS where $\alpha\in\{a,b\}$.
+\[
+    \sosrule{}{a\trans{a} a} \quad
+    \sosrule{}{a\trans{a} b} \quad
+    \sosrule{}{b\trans{b} b} \quad
+    \sosrule{x\trans\alpha x' \quad y\trans\alpha y'}{x | y \trans\alpha x' | y'}
+\]
+For the operator $|$, this violates the condition $t_0\equiv t_1$ (note that $\trans{a}$ is not deterministic).
+We observe that $a|a \trans{a} a|b$. The only possibilities for $a$ to simulate this $a$-transition
+is either with $a\trans{a}a$
+or with $a\trans{a}b$. However, neither $a$ nor $b$ can be bisimilar to $a|b$ because both $a$ and $b$ have outgoing
+transitions while $a|b$ is stuck. Therefore $a$ and $a|a$ cannot be bisimilar.
+%
+If $t_0 \not\equiv t_1$ we must require that the labels match, $l_0 = l_1$, and that $\trans{l_0}$ is deterministic.
+We require the labels to match because if they do not, then given only $p\trans{l}p'$ it is impossible to prove that $f(p,p)$
+can simulate it using only a $2_{l,l'}^*$ rule. The determinacy of the transition with that label
+is necessary when proving that transitions from $f(p,p)$ can, in general, be simulated by $p$;
+if we assume that $f(p,p)\trans{l}p'$ then we must be able to conclude that $p'$ has the shape $f(p'',p'')$ for some $p''$,
+in order to meet the bisimulation condition for $\eqidem$. Consider the standard choice operator $+$
+and prefixing operator $.$ of CCS
+with the $|$ operator from the last example, with $\alpha\in\{a,b,c\}$.
+\[
+    \sosrule{}{\alpha \trans{\alpha} 0} \quad
+    \sosrule{}{\alpha.x \trans{\alpha} x} \quad
+    \sosrule{x \trans{\alpha} x'}{x + y \trans{\alpha} x' } \quad \sosrule{y \trans{\alpha} y'}{x + y \trans{\alpha} y' } \quad
+    \sosrule{x\trans\alpha x' \quad y\trans\alpha y'}{x | y \trans\alpha x' | y'}
+\]
+If we let $p = a.b + a.c$, then $p|p \trans{a} b|c$ and $b|c$ is stuck.
+However, $p$ cannot simulate this transition w.r.t. $\eqidem$.
+Indeed, $p$ and $p|p$ are not bisimilar.
+
+
+% subsection relaxing_the_restrictions (end)
+
+\subsection{Predicates\label{sec::pred}}
+
+There are many examples of TSSs where predicates are used.
+The definitions presented in Section \ref{sec::pre} and  \ref{sec:idempotency} can be easily adapted to deal with predicates as well.
+In particular, two closed terms are called bisimilar in this setting when,
+in addition to the transfer conditions of bisimilarity, they satisfy the same predicates.
+%Note that the notion of bisimulation (Definition \ref{def:bisim}), and thus the notion of idempotency (Definition \ref{def:idem}), are
+%extended naturally to the setting with predicates,
+%by requiring that for each two closed terms and each predicate, one term satisfies the predicate if and only if the other one satisfies the predicate.
+To extend the idempotency rule format to a setting with predicates, the following types of rules for predicates are introduced:
+
+\paragraph{$3_P$. Choice rules for predicates}
+\[
+    \sosrule[i\in\{0,1\}]{\{P x_i\}\cup\Phi}{P f(x_0,x_1)} \\
+\]
+\paragraph{$4_{P}$. Synchronization rules for predicates}
+\[
+    \sosrule{\{P x_0,\, P x_1\}\cup\Phi}{P f(x_0,x_1)}
+\]
+
+As before, we define the starred version of these forms, $3_P^*$ and $4_{P}^*$. The starred version of each rule is the same as the unstarred one except that the set $\Phi$ must be
+empty in each case. With these additional definition the idempotency format is defined as follows.
+
+A TSS is in \emph{idempotency format w.r.t. a binary operator $f$} if each \mbox{$f$-defining} rule, i.e., a deduction rule with $f$ appearing in the source of the conclusion, is of one the forms $1_l$, $2_{l_0,l_1}$, $3_P$ or $4_P$ for some $l, l_0, l_1 \in L$, for each label $l \in L$  and predicate symbol $P$. Moreover, for each $l \in L$, there exists at least one rule of the forms $1_l^*$ or $2_{l,l}^*$, and for each predicate symbol $P$ there is a rule of the form $1^*_P$ or $2_P^*$.
+
+\subsection{Examples} % (fold)
+
+\begin{example}
+The most prominent example of an idempotent operator is non-deterministic choice, denoted $+$. It typically has the following deduction rules:
+\[
+\sosrule{x_0 \trans{a} x_0'}{x_0 + x_1 \trans{a} x_0'} \qquad
+\sosrule{x_1 \trans{a} x_1'}{x_0 + x_1 \trans{a} x_1'}
+\]
+Clearly, these are in the idempotency format w.r.t.\ $+$.
+\end{example}
+
+\begin{example}[External choice]
+The well-known external choice operator $\Box$ from CSP \cite{Hoare85} has the following deduction rules
+\[
+\sosrule{x_0 \trans{a} x'_0}{x_0 \Box x_1 \trans{a} x'_0}
+\qquad
+\sosrule{x_1 \trans{a} x'_1}{x_0 \Box x_1 \trans{a} x'_1}
+\qquad
+\sosrule{x_0 \trans{\tau} x'_0}{x_0 \Box x_1 \trans{\tau} x'_0 \Box x_1}
+\qquad
+\sosrule{x_1 \trans{\tau} x'_1}{x_0 \Box x_1 \trans{\tau} x_0 \Box x'_1}
+\]
+Note that the third and fourth deduction rule are not instances of any of the allowed types of deduction rules.
+Therefore, no conclusion about the validity of idempotency can be drawn from our format.
+In this case this does not point to a limitation of our format,
+because this operator is not idempotent in strong bisimulation semantics \cite{dArgenio95}.
+\end{example}
+
+\begin{example}[Strong time-deterministic choice]
+The choice operator that is used in the timed process algebra ATP \cite{Nicollin94} has the following deduction rules.
+\[
+\sosrule{x_0 \trans{a} x'_0}{x_0 \oplus x_1 \trans{a} x'_0}
+\qquad
+\sosrule{x_1 \trans{a} x'_1}{x_0 \oplus x_1 \trans{a} x'_1}
+\qquad
+\sosrule{x_0 \trans{\chi} x'_0 \quad x_1 \trans{\chi} x'_1}{x_0 \oplus x_1 \trans{\chi} x'_0 \oplus x'_1}
+\]
+The idempotency of this operator follows from our format since the last rule for $\oplus$ fits
+the form $2_{\chi,\chi}^*$ because, as we remarked in Example~\ref{ex:timetrans1}, the transition relation
+$\trans{\chi}$ is deterministic.
+\end{example}
+
+\begin{example}[Weak time-deterministic choice]
+The choice operator $+$ that is used in most ACP-style timed process algebras has the following deduction rules:
+\[
+\sosrule{x_0 \trans{a} x_0'}{x_0 + x_1 \trans{a} x_0'} \qquad
+\sosrule{x_1 \trans{a} x_1'}{x_0 + x_1 \trans{a} x_1'}\]
+\[\sosrule{x_0 \trans{1} x'_0 \quad x_1 \trans{1} x'_1}{x_0 + x_1 \trans{1} x'_0 + x'_1} \qquad
+\sosrule{x_0 \trans{1} x'_0 \quad x_1 \ntrans{1}}{x_0 + x_1 \trans{1} x'_0} \qquad
+\sosrule{x_0 \ntrans{1}  \quad x_1 \trans{1} x'_1}{x_0 + x_1 \trans{1} x'_1}
+\]
+The third deduction rule is of the form $2^*_{1,1}$, the others are of forms $1^*_a$ and $1^*_1$.
+This operator is idempotent (since the transition relation $\trans{1}$ is deterministic, as remarked
+in Example~\ref{ex:timetrans2}).
+\end{example}
+
+\begin{example}[Conjunctive nondeterminism]
+The operator $\lor$ as defined in Example \ref{cnp} by means of the deduction rules
+\[
+%\sosrule{}{0 \cando{a}}
+%\qquad
+%\sosrule{}{a.x \cando{a}}
+%\qquad
+\sosrule{x \cando{a}}{x \lor y \cando{a}}
+\qquad
+\sosrule{y \cando{a}}{x \lor y \cando{a}}
+%\]
+%\[
+%\sosrule{}{0 \after{a} 0}
+%\quad
+%\sosrule{}{a.x \after{a} x}
+%\quad
+%\sosrule{}{a.x \after{b} 0} ~a \neq b
+\quad
+\sosrule{x \after{a} x' \quad y \after{a} y'}{x \lor y  \after{a} x' \lor y'}
+\]
+satisfies the idempotency format (extended to a setting with predicates). The first two deduction rules are of the form $3^*_{\cando{a}}$ and the last one is of the form $2^*_{a,a}$. Here we have used the fact that the transition relations $\after{a}$ are deterministic as concluded in Example \ref{cnp}.
+\end{example}
+
+\begin{example}[Delayed choice]
+Delayed choice can be concluded to be idempotent in the restricted setting without $+$ and $\cdot$ by using the idempotency format and the fact that in this restricted setting the transition relations $\trans{a}$ are deterministic. (See Example \ref{dc}.)
+\[
+\sosrule{x \downarrow}{x \mp y \downarrow}
+\qquad
+\sosrule{y \downarrow}{x \mp y \downarrow}
+\qquad
+\sosrule{x \trans{a} x' \quad y \trans{a} y'}{x \mp y \trans{a} x' \mp y'}
+\qquad
+\sosrule{x \trans{a} x' \quad y \ntrans{a}}{x \mp y \trans{a} x'}
+\qquad
+\sosrule{x \ntrans{a} \quad y \trans{a} y'}{x \mp y \trans{a} y'}
+\]
+The first two deduction rules are of form $3^*_{\downarrow}$, the third one is a $2^*_{a,a}$ rule, and the others are $1_{a}$ rules. Note that for any label a starred rule is present.
+
+For the extensions discussed in Example \ref{dc} idempotency cannot be established using our rule format
+since the transition relations are no longer deterministic. In fact, delayed choice is not idempotent in these cases.
+\end{example}
+% subsection examples (end)

@@ -1,0 +1,297 @@
+\documentclass[10pt]{book}
+
+% Use utf-8 encoding for foreign characters
+%\usepackage[utf8]{inputenc}
+
+% Font setup
+\usepackage[T1]{fontenc}
+\usepackage[medfamily,opticals,mathlf,minionint,loosequotes,fourierbb]{MinionPro}
+\usepackage{MnSymbol}
+\usepackage[sf,lining,scaled=0.92]{myriad}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=.9]{blgothic}
+\usepackage{microtype}
+
+% Setup for fullpage use
+%\usepackage{fullpage}
+% For customization:
+%\setlength{\topmargin}{0pt}
+%\setlength{\textheight}{27cm}
+
+
+\usepackage[paperwidth=172mm,
+            paperheight=246mm,
+            left=34mm,
+            right=25mm,
+            top=25mm,
+            bottom=25mm,
+            head=10mm,
+            foot=10mm,
+            %left=1.5cm,
+            %top=2cm,
+            %right=1.5cm
+        ]{geometry}
+
+% More symbols
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage{latexsym}
+\usepackage{stmaryrd}
+
+% For multiple columns
+%\usepackage{multicol}
+%\setlength{\columnsep}{1cm}
+%\parindent=1em
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+
+\ifpdf
+%\usepackage{pdfsync}
+
+\fi
+
+\usepackage{rotating}
+\usepackage{color}
+
+\definecolor{webblue}{rgb}{0,0,0.5}
+\definecolor{darkred}{rgb}{0.63,0.16,0.16}
+
+%\ifpdf
+%	\newcommand*{\defaultcolor}{\color{black}}
+%	\newcommand*{\spotcolor}{\color{darkred}}
+%\else
+	\let\defaultcolor\relax
+	\let\spotcolor\relax
+%\fi
+
+% Other packages and settings
+\usepackage{fancyvrb}
+\usepackage{shortvrb}
+\usepackage[plainpages=false,pdfpagelabels,pdfborder={0 0 0}]{hyperref}
+\usepackage{textcomp}
+\usepackage{listings}
+
+\usepackage{fancyhdr}
+
+\usepackage{natbib}
+\setlength{\bibsep}{3pt plus .5pt minus .25pt}
+\bibpunct{[}{]}{,}{A}{}{,}
+\let \cite = \citep
+
+\usepackage{amsthm}
+\usepackage{ifthen}
+
+\newtheoremstyle{definition}% name of the style to be used
+  {.5em}% measure of space to leave above the theorem. E.g.: 3pt
+  {.5em}% measure of space to leave below the theorem. E.g.: 3pt
+  {\upshape}% name of font to use in the body of the theorem
+  {}% measure of space to indent
+  {}% name of head font
+  {}% punctuation between head and body
+  {.5em}% space after theorem head
+  {{\bfseries\scshape\thmname{#1}\thmnumber{ #2}.}\thmnote{ {\itshape(#3)}}}% Manually specify head
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\newtheorem*{remark}{Remark}
+
+% Put section numbers in the margin
+\makeatletter 
+\def\@seccntformat#1{\protect\makebox[0pt][r]{\csname the#1\endcsname\quad}} 
+\makeatother 
+
+% Chapter headers 
+\newcommand\jointwith\relax
+\newcommand{\TheAlphaChapter}{%
+\ifcase\number\thechapter\or one\or two\or three\or four\or five\fi}
+\makeatletter
+\def\@makechapterhead#1{%
+  %\vspace*{10\p@}%
+  {\parindent \z@ \raggedleft \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      \if@mainmatter
+        {\huge\sffamily\lseries\MakeLowercase{\@chapapp\space \TheAlphaChapter}}
+        \par\nobreak
+        \vskip 30\p@
+      \fi
+    \fi
+    \interlinepenalty\@M
+    {\Huge\sffamily\sbseries #1\par\nobreak}
+    \if \jointwith \relax\relax \else
+        \vskip 10\p@
+        {\Large\sffamily joint work with \jointwith\par\nobreak}
+    \fi
+    \vskip 40\p@
+  }}%
+  \def\@makeschapterhead#1{%
+    \vspace*{30\p@}%
+    {\parindent \z@ \raggedleft
+      \normalfont
+      \interlinepenalty\@M
+      {\Huge\sffamily\sbseries #1\par\nobreak}
+      \vskip 40\p@
+    }}%
+\renewcommand\tableofcontents{%
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+    \chapter*{\contentsname
+        \@mkboth{%
+           {\upshape\scshape\MakeLowercase\contentsname}}{{\upshape\scshape\MakeLowercase\contentsname}}}%
+    \@starttoc{toc}%
+    \if@restonecol\twocolumn\fi
+    }
+\renewenvironment{thebibliography}[1]
+     {\chapter*{\bibname
+        \@mkboth{\upshape\scshape\MakeLowercase\bibname}{\upshape\scshape\MakeLowercase\bibname}}%
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy\clubpenalty4000\widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+\makeatother
+
+
+
+
+\usepackage{epigraph}
+\setlength{\epigraphrule}{0pt}
+
+\newcommand{\todo}[1]{[{\textcolor{red}{\bf TODO:}} #1]}
+
+
+
+\input{ch1/preamble}
+\input{ch2/preamble}
+\input{ch3/preamble}
+
+\title{Topics in Structural Operational Semantics}
+\author{Arnar Birgisson}
+
+\begin{document}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\renewcommand{\chaptermark}[1]{\markboth{\upshape\scshape chapter \thechapter. \MakeLowercase{#1}}{}}
+\renewcommand{\sectionmark}[1]{\markright{\upshape\scshape\MakeLowercase{#1}}{}}
+
+\frontmatter{}
+
+\begin{titlepage}
+\setlength{\hoffset}{0mm}
+\setlength{\oddsidemargin}{5mm}
+\begin{center}
+\vspace*{1cm}
+{\fontsize{16}{24}\selectfont\spotcolor\scshape topics in} \\
+\vspace*{.5cm}
+{\fontsize{24}{50}\selectfont\spotcolor\bfseries
+Structural Operational Semantics}\\
+\vspace*{1.5cm}
+\textsc{\large thesis}\\
+\vspace*{.3cm}
+\textit{submitted in partial fulfillment of the \\ 
+requirements for the degree of }\\
+\vspace*{.5cm}
+\textsc{\large master of science}\\
+\vspace*{.3cm}
+\textit{in}\\
+\vspace*{.3cm}
+\textsc{\large computer science}\\
+\vspace*{2.3cm}
+\textsc{\LARGE arnar birgisson}\\
+\vspace*{.2cm}
+\textit{Supervisor: Luca Aceto}\\
+\vspace*{1.7cm}
+%\textsc{\Large school of\\ computer science}\\
+%\vspace*{2cm}
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[height=2cm]{RU-logo-EN.pdf}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[height=2.5cm,trim=0cm 1cm 0cm 0cm,clip]{CS-Address.pdf}
+\end{figure}
+
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\mainmatter{}
+
+\chapter{Introduction}
+
+bla bla \cite{DeNicola:1990} 
+
+\renewcommand{\jointwith}{\'Ulfar Erlingsson}
+\chapter{Semantics of Transactional Memory Introspection}
+%\markboth{\scshape\upshape chapter \thechapter. semantics of tmi}{}
+\input{ch1/intro}
+\input{ch1/background}
+\input{ch1/informal}
+\input{ch1/formal}
+\input{ch1/implementation}
+\input{ch1/conclusion}
+
+\renewcommand{\jointwith}{Luca Aceto, Anna Ing\'olfsdottir,\\ and MohammadReza Mousavi}
+\chapter[Decompositional Reasoning about the History of Parallel Processes]{Decompositional Reasoning \\ about the History of \\ Parallel Processes}
+\markboth{\upshape\scshape chapter \thechapter. decompositional reasoning about history}{}
+\input{ch2/intro}
+\input{ch2/preliminaries}
+\input{ch2/decomp_comp}
+\input{ch2/decomp_hml}
+
+
+\renewcommand{\trans}[1]{\,{\stackrel{{#1}}{\rightarrow}}\,}
+
+\renewcommand{\jointwith}{Luca Aceto, Anna Ing\'olfsdottir,\\ MohammadReza Mousavi and Michel Reniers}
+\chapter[Rule Formats for Determinism and Idempotency]{Rule Formats for \\ Determinism and Idempotency}
+%\epigraph{I like deadlines. I like the whooshing sound they make as they pass by.}%
+%         {\textit{Douglas Adams}}
+\input{ch3/Introduction}
+\input{ch3/Preliminaries}
+\input{ch3/Determinism}
+\input{ch3/Format}
+\input{ch3/Conclusions}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

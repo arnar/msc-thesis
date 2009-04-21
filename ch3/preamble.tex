@@ -1,0 +1,62 @@
+
+\newcommand{\assocdesim}{\textsf{ASSOC-De Simone}}
+\newcommand{\Implies}{\mathrel{\Rightarrow}}
+\newcommand{\Iff}{\mathrel{\Leftrightarrow}}
+\newcommand{\defs}{\mathrel{\doteq}}
+\newcommand{\ident}[1]{\mathit{#1}}
+\newcommand{\MAR}[1]{\textbf{\underline{Michel says}: #1}}
+\newcommand{\MRM}[1]{\textbf{\underline{Mohammad says}: #1}}
+\newcommand{\AB}[1]{\textbf{\underline{Arnar says}: #1}}
+
+
+%\newcommand{\sosrule}[3][0]{
+%\ifthenelse{\equal{#1}{0}}
+%  {\begin{array}[c]{c}
+%   #2\vspace{0.1em}\\\hline\rule[1em]{0pt}{0.1em}#3
+%   \end{array}}
+%  {\displaystyle\frac{#2}{#3}\ifthenelse{\equal{#1}{}}{}{,\quad}#1}
+%}
+\newcommand{\sosproof}[3][0]{
+\ifthenelse{\equal{#1}{0}}
+  {\begin{array}[b]{c}
+   #2\vspace{0.1em}\\\hline\hline\rule[1em]{0pt}{0.1em}#3
+   \end{array}}
+  {\begin{array}[c]{c}
+   #2\vspace{0.1em}\\\hline\hline\rule[1em]{0pt}{0.1em}#3
+   \end{array}\ifthenelse{\equal{#1}{}}{}{,\quad}#1}
+}
+
+\newcommand{\eqidem}{\mathrel{\simeq_f}}
+\newcommand{\isomorphic}{\mathrel{\sim_i}}
+
+%\newcommand{\assocrules}{\mathcal{R}_\textrm{a}}
+%\newcommand{\assocrulest}{\mathcal{R}_\textrm{a\term}}
+%\newcommand{\tss}{\mathcal{T}}
+%\newcommand{\trans}[1]{\,{\stackrel{{#1}}{\rightarrow}}\,}
+\newcommand{\cando}[1]{\mathrel{\mbox{ can}_{#1}\,}}
+\newcommand{\after}[1]{\mathrel{\mbox{ after}_{#1}\,}}
+
+%\newcommand{\ntrans}[1]{\,{\stackrel{{#1}}{\nrightarrow}}\,}
+\newcommand{\bisim}{\mathbin{\mbox{$\underline{\leftrightarrow}$}}}
+\newcommand{\rel}{\mathcal{R}}
+\newcommand{\Rel}{\,\mathcal{R}\,}
+\newcommand{\cond}[1]{\textbf{Condition: }#1}
+\newcommand{\term}{\checkmark}
+\newcommand{\interrupt}{\vartriangleright}
+\newcommand{\disrupt}{\blacktriangleright}
+\newcommand{\DR}[1]{\ensuremath \mathrm{(#1)}}
+\newcommand{\DRn}[1]{\ensuremath \mathrm{#1}}
+
+\newcommand{\prem}[1]{\ensuremath \ident{prem}(#1)}
+\newcommand{\conc}[1]{\ensuremath \ident{conc}(#1)}
+
+\newcommand{\ntyft}{\textsf{Ntyft}}
+
+\newcommand{\Terms}[1]{\mathbb{T}(#1)}
+\newcommand{\CTerms}[1]{\mathbb{C}(#1)}
+
+\newcommand{\vars}[1]{\mathit{vars}(#1)}
+
+
+
+\newenvironment{bullets}{\begin{list}{$\bullet$}{\itemsep 0em\topsep 0em}\labelwidth 3mm}{\end{list}}

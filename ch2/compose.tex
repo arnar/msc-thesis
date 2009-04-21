@@ -1,0 +1,117 @@
+\documentclass{llncs}
+
+
+\usepackage{stmaryrd, amssymb, ifthen, mdwlist, amsmath, graphicx}
+\usepackage[usenames]{color}
+\usepackage{hyperref}
+
+
+\newcommand{\tss}{\mathcal{T}}
+\newcommand{\trans}[1]{\ {\stackrel{{#1}}{\longrightarrow}}\ }
+\newcommand{\transshort}[1]{\,{\stackrel{{#1}}{\rightarrow}}\,}
+\newcommand{\ntrans}[1]{\ {\stackrel{{#1}}{\nrightarrow}}\ }
+%\newcommand{\ptrans}[1]{\,{\stackrel{\curvearrowright}{_{#1}}}\,}
+\newcommand{\ptrans}[1]{\ {\stackrel{_{#1}}{\dashrightarrow}}\ }
+\newcommand{\ptransshort}[1]{\,{\stackrel{_{#1}}{\dashrightarrow}}\,}
+\newcommand{\bisim}{\mathbin{\mbox{$\underline{\leftrightarrow}$}}}
+\newcommand{\sosrule}[3][0]{
+\ifthenelse{\equal{#1}{0}}
+  {\begin{array}[b]{c}
+   #2\vspace{0.1em}\\\hline\rule[1em]{0pt}{0.1em}#3
+   \end{array}}
+  {\displaystyle\frac{#2}{#3}\ifthenelse{\equal{#1}{}}{}{,\quad}#1}
+}
+
+
+\newcommand{\seq}[1]{#1^*}
+\newcommand{\abs}[1]{|#1|}
+\newcommand{\alt}{\;\;|\;\;}
+\newcommand{\dmnd}[1]{\mbox{\ensuremath{\langle #1 \rangle}}}
+\newcommand{\dmndback}[1]{\mbox{\ensuremath{\langle\leftarrow\! #1 \rangle}}}
+\newcommand{\pdmnd}[1]{\mbox{\ensuremath{\langle\stackrel{_{#1}}{\dashrightarrow}\rangle}}}
+\newcommand{\pdmndback}[1]{\mbox{\ensuremath{\langle\stackrel{_{#1}}{\dashleftarrow}\rangle}}}
+
+\newcommand{\bx}[1]{\mbox{\ensuremath{[#1]}}}
+\newcommand{\bxback}[1]{\mbox{\ensuremath{[\leftarrow\! #1]}}}
+\newcommand{\pbx}[1]{\mbox{\ensuremath{[\stackrel{_{#1}}{\dashrightarrow}]}}}
+\newcommand{\pbxback}[1]{\mbox{\ensuremath{[\stackrel{_{#1}}{\dashleftarrow}]}}}
+
+\newcommand{\dendmnd}[1]{\mbox{\ensuremath{\langle\cdot #1 \cdot\rangle}}}
+\newcommand{\dendmndback}[1]{\mbox{\ensuremath{\langle\cdot\leftarrow\! #1 \cdot\rangle}}}
+\newcommand{\denpdmnd}[1]{\mbox{\ensuremath{\langle\cdot\stackrel{_{#1}}{\dashrightarrow}\cdot\rangle}}}
+\newcommand{\denpdmndback}[1]{\mbox{\ensuremath{\langle\cdot\stackrel{_{#1}}{\dashleftarrow}\cdot\rangle}}}
+
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\M}{\mathcal{M}}
+\renewcommand{\phi}{\varphi}
+
+\newcommand{\true}{\ensuremath{\top}}
+\newcommand{\false}{\ensuremath{\bot}}
+
+\newcommand{\powerset}[1]{\ensuremath{\mathcal{P}(#1)}}
+
+\DeclareMathOperator{\first}{first}
+\DeclareMathOperator{\last}{last}
+\DeclareMathOperator{\trace}{trace}
+
+\newcommand{\bbbracketleft}{[\hspace{-.15em}[}
+\newcommand{\bbbracketright}{]\hspace{-.15em}]}
+
+\newcommand{\den}[1]{\bbbracketleft{}#1\bbbracketright}
+
+\newcommand{\HMLpast}{\ensuremath{\textit{HML}_\shortleftarrow}}
+\newcommand{\HMLpp}{\ensuremath{\textit{HML}_\shortleftarrow^*}}
+\newcommand{\HMLpastf}[1]{\ensuremath{\textit{HML}_{\shortleftarrow,#1}}}
+\newcommand{\HMLppf}[1]{\ensuremath{\textit{HML}_{\shortleftarrow,#1}^*}}
+
+\newcommand{\proofcase}[1]{\vspace{.4em}\noindent{\bf #1}\hspace{1em}}
+\newcommand{\ltr}{\proofcase{$(\Rightarrow)$}}
+\newcommand{\rtl}{\proofcase{$(\Leftarrow)$}}
+
+\newcommand{\id}{\mathop{\rm id}\nolimits}
+
+\newcommand{\TODO}[1]{{\bf TODO:} #1}
+
+\title{Decompositional Reasoning about the History of Parallel Processes}
+\author{}
+\institute{Department of Computer Science, Eindhoven University of Technology,
+\\ {P.O.~Box~513}, NL-5600~MB~~Eindhoven, The Netherlands
+\and
+School of Computer Science, Reykjavik University,
+\\ Kringlan 1, IS-103 Reykjavik, Iceland
+}
+
+
+%\bibliographystyle{plain}
+\pagestyle{plain} % for page numbers
+\pagenumbering{arabic}
+
+\begin{document}
+\pagenumbering{arabic}
+
+\begin{frontmatter}
+
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\end{frontmatter}
+
+\pagenumbering{arabic}
+\input{intro}
+%\input{ccs}
+%\input{hml}
+\input{preliminaries}
+\input{decomp_comp}
+\input{decomp_hml}
+%\input{fixpoints}
+%\input{case}
+
+\bibliographystyle{amsplain}
+\bibliography{references}
+
+\end{document}

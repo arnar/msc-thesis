@@ -1,0 +1,285 @@
+\section{Transactional Memory Introspection} % (fold)
+\label{sec:transactional_memory_introspection}
+
+In this section we give an overview of the TMI architecture and how it is implemented. We then describe
+our Haskell implementation from a user standpoint.
+
+\subsection{Overview of TMI} % (fold)
+\label{ssub:overview_of_tmi}
+
+As described in our previous work~\cite{tmi}, the TMI architecture aims to  raise the level
+of abstraction in the implementation of security enforcement mechanisms. It allows the programmer
+to decouple application logic from security enforcement. Just as STM frees the programmer from worrying
+about lock acquisition order and other synchronization efforts, TMI can be used to eliminate concerns about check
+placement, race conditions and exceptional execution paths.
+
+TMI provides these guarantees by imposing on the STM system. 
+The programmer marks certain variables as security
+sensitive. This implicitly indicates to the STM system that these variables are shared,
+and ensures that the STM system will protect against race conditions in accesses to the variables.
+TMI enhances the monitoring of these security sensitive variables
+by ensuring that a access-control reference monitor is invoked every time
+that the variables are accessed.
+
+\paragraph{\emph{Time of policy evaluation with TMI:}} % Changed proposed header
+% Didn't apply changes in below para
+The TMI architecture only loosely constrains when policy must be evaluated,
+and in~\cite{tmi} we consider a number of alternatives. In particular, TMI enforcement
+can be \emph{eager} or \emph{lazy}.
+With {\em eager} enforcement,
+every access to a variable triggers the reference monitor, which immediately checks it against the
+relevant policy. If authorization is denied, the transaction is immediately aborted. With lazy enforcement,
+accesses to variables are simply logged (often they are already logged by the STM) and only at the end
+of the transaction, the logs are inspected by the reference monitor. If any of the logged accesses
+are invalid, the whole transaction is aborted. 
+
+% Applied some, not all, changes in below para
+A key property of TMI enforcement is that policy decisions
+can be evaluated at any time, as long as they are evaluated in a serialized fashion,
+and evaluation is fully complete before the transaction commits.
+A good STM system will ensure that each transaction is executed in isolation,
+such that aborting one will have the same semantics as not having started it. 
+This said, for our formal treatment and Haskell implementation, we focus 
+on lazy enforcement only. Thus, the following
+discussion only deals with the lazy variant unless otherwise noted.
+
+\paragraph{\emph{Utilizing TMI enforcement:}}  % Changed proposed header
+% Didn't apply changes in below para
+To use TMI, the programmer declares a set of variables as security relevant.
+This implicitly indicates to the underlying STM system
+that those variables should be protected against race conditions.
+This means the values held by these variables can only
+be read or modified within a transaction, and that the STM system takes care of resolving conflicting accesses
+by concurrent transactions. 
+This also means that upon every variable access,
+TMI appends information identifying the variable in 
+question to a transaction-specific {\em introspection log}. 
+In particular, the introspection log will contain information about the creation, reading, and writing
+of the security sensitive variables.
+
+% Changed below para
+In addition, TMI requires that all sections
+of code that access security-sensitive variables
+must be explicitly marked as \emph{atomic}.
+To execute such atomic code sections,
+programmers initiate a TMI transaction 
+and provide a reference to the atomic block and a
+{\em security manager}. The security manager is a block of code (or closure) that 
+encodes the intended, application-specific security policy, 
+and is able to determine
+whether a transaction introspection log
+satisfies the security policy.
+The security manager closure includes the active principal, and other  auxiliary information that is 
+needed to check policy compliance.
+
+% Changed below para
+% NOTE: I don't have a good spell checker, so please spell check.
+Finally, transaction commit plays a special role in TMI enforcement.
+TMI runs atomic blocks as transactions in the underlying STM system,
+but changes the semantics of transaction commit.
+After a TMI atomic block has finished execution, but before it is committed,
+TMI ensures that the security manager has fully evaluated whether the transaction introspection log 
+complies with the intended security policy.
+Importantly, this evaluation occurs within the same STM transaction
+as the execution of the atomic block,
+and a commit of the transaction is attempted only if 
+the security manager returns success.
+
+Even when the transaction has complied with the security policies,
+the attempted commit may still fail,
+and the transaction is retried,
+in the case when the STM system 
+finds conflicting concurrent accesses.
+Also,
+if the security manager finds the transaction in violation of policy,
+all state changes are rolled back---including changes to the security manager state,
+in the case of history-based policies---and,
+instead of retrying the transaction,
+an exception is raised to invoker of the atomic block.
+
+\paragraph{\emph{A simple example:}} 
+The following pseudo code shows what software
+that makes use of TMI-based security enforcement might look like.
+(Note that the code makes use of function-argument currying.)
+\begin{lstlisting}[style=small,language=pseudo]
+declare sensitive accounts = array of Account
+
+function withdraw(account, amount):
+    account.balance = account.balance - amount
+
+function security_manager(user, log):
+    if log contains <withdrawal from account>:
+        if account.owner == user:
+            return Allowed
+    return Denied
+
+main program:
+    user = aquire_login_credentials()
+    try:
+        transaction with security_manager(user):
+            withdraw(get_account(123456), 42)
+    catch AuthorizationFailed:
+        tell user about error
+\end{lstlisting}
+In this code, two aspects are especially noteworthy. First, 
+security enforcement code is completely decoupled from the application logic
+and the function \lstinline+withdraw+ performs no authorization. 
+Even so, complete mediation is ensured,
+since the introspection log is implicitly updated by the TMI reference monitor
+upon each access to account variables.
+
+Second, in the case of 
+authorization failure (e.g. a withdrawal from a different user's account), the error handler 
+need only consider how to indicate the error to the user.
+The error handler need not clean up any mess:
+any state changes that happened during the
+transaction
+have already been rolled back when the error handler starts execution. 
+Although perhaps not apparent in this simplified example, 
+there is ample evidence that writing correct cleanup code is difficult,
+especially when multiple security-relevant operations are involved~\cite{errorHandlingMistakes}.
+
+While the above observations form the two main benefits of the TMI architecture,
+the third is freedom from TOCTTOU bugs.
+Without TMI,
+this example code 
+might suffer from 
+TOCTTOU race conditions,
+e.g., if accounts could change owners. 
+However, with TMI,
+such account-ownership changes would be isolated,
+and a transaction 
+would be guaranteed to see the same owner throughout its execution.
+
+% subsubsection overview_of_tmi (end)
+
+\subsection{TMI in Haskell} % (fold)
+\label{ssub:tmi_in_haskell}
+
+We saw earlier how Concurrent Haskell uses the type system to confine operations on shared variables to
+STM actions, and provided a single function to wrap STM actions into an atomic I/O action.
+For TMI, we do something very similar. We confine operations on security sensitive variables to {\em TMI
+actions}, and provide a single function to turn a TMI action into an STM action and associating it with a
+security manager at the same time. 
+
+Figure~\ref{fig:syntax2} shows the extensions of STM Haskell with the TMI extensions (highlighted).
+We define a new monad that represents TMI actions and operations on sensitive variables. In addition,
+we lift all standard STM functions to their TMI counterparts. This is done so that an existing Haskell STM program can
+be easily adapted to TMI with minimal changes to code. The TMI monad also encapsulates state, namely the
+introspection log of a transaction. The introspection log contains entries which specify the access type (create,
+read or write) of a variable and the {\em security descriptor} of a variable. Security descriptors are provided by the
+programmer when she creates sensitive variables and contain the metadata about the variable 
+that is necessary for authorization,
+such as the owner of an account, permissions of a file, etc.
+
+\input{ch1/syntaxfig}
+
+Since the type of security descriptors is application specific, our new monad type
+is polymorphic,
+\begin{lstlisting}[style=small]
+TMI d a
+\end{lstlisting}
+where \lstinline+d+ is the type of descriptors and \lstinline+a+ is the type returned by the action. For
+security sensitive variables, we have a type similar to \lstinline+IORef a+ and \lstinline+TVar a+,
+\begin{lstlisting}[style=small]
+TMIVar d a
+\end{lstlisting}
+An instance of this type is a cell with a security descriptor of type \lstinline+d+ and a value of type \lstinline+a+.
+While the value can change over time, the security descriptor is specified when the cell is created and cannot
+change after that. Creation, reading and writing of cells is performed with the following set of functions.
+\begin{lstlisting}[style=small]
+  newTMIVar :: d -> a -> TMI d (TMIVar d a)
+ readTMIVar :: TMIVar d a -> TMI d a
+writeTMIVar :: TMIVar d a -> a -> TMI d ()
+\end{lstlisting}
+
+For an example, the following code defines a descriptor type for a bank account. The account itself is represented
+by a simple integer.
+\begin{lstlisting}[style=small]
+-- Security descriptor for accounts
+data AccountDescr = AccountDescr {
+    acctOwner  :: String,
+    acctNumber :: Int
+}
+type Account = TMIVar AccountDescr Int
+
+createAccount :: String -> Int -> Int 
+                               -> TMI Account
+createAccount owner number balance = 
+    newTMIVar (AccountDescr owner number) balance
+\end{lstlisting}
+The next function demonstrates reading and writing of the security-relevant account variables.
+\begin{lstlisting}[style=small]
+deposit :: Account -> Int -> TMI AccountDescr ()
+deposit acct amount = 
+    do balance <- readTMIVar acct
+       writeTMIVar acct (balance + amount)
+\end{lstlisting}
+
+To turn a TMI action into an STM action, we need to associate it with a security manager, i.e. a boolean function
+that evaluates the transaction introspection log of security-relevant accesses and determines if the transaction should be aborted. As an input
+to this function, TMI defines the type of an introspection log.
+\begin{lstlisting}[style=small]
+data AccessType = CreateVar | ReadVar | WriteVar
+type TMILog d = [(AccessType, d)]
+\end{lstlisting}
+To specify the application specific policy, the programmer must supply the security manager, a function
+of the type \lstinline+TMILog d -> Bool+. This function, along with a TMI action is passed to the
+\lstinline+authorized+ function. The simplest security manager is one that performs no authorization and
+simply allows all operations.
+\begin{lstlisting}[style=small]
+allowAll :: forall d. TMI d a -> STM a
+allowAll tx = authorized (const True) tx
+\end{lstlisting}
+A slightly more complex example is a security manager that looks at all \lstinline+Account+s touched
+by a transaction and verifies that they belong to the current user. The current user is passed to the
+security manager as the first argument, and this currying ensures 
+that we satisfy the type required by \lstinline+authorized+.
+% NOTE: the comment in the code said ``Defined my the TMI module'' and I changed to ``by''
+\begin{lstlisting}[style=small]
+auth :: String -> TMILog AccountDescr -> Bool
+auth user thelog = all checkowner thelog
+    where
+      checkowner :: (AccessType, AccountDescr) 
+                 -> Bool
+      checkowner (_,descr) = 
+            user == (acctOwner descr)
+
+-- Defined by the TMI module:
+-- authorized :: (TMILog d -> Bool) 
+--            -> TMI d a 
+--            -> STM a
+
+main = 
+  do acct <- atomically (allowAll mkAccount)
+     atomically (doDeposit acct "alice")  -- OK
+     atomically (doDeposit acct "bob")    -- FAILS
+  where
+     mkAccount = createAccount "alice" 123456 0
+     doDeposit acct user =
+         authorized (auth user) (deposit acct 42)
+\end{lstlisting}
+
+Since TMI actions are ultimately executed as STM actions, we also provide a lifting operation to lift
+STM operations into TMI operations, \lstinline+liftSTM+. 
+This allows for the embedding of an STM action inside a TMI action.
+Once the TMI action is turned into an STM action via \lstinline+authorized+, the embedded action is
+just composed with it in the normal way. An interesting effect of this is that it allows for nested
+calls to \lstinline+authorized+. While this might cause ambiguity for other implementations,
+in this Haskell-based implementation such nesting has 
+clear and well-defined semantics, and can therefore be permitted.
+In fact, we will make explicit use of such nesting in the following sections to
+implement {\em privilege amplification}.
+% Þetta hér að ofan er eitt sem væri fínt að sýna í merkingafræðinni.
+% Ef þetta er svona súper clear, þá gætum við sýnt það og gert að söluvöru.
+% Eins og það er núna, þá er þetta ekkert súper clear fyrir mig, btw.
+
+% Hvar eru orElseTMI og vinir í kóðanum?  Eiga þeir ekki að vera neinstaðar?
+TMI actions are also composable in the same way STM actions are. This means the monadic bind acts as
+sequential composition and we provide \lstinline+orElseTMI+ and \lstinline+retryTMI+ that behave as
+their STM counterparts. When TMI actions composed with \lstinline+orElseTMI+ are turned into STM actions,
+via \lstinline+atomically+, the security manager only sees the log entries for \lstinline+TMIVar+-actions
+that are actually committed or could have affected the committed actions.
+% subsubsection tmi_in_haskell (end)
+
+% section transactional_memory_introspection (end)

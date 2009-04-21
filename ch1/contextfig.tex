@@ -1,0 +1,26 @@
+\begin{figure}
+\flushleft{\begin{minipage}{\linewidth}
+    \small
+\color{old}
+\vspace{-1.5ex}
+\begin{gather*}
+\begin{array}{rrcl}
+\textrm{Thread soup} & P,Q & ::= & M_t \alt (P\,|\,Q) \\
+\new{\textrm{Descriptors}} & \new{D_\bot} & \new{::=} & \new{M \cup \{\bot\}} \\
+\textrm{Heap} & \Theta & ::= & r \hookrightarrow M \new{\,\times\, D_\bot} \\
+\textrm{Allocations} & \Delta & ::= & r \hookrightarrow M \new{\,\times\, D_\bot} \\
+\new{\textrm{Access types}} & \new{T} & \new{::=} & \new{\{ \textsc{create}, \textsc{read}, \textsc{write} \}} \\
+\textrm{\new{Log}} & \new{\Sigma} & \new{::=} & \new{\textrm{list monoid } ([], \oplus) \textrm{ over } T\times D} \\
+\\
+\textrm{Evaluation} & \EE & ::= & [\cdot] \alt \EE \,\prg{>{}>=}\,M \alt \prg{catch }\EE\;M \\
+\textrm{contexts} & \SS & ::= & [\cdot] \alt \SS \,\prg{>{}>=}\,M \\
+                  & \PP & ::= & \SS_t \alt (\PP|P) \alt (P|\PP) \\
+\textrm{Action} & a & ::= & \prg{!}c \alt \prg{?}c \alt \epsilon
+\end{array}
+\end{gather*}
+\end{minipage}}\caption{Program state and evaluation contexts}
+\vspace{2ex}
+\label{fig:contexts}
+\end{figure}
+
+

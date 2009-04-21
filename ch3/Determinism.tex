@@ -1,0 +1,309 @@
+\section{\label{sec::det}Determinism}
+\begin{definition}[Determinism]
+A transition relation $T$ is called deterministic for label $l$, when if
+$p \trans{l} p' \in T$ and $p \trans{l} p'' \in T$, then $p' \equiv p''$.
+\end{definition}
+
+Before we define a format for determinism, we need two auxiliary definitions.
+The first one is
+the definition of source dependent variables,
+which we borrow from~\cite{Mousavi05-ICALP} with minor additions.
+%\MAR{It is not clear what are those additions and why we have those.}
+
+\begin{definition}[\label{def::varDepend}Source dependency]
+For a deduction rule, we define the set of \emph{source dependent} variables as the smallest set that contains
+\begin{enumerate}
+    \item all variables appearing in the source of the conclusion, and
+    \item all variables that appear in the target of a premise where all variables in the source of that premise are source dependent.
+\end{enumerate}
+For a source dependent variable $v$, let $\mathcal{R}$ be the collection of transition relations appearing in a set of premises needed to show source dependency through condition 2. We say that $v$ is source dependent \emph{via} the relations in $\mathcal{R}$.
+\end{definition}
+
+Note that for a source dependent variable, the set $\mathcal{R}$ is not necessarily unique. For example, in the rule
+\[
+    \sosrule{y\trans{l_1}y' \quad x\trans{l_2}z \quad z\trans{l_3}y'}{f(x,y) \trans{l} y'}
+\]
+the variable $y'$ is source dependent both via the set $\{\trans{l_1}\}$ as well as $\{\trans{l_2},\trans{l_3}\}$.
+
+%We also note that for any source dependent variable, it is possible to construct a chain of transition relations and
+%other source dependent variables, such that by following these relations backwards through the premises
+
+The second auxiliary definition needed for our determinism format is the definition of determinism-respecting substitutions.
+
+\begin{definition}[\label{def::determinismRespecting}Determinism-Respecting Pairs of Substitutions]
+Given a set $L$ of labels, a pair of substitutions $(\sigma,\sigma')$ is determinism-respecting w.r.t.\
+a pair of sets of formulae $(\Phi, \Phi')$ and $L$ when for all two positive formulae $s \trans{l} s' \in \Phi$ and $t \trans{l} t' \in \Phi'$ such that $l \in L$, $\sigma(s) \equiv \sigma'(t)$ only if  $\sigma(s') \equiv \sigma'(t')$.
+%\MAR{What is $\equiv$?}
+\end{definition}
+
+%\MAR{Would it be possible to avoid the term ``format'' for the following constraint. It is not syntactic and thus should not be called a format.}
+
+\begin{definition}[\label{def::detHard}Determinism Format]
+A TSS $\tss$ is in the determinism format w.r.t.\ a set of labels $L$,
+when for each $l \in L$ the following conditions hold.
+\begin{enumerate}
+    \item In each deduction rule $\frac{\Phi}{t\trans{l}t'}$, each variable $v\in \vars{t'}$ is source dependent
+          via a subset of $\{ \trans{l} \mid l \in L\}$, and
+    \item for each pair of distinct deduction rules $\frac{\Phi_0}{t_0\trans{l}t_0'}$ and $\frac{\Phi_1}{t_1\trans{l}t_1'}$ and
+          for each determinism-respecting pair of substitutions $(\sigma, \sigma')$ w.r.t. $(\Phi_0, \Phi_1)$ and $L$
+          such that $\sigma(t_0)\equiv\sigma'(t_1)$, it holds that
+          either $\sigma(t_0')\equiv\sigma'(t_1')$ or $\sigma(\Phi_0)$ contradicts $\sigma'(\Phi_1)$.
+\end{enumerate}
+\end{definition}
+
+The first constraint in the definition above ensures that each rule in a TSS
+in the determinism format, with some $l \in L$ as its label of conclusion,
+can be used to prove at most one outgoing transition for each closed term.
+The second requirement guarantees that no two different rules can be used to prove two distinct
+$l$-labelled transitions for any closed term.
+
+\begin{theorem}\label{th::det}
+Consider a TSS with $(C, U)$ as its least three-valued stable model and a subset $L$ of its labels. If the TSS is in the determinism format w.r.t.\ $L$, then $C$ is deterministic for each $l\in L$.
+\end{theorem}
+
+%\begin{proof}
+%For review purposes the proof is given in Appendix \ref{proof::det}. \hfill \qed
+%\end{proof}
+
+For a TSS in the determinism format with $(C, U)$ as its least three-valued stable model, $U$ and thus $C \cup U$ need not be deterministic.
+The following counter-example illustrates this phenomenon.
+
+\begin{example}
+Consider the TSS given by the following deduction rules.
+\[
+\sosrule[]{a \trans{l} a}{a \trans{l} b} \quad \sosrule[]{a \ntrans{l}}{a \trans{l} a}
+\]
+The above-given TSS is in the determinism format since $a \trans{l} a$ and $a \ntrans{l}$ contradict each other (under any substitution).
+Its least three-valued stable model is, however, $(\emptyset, \{a \trans{l} a, a \trans{l} b\})$ and $\{a \trans{l} a, a \trans{l} b\}$ is not deterministic.
+\end{example}
+
+\begin{corollary}
+Consider a complete TSS with $L$ as a subset of its labels. If the TSS is in the determinism format w.r.t. $L$, then its defined transition relation is deterministic for each $l \in L$.
+\end{corollary}
+
+Constraint 2 in Definition \ref{def::detHard} may seem difficult to verify,
+since it requires checks for all possible (determinism-respecting) substitutions.
+However, in practical cases, to be quoted in the remainder of this paper,
+variable names are chosen in such a way that constraint 2
+can be checked syntactically.
+For example, consider the following two deduction rules.
+\[
+\sosrule{x \trans{a} x'}{f(x,y) \trans{a} x'} \qquad
+\sosrule{y \ntrans{a} \quad x \trans{b} x'}{f(y,x) \trans{a} x'}
+\]
+If in both deduction rules $f(x,y)$ (or symmetrically $f(y,x)$) was used,
+it could have been easily seen from the syntax of the rules that the premises of one deduction rule
+always (under all pairs of substitutions agreeing on the value of $x$) contradict the premises of the other deduction rule and, hence, constraint 2 is trivially satisfied.
+Based on this observation, we next present a rule format, whose constraints
+have a purely syntactic form,
+and that is sufficiently powerful to handle all the examples we discuss
+in Section \ref{sec::detExamples}.
+(Note that, for the examples in Section \ref{sec::detExamples}, checking the constraints of Definition \ref{def::detHard} is
+not too hard either.)
+
+
+
+\begin{definition}[Normalized TSSs]\label{def::normalized}
+A TSS is normalized w.r.t. $L$ if each deduction rule is $f$-defining for some function symbol $f$, and for each label $l \in L$, each function symbol $f$ and each pair of deduction rules of the form
+\[
+\DR{r} \sosrule{\Phi_r}{f(\overrightarrow{s}) \trans{l} s'} \quad
+\DR{r'} \sosrule{\Phi_{r'}}{f(\overrightarrow{t}) \trans{l} t'}
+\]
+the following constraints are satisfied:
+\begin{enumerate}
+\item the sources of the conclusions coincide, i.e., $f(\overrightarrow{s}) \equiv f(\overrightarrow{t})$,
+\item each variable $v \in \vars{s'}$ (symmetrically $v \in \vars{t'}$) is source dependent in $\DR{r}$ (respectively in $\DR{r'}$) via some subset of $\{ \trans{l} \mid l \in L\}$,
+
+\item for each variable $v \in \vars{r} \cap \vars{r'}$ there is a set of formulae in $\Phi_r \cap \Phi_{r'}$ proving its source dependency (both in $\DR{r}$ and $\DR{r'})$) via some subset of $\{ \trans{l} \mid l \in L\}$.
+\end{enumerate}
+\end{definition}
+
+The second and third constraint in Definition \ref{def::simplifiedDet} guarantee that
+the syntactic equivalence of relevant terms (the target of the conclusion or the premises negating each other)
+will lead to syntactically equivalent closed terms under all determinism-respecting pairs of substitutions.
+
+
+
+%\begin{definition}[Source-normalized rules]
+%Given a countably infinite list $\widetilde{x} \equiv x_0, x_1, \ldots$ of variables.
+%A $\tss$ contains only {\em source-normalized rules}, when all its deduction rules
+%are of the form:
+%\[
+%\sosrule[]{\Phi}{f(\overrightarrow{x}) \trans{l} t'}
+%\]
+%where $\overrightarrow{x}$ is a prefix of $\widetilde{x}$.
+%Henceforth, we assume a fixed yet arbitrary list $\widetilde{x} \equiv x_0, x_1, \ldots$ and only speak
+%of source-normalized rules without mentioning the list.
+%
+%We refer to each rule with $f$ as the main operator of the source and $l$ as the label of the conclusion as an $(f,l)$\emph{-defining rule}.
+%\end{definition}
+%
+%\MAR{We should indicate that for any TSS there is an equivalent (definition?) TSS with only source-normalized rules.}
+The reader can check that all the examples quoted from the literature in Section \ref{sec::detExamples} are indeed normalized TSSs.
+
+
+\begin{definition}[\label{def::simplifiedDet}Syntactic Determinism Format]
+A normalized TSS is in the (syntactic) determinism format w.r.t.\ $L$, when
+%\begin{enumerate}
+%    \item in each deduction rule $\frac{\Phi}{t\trans{l}t'}$, each variable $v\in vars(t')$ is source dependent
+%          via some subset of $\{ \trans{l} \mid l \in L\}$, and
+%    \item
+    for each two deduction rules $\frac{\Phi_0}{f(\overrightarrow{s}) \trans{l} s'}$ and $\frac{\Phi_1}{f(\overrightarrow{s})  \trans{l} s''}$, it holds that $s' \equiv s''$ or $\Phi_0$ contradicts $\Phi_1$.
+%\end{enumerate}
+\end{definition}
+
+The following theorem states that for normalized TSSs, Definition \ref{def::simplifiedDet} implies Definition \ref{def::detHard}.
+
+
+\begin{theorem}\label{th::simplifiedImpliesHard}
+Each normalized TSS in the syntactic determinism format w.r.t.\ $L$ is also in the determinism format w.r.t.\ $L$.
+\end{theorem}
+
+For brevity, we omit the proof of Theorem \ref{th::simplifiedImpliesHard}.
+%(The proof is included for reviewers' convenience in Appendix \ref{proof::simpImpHard}.)
+The following statement is thus a corollary to Theorems \ref{th::simplifiedImpliesHard} and \ref{th::det}.
+
+\begin{corollary}
+Consider a normalized TSS with $(C, U)$ as its least three-valued stable model and a subset $L$ of its labels. If the TSS is in the (syntactic) determinism format w.r.t.\ $L$ (according to Definition \ref{def::simplifiedDet}), then $C$ is deterministic w.r.t.\ any $l\in L$.
+\end{corollary}
+
+
+\subsection{Examples\label{sec::detExamples}}
+In this section, we present some examples of various TSSs from the literature and apply our (syntactic) determinism format to them.
+Some of the examples we discuss below are based on TSSs with predicates. The extension of our formats with predicates is
+straightforward and we discuss it in Section \ref{sec::pred} to follow.
+
+
+\begin{example}[Conjunctive Nondeterministic Processes]\label{cnp}
+Hennessy and Plotkin, in \cite{Hennessy87},  define a language, called conjunctive nondeterministic processes,
+for studying logical characterizations of processes.
+The signature of the language consists of a constant $0$, a unary action prefixing operator $a.\_$ for each $a \in A$, and
+a binary conjunctive nondeterminism operator $\lor$.
+The operational semantics of this language is defined by the following deduction rules.
+\[
+\sosrule{}{0 \cando{a}}
+\qquad
+\sosrule{}{a.x \cando{a}}
+\qquad
+\sosrule{x \cando{a}}{x \lor y \cando{a}}
+\qquad
+\sosrule{y \cando{a}}{x \lor y \cando{a}}
+\]
+\[
+\sosrule{}{0 \after{a} 0}
+\quad
+\sosrule{}{a.x \after{a} x}
+\quad
+\sosrule{}{a.x \after{b} 0} ~a \neq b
+\quad
+\sosrule{x \after{a} x' \quad y \after{a} y'}{x \lor y  \after{a} x' \lor y'}
+\]
+The above TSS is in the (syntactic) determinism format with respect to the transition relation $\after{a}$ (for each $a \in A$).
+Hence, we can conclude that the transition relations $\after{a}$ are deterministic.
+\end{example}
+
+\begin{example}[Delayed choice]\label{dc}
+The second example we discuss is a subset of the process algebra $\mathrm{BPA}_{\delta\epsilon}+\mbox{DC}$ \cite{BaetenMauw94}, i.e., Basic Process Algebra with deadlock and empty process extended with delayed choice. First we restrict attention to the fragment of this process algebra without non-deterministic choice $+$ and with action prefix $a.\_$ instead of general sequential composition $\cdot$. This altered process algebra has the following deduction rules, where $a$ ranges over the set of actions $A$:
+\[
+\sosrule{}{\epsilon\downarrow}
+\qquad
+\sosrule{}{a.x \trans{a} x}
+\qquad
+\sosrule{x \downarrow}{x \mp y \downarrow}
+\qquad
+\sosrule{y \downarrow}{x \mp y \downarrow}
+\]
+\[
+\sosrule{x \trans{a} x' \qquad y \trans{a} y'}{x \mp y \trans{a} x' \mp y'}
+\qquad
+\sosrule{x \trans{a} x' \qquad y \ntrans{a}}{x \mp y \trans{a} x'}
+\qquad
+\sosrule{x \ntrans{a} \qquad y \trans{a} y'}{x \mp y \trans{a} y'}
+\]
+In the above specification, predicate $p \downarrow$ denotes the possibility of termination for process $p$.
+The intuition behind the delayed choice operator, denoted by $\_\ \mp\ \_$, is that the choice between
+two components is only resolved when one performs an action that the other cannot perform.
+When both components can perform an action, the delayed choice between them remains unresolved and
+the two components synchronize on the common action.
+This transition system specification is in the (syntactic) determinism format w.r.t.\ $\{ a \mid a \in A\}$.
+
+Addition of non-deterministic choice $+$ or sequential composition $\cdot$ results in deduction rules that do not satisfy the determinism format. For example, addition of sequential composition comes with the following deduction rules:
+\[ \sosrule{x \trans{a} x'}{x \cdot y \trans{a} x' \cdot y}
+\qquad
+\sosrule{x \downarrow \quad y \trans{a} y'}{x \cdot y \trans{a} y'}
+\]
+The sets of premises of these rules do not contradict each other.
+The extended TSS is indeed non-deterministic since, for example, $(\epsilon \mp (a.\epsilon))\cdot (a.\epsilon) \trans{a} \epsilon$ and
+$(\epsilon \mp (a.\epsilon))\cdot (a.\epsilon) \trans{a} \epsilon \cdot (a.\epsilon)$.
+\end{example}
+
+\begin{example}[Time transitions I]\label{ex:timetrans1}
+This example deals with the Algebra of Timed Processes, ATP, of Nicollin and Sifakis \cite{Nicollin94}.
+In the TSS given below, we specify the time transitions (denoted by label $\chi$) of delayable deadlock $\delta$,
+non-deterministic choice $\_~\oplus~\_$, unit-delay operator $\lfloor\_\rfloor\_$ and parallel composition $\_~\parallel~\_$.
+\[
+\sosrule{}{\delta \trans{\chi} \delta}
+\qquad
+\sosrule{x \trans{\chi} x' \quad y \trans{\chi} y'}{x \oplus y \trans{\chi} x' \oplus y'}
+\qquad
+\sosrule{}{\lfloor x \rfloor (y) \trans{\chi} y}
+\qquad
+\sosrule{x \trans{\chi} x' \quad y \trans{\chi} y'}{x \parallel y \trans{\chi} x' \parallel y'}
+\]
+These deduction rules all trivially satisfy the determinism format for time transitions since the sources of conclusions of different deduction rules cannot be unified. Also the additional operators involving time, namely, the delay operator $\lfloor \_ \rfloor^{d}\_$, execution delay operator
+$\lceil \_ \rceil^{d}\_$ and unbounded start delay operator $\lfloor \_ \rfloor^{\omega}$, satisfy the determinism format for time transitions. The deduction rules are given below, for $d \geq 1$:
+%start delay within d
+\[
+\sosrule{}{\lfloor x \rfloor^1(y) \trans{\chi} y}
+\qquad
+\sosrule{x \trans{\chi} x'}{\lfloor x \rfloor^{d+1} (y) \trans{\chi} \lfloor x' \rfloor^{d}(y)}
+\qquad
+\sosrule{x \ntrans{\chi}}{\lfloor x \rfloor^{d+1} (y) \trans{\chi} \lfloor x \rfloor^{d}(y)}
+\]
+%unbounded start delay
+\[
+\sosrule{x \trans{\chi} x'}{\lfloor x \rfloor^{\omega} \trans{\chi} \lfloor x' \rfloor^{\omega}}
+\qquad
+\sosrule{x \ntrans{\chi}}{\lfloor x \rfloor^{\omega} \trans{\chi} \lfloor x \rfloor^{\omega}}
+\]
+%execution delay within d
+\[
+\sosrule{x \trans{\chi} x'}{\lceil x \rceil^1(y) \trans{\chi} y}
+\qquad
+\sosrule{x \trans{\chi} x'}{\lceil x \rceil^{d+1} (y) \trans{\chi} \lceil x' \rceil^{d}(y)}
+\]
+\end{example}
+
+\begin{example}[Time transitions II]\label{ex:timetrans2}
+Most of the timed process algebras that originate from the Algebra of Communicating Processes (ACP) from \cite{Bergstra84,Baeten90} such as those reported in \cite{Baeten02} have a deterministic time transition relation as well.
+
+In the TSS given below, the time unit delay operator is denoted by $\sigma_{\mathrm{rel}} \_$, nondeterministic choice is denoted by $\_~+~\_$,
+and sequential composition is denoted by $\_ \cdot \_$.
+The deduction rules for the time transition relation for this process algebra are the following:
+\[ \sosrule{}{\sigma_{\mathrm{rel}}(x) \trans{1} x}
+\qquad
+\sosrule{x \trans{1} x' \quad y \trans{1} y'}{x + y \trans{1} x'+y'}
+\qquad
+\sosrule{x \trans{1} x' \quad y \ntrans{1} }{x + y \trans{1} x'}
+\qquad
+\sosrule{x \ntrans{1} \quad y \trans{1} y'}{x + y \trans{1} y'}
+\]
+\[
+\sosrule{x \trans{1} x' \quad x \not\downarrow}{x \cdot y \trans{1} x' \cdot y}
+\qquad
+\sosrule{x \trans{1} x' \quad y \ntrans{1}}{x \cdot y \trans{1} x' \cdot y}
+\qquad
+\sosrule{x \trans{1} x' \quad x \downarrow \quad y \trans{1} y'}{x \cdot y \trans{1} x' \cdot y + y'}
+\qquad
+\sosrule{x \ntrans{1} \quad x \downarrow \quad y \trans{1} y'}{x \cdot y \trans{1} y'}
+\]
+Note that here we have an example of deduction rules, the first two deduction rules for time transitions of a sequential composition, for which the premises do not contradict each other. Still these deduction rules satisfy the determinism format since the targets of the conclusions are identical. In the syntactically richer framework of \cite{Reniers08}, where arbitrary first-order logic formulae over transitions are allowed, those two deduction rules are presented by a single rule with premise $x \trans{1} x' \land (x \not\downarrow \lor y \ntrans{1})$.
+
+Sometimes such timed process algebras have an operator for specifying an arbitrary delay, denoted by $\sigma^*_{\mathrm{rel}} \_$, with the following deduction rules.
+\[ \sosrule{x \ntrans{1}}{\sigma^*_{\mathrm{rel}}(x) \trans{1} \sigma^*_{\mathrm{rel}}(x)}
+\qquad
+\sosrule{x \trans{1} x'}{\sigma^*_{\mathrm{rel}}(x) \trans{1} x' + \sigma^*_{\mathrm{rel}}(x)}
+\]
+The premises of these rules contradict each other and so, the semantics of this operator also satisfies the constraints of our (syntactic)
+determinism format.
+\end{example}

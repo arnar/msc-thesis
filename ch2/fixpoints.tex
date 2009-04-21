@@ -1,0 +1,416 @@
+%!TEX root = compose.tex
+\section{Extension to $\HMLpastf{\X}$ and $\HMLppf{\X}$}
+
+In this section extend our logics to include variables. Satisfiability of 
+formulas with variables is determined by a declaration of equations,
+mapping variables to formulas, and depends on a model for the declaration,
+i.e. a mapping of variables to sets of processes (or computations). We
+are usually only interested in the minimal or maximal model for a given
+declaration. By doing this we can reason about properties of processes
+and computations that go beyond one step of lookahead or lookback. For
+example we can phrase the question ``Has the action $\alpha$ ever happened
+in the past?'' as a recursive logical property under a minimal model.
+
+\begin{definition}
+    Let $\T=\langle P,A,\rightarrow \rangle$ be an LTS and $\X$ a possibly
+    infinite
+    set of identifiers. The set $\HMLpastf{\X}(A)$,
+    or simply $\HMLpastf{\X}$, is defined by the grammar
+    \[
+        \phi,\psi \,::=\, \true \alt \phi\land\psi
+                                \alt \neg\phi
+                                \alt \dmnd{\alpha} \phi
+                                \alt \dmndback{\alpha} \phi
+                                %\alt \pdmnd{i} \phi
+                                %\alt \pdmndback{i} \phi
+                                \alt X
+    \]
+    where $X\in \X$. The set $\HMLppf{\X}(A)$ is defined in the same manner, 
+    extending $\HMLpp(A)$ with identifiers.
+\end{definition}
+
+When reasoning about recursive formulae, it is useful to have their denotational
+semantics. For convenience we rephrase part of definiton \ref{dfn:hmlpast} in a 
+denotational setting.
+
+\begin{definition}[Denotational semantics of $\HMLpp$]
+    \label{dfn:hmlppsemantics}
+
+    Let $\phi$ be a $\HMLpp$ formula. Its {\em denotation} $\den{\phi}\subseteq \C_\T$ 
+    is defined structurally as follows.
+    \[
+    \begin{array}{r@{\quad}c@{\quad}l}
+        \den{\true} &=&  \C_\T \\
+        \den{\phi\land\psi} &=& \den{\phi} \cap \den{\psi} \\
+        \den{\neg\phi} &=& \C_\T \setminus \den{\phi} \\
+        \den{\dmnd{\alpha}\phi} &=& \dendmnd{\alpha}\den{\phi} \\
+        \den{\dmndback{\alpha}\phi} &=& \dendmndback{\alpha}\den{\phi} \\
+        \den{\pdmnd{i}\phi} &=& \denpdmnd{i}\den{\phi} \\
+        \den{\pdmndback{i}\phi} &=& \denpdmndback{i}\den{\phi} \\
+    \end{array}
+    \]
+    where the operators $\dendmnd{\alpha}, \dendmndback{\alpha},
+    \denpdmnd{i}, \denpdmndback{i} : \powerset{\C_\T} \rightarrow \powerset{\C_\T}$
+    are defined with
+    \[
+    \begin{array}{r@{\quad}c@{\quad}l}
+        \dendmnd{\alpha}S &=& \{ \rho \in \C_\T \,|\, \exists \rho'\in S : \rho \trans{\alpha} \rho' \} \\
+        \dendmndback{\alpha}S &=& \{ \rho \in \C_\T \,|\, \exists \rho'\in S : \rho' \trans{\alpha} \rho \} \\
+        \denpdmnd{i}S &=& \{ \rho \in \C_\T \,|\, \exists \rho'\in S : \rho \ptrans{i} \rho' \} \\
+        \denpdmndback{i}S &=& \{ \rho \in \C_\T \,|\, \exists \rho'\in S : \rho' \ptrans{i} \rho \} \\
+    \end{array}
+    \]
+\end{definition}
+
+We will use the same notation for denotations of formulas in $\HMLpast$, where
+the stuttering operators are simply removed from the above definition.
+The the denotational semantics coincide with definition \ref{dfn:hmlpast},
+although we leave the proof as an exercise for the reader.
+
+\begin{lemma}
+    Let $\phi \in \HMLpp$ and $\rho \in \C_\T$. Then $\rho\in\den{\phi}$ if
+    and only if $\rho \vDash^* \phi$.
+\end{lemma}
+
+To define the satisfiability relation between computations and formulas
+of this logic, we need to define the meaning of each identifier appearing
+in a formula. Thus, the satisfiability relation depends on a {\em declaration}
+of variables.
+\begin{definition}
+    Let $\X$ be a set of variables. Then 
+    a {\em declaration} over $\X$ is a partial function 
+    $\D : \X \hookrightarrow \HMLppf\X$,
+    assigning a formula to each variable of some subset of $\X$, with the restriction
+    that the formulas only contain variables in the domain of $\D$ and each occurence
+    of a variable in a formula is positive, i.e. any variable is within the scope of
+    an even number of negations.
+\end{definition}
+%
+We generally write declarations as sets of defining equations, for example
+\begin{align*}
+    X &= \dmnd{a}\true \lor Y \\
+    Y &= \dmnd{A}\true \land \bx{A}X
+\end{align*}
+Note that our shorthands for $\lor$ and the box operators nest their components within
+an even number of negations.
+
+To define the precise meaning of a formula involving variables, we need to
+fix a declaration of the variables in question. In addition we also need
+to define the denotation of each variable, which is done by a {\em model}.
+\begin{definition}
+    \label{dfn:model}
+    Let $\X$ be a set of variables and $\D$ a declaration over $\X$. 
+    A {\em model} over $\X$ for the declaration $\D$
+    is a partial function $\sigma : \X \hookrightarrow \powerset{\C}$,
+    assigning each variable of a set of variables a subset of computations,
+    such that the assignments of variables is consistent with $\D$, i.e.
+    \[
+    \sigma(X) = \den{\D(X)}
+    \]
+    where $\sigma$ is used in the right hand side to specify the denotation
+    of any nested variables in the formula $\D(X)$.
+    By $\M_\X$ we denote the set of all models over $\X$.
+\end{definition}
+%
+The idea is that a computation $\rho$ satisfies the formula $X$ if and only
+if $\rho \in \sigma(X)$ for a fixed model $\sigma$. In other words, $\sigma(X)$
+is the denotation of the formula $X$. The above definition is a bit vague
+in the term ``consistent.'' We clarify this by 
+extending the denotational semantics for $\HMLpp$
+to one for $\HMLppf{\X}$.
+\begin{definition}[Denotational semantics of $\HMLppf{\X}$]
+    \label{dfn:hmlppfsemantics}
+
+    Let $\phi$ be a $\HMLppf{\X}$ formula and $\D$ be a declaration assigning
+    formulas to every variable appearing in $\phi$ and $\D$ itself and
+    $\sigma$ a model for $\D$. 
+    The denotation of $\phi$ with respect to $\D$ and $\sigma$,
+    written $\den{\phi}^\D_\sigma$
+    is defined structurally as follows.
+    \[
+    \begin{array}{r@{\quad}c@{\quad}l}
+        \den{\true}^\D_\sigma &=&  \C_\T \\[4pt]
+        \den{\phi\land\psi}^\D_\sigma &=& \den{\phi}^\D_\sigma \cap \den{\psi}^\D_\sigma \\[4pt]
+        \den{\neg\phi}^\D_\sigma &=& \C_\T \setminus \den{\phi}^\D_\sigma \\[4pt]
+        \den{\dmnd{\alpha}\phi}^\D_\sigma &=& \dendmnd{\alpha}\den{\phi}^\D_\sigma \\[4pt]
+        \den{\dmndback{\alpha}\phi}^\D_\sigma &=& \dendmndback{\alpha}\den{\phi}^\D_\sigma \\[4pt]
+        \den{\pdmnd{i}\phi}^\D_\sigma &=& \denpdmnd{i}\den{\phi}^\D_\sigma \\[4pt]
+        \den{\pdmndback{i}\phi}^\D_\sigma &=& \denpdmndback{i}\den{\phi}^\D_\sigma \\[4pt]
+        \den{X}^\D_\sigma &=& \sigma(X) \\
+    \end{array}
+    \]
+    where the operators $\dendmnd{\alpha}, \dendmndback{\alpha},
+    \denpdmnd{i}, \denpdmndback{i} : \powerset{\C_\T} \rightarrow \powerset{\C_\T}$
+    are the same as in definition~\ref{dfn:hmlppsemantics}.
+
+    The satisfiability relation $\vDash^\D_\sigma \subseteq \C_\T \times \HMLppf{\X}$
+    is defined by
+    \[
+        \rho \vDash^\D_\sigma \phi  \quad\Leftrightarrow\quad \rho \in \den{\phi}^\D_\sigma
+    \]
+\end{definition}
+
+The {\em consistency} of models can now be expressed as follows. A function 
+$\sigma : \X \hookrightarrow \powerset\C$ is a model for a declaration $\D$
+if and only if for all $X$ in the domain of $\sigma$
+\[
+\sigma(X) = \den{\D(X)}_\sigma^\D.
+\]
+
+Obviously, for every declaration there may be a choice of multiple models. 
+We are usually interested in either the greatest or least models, meaning the
+sets assigned to variables are as large or as small as possible. Finding such
+models is done by calculating fixpoints, whose existence is given by Tarski's
+Fixpoint Theorem. Tarski's theorem requires that declarations define
+a monotonic function on sets of computations. Since we have negation in our logic,
+monotonicity is not guaranteed in the general case, but our restriction on
+declarations that its formulas may only contain positive occurrences of variables
+suffices to ensure monotonicity.
+Since negation is the only operator within the
+denotational semantics that is non-monotonic, this suffices.
+
+For a declaration $\D$ we look at its {\em semantic function}. 
+Let $\mathcal{O}_\D$ be a function that maps models to models,
+such that $\mathcal{O}_\D(\sigma)$ maps to a model defined by $X \mapsto 
+\den{\D(X)}^\D_\sigma$. Since models are functions on sets of computations, they can
+be pointwise partially ordered using the normal $\subseteq$ order on sets. With respect
+to this order, the function $\mathcal{O}_\D$ is monotonic under our conditions on $\D$.
+
+The monotonicity property allows us to calculate minimal and maximal models for
+monotonic declarations, using Tarski's Fixpoint Theorem. To find a maximal model,
+start with the model that maps every variable to $\emptyset$ and iterate the
+function $\mathcal{O}_\D$ until a fixpoint is reached. A minimal model can be
+found similarly by starting with a model that maps all variables to $\C$.
+
+
+\subsection{Transformation of formulas in $\HMLppf{\X}$}
+
+We now turn back to the transformation of formulas, so that we can extend 
+theorem~\ref{thm:decomposition} to include formulas from $\HMLppf{\X}$. This
+section largely follows the precedence of~\cite{anna}.
+
+In Section~\ref{sec:decomp_hml} we defined how a formula $\phi$ is quotiented
+with respect to a computation $\rho$. In particular the quotiented formula
+$\true/\rho$ is rewritten to $\true$ for any computation $\rho$. This works
+reasonably well in the non-recursive setting, but there is a hidden assumption
+that we must expose before tackling recursive formulas based on a declaration
+of variables. In Theorem~\ref{thm:decomposition}, the two satisfiability
+relations are actually based on two different transition systems. Satisfiability
+on the right hand side of the theorem, namely
+\[
+(p,\mu_1) \vDash \phi/(q,\mu_2)  \forall (\mu_1,\mu_2) \in D(\pi).
+\]
+When working with this satisfiability relation, we have implicitly assumed
+it is based on the transition system of computations from $p$, which are
+{\em compatible} with the computations from $q$, i.e. in the above, $\mu_1$
+really is a path that is the counterpart of $\mu_2$ in a decomposition of a
+path $\pi$.
+
+Intuitively, the set of computations that satisfy rewritten formula $\phi/\rho$, is the
+set of computations which {\em are compatible with $\rho$} and their {\em
+composition} satisfies the formula $\phi$. However, the rewriting
+\[  \true/\rho = \true \]
+does not match this intuition if we take the denotational viewpoint of the formula
+$\true$ on the right hand side representing {\em all} possible computations.
+In fact, we expect it to represent only those computations which are compatible with $\rho$.
+We will now formalize the notion of compatible computations and refine our definition
+of $\true/\rho$.
+
+\begin{definition}\label{dfn:compatible}
+    Paths $\mu_1$ and $\mu_2$ are {\em compatible} with each other if and only
+    if they have the same length and one of the following holds if they are non-empty.
+    \begin{itemize}
+        \item If $\mu_1 = \mu_1'(p'' \trans \tau p')$ then 
+            $\mu_2 = \mu_2'(q' \ptrans i q')$ and 
+            $\mu_1$ and $\mu_2$ are compatible.
+        \item If $\mu_1 = \mu_1'(p'' \trans a p')$ then either 
+            $\mu_2 = \mu_2'(q'' \trans{\bar a} q')$ or 
+            $\mu_2 = \mu_2'(q' \ptrans i q')$; and in both cases
+            $\mu_1$ and $\mu_2$ are compatible.
+        \item If $\mu_1 = \mu_1'(p'' \ptrans i p')$ then either 
+            $\mu_2 = \mu_2'(q'' \trans{\alpha} q')$ or 
+            $\mu_2 = \mu_2'(q' \ptrans i q')$; and in both cases
+            $\mu_1$ and $\mu_2$ are compatible.
+    \end{itemize}
+    We say two computations are compatible with each other if their paths
+    are compatible.
+\end{definition}
+In a sense, the compatibility of paths is the inverse of decomposition, as stated
+by the following lemma.
+\begin{lemma}
+    If paths $\mu_1$ and $\mu_2$ are compatible, then there exists a path $\pi$
+    such that $(\mu_1,\mu_2)\in D(\pi)$.
+\end{lemma}
+\begin{proof}
+    The path $\pi$ is constructed in the obvious way, each transition of it is
+    obtained by composing the processes from the matching transitions of
+    $\mu_1$ and $\mu_2$ with the parallel operator and determining
+    the action according to the rules for that operator. The conditions of
+    Definition~\ref{dfn:compatible} ensure that the choice of actions is
+    unambiguous in every case. The rest is easy to check with the definition of $D$.
+\end{proof}
+
+We now revise our transformation of the formula $\true$. We want $T/\rho$ to be
+the set of all computations that are compatible with $\rho$. It turns out this
+can be expressed easily in $\HMLpp$, for which we define the following short-hand.
+\begin{definition}
+    Let $\pi$ be a path of transitions in the LTS
+    $\T = \langle P,A,\rightarrow \rangle$.
+    Then the \HMLpp{} formula $\true_\pi$ is defined as follows.
+    \[ \begin{array}{rcl}
+        \true_\lambda &=& \bxback A \false \land \pbxback i \false \\
+        \true_{\pi'(p\trans \tau p')} &=& \pdmndback i \true_{\pi'} \\
+        \true_{\pi'(p\trans a p')} &=& \dmndback{\bar a} \true_{\pi'}  \lor \pdmndback i \true_{\pi'} \\
+        \true_{\pi'(p\ptrans i p')} &=& \dmndback A \true_{\pi'} \lor \pdmndback i \true_{\pi'} \\
+    \end{array} \]
+\end{definition}
+An astute reader will notice that this is a rewording of Definition~\ref{dfn:compatible},
+and it is easy to see that the computations satisfying $T_\pi$ are exactly the computations
+that are compatible with the computations which have $\pi$ as their path. 
+Now the revised transformation of $\true$ is
+\begin{equation}
+\true/(p,\pi) = \true_\pi
+\end{equation}
+which matches our intuition.
+
+\hspace{1cm}
+
+In the recursive setting, satisfiability depends not only on the formula, 
+but also on a declaration
+and its model, it is reasonable that we need to transform the declaration and
+the model as well as formulas.
+For the logic constructs of $\HMLpp$, we can reuse the transformation defined
+in section~\ref{sec:decomp_hml} and define how to rewrite formulas of the form $X$. 
+However, instead
+of decomposing formulas of this form, we will treat the quotient $X/\rho$
+as a variable, i.e. we use the set $\X\times\C$ as our set of variables. 
+The intuitive idea of such variables is the following,
+\[
+(p,\mu_1) \vDash^{\D'}_{\sigma'} X/(q,\mu_2)
+\quad \Leftrightarrow \quad
+(p\parallel q, \pi) \vDash^\D_\sigma X
+\quad \Leftrightarrow \quad
+(p\parallel q, \pi) \in \sigma(X)
+\]
+where $\sigma$ is a model for the declaration $\D$ over the variables $\X$, 
+$\sigma'$ and $\D'$ similarly over the variables $\X\times\C$,
+and $(\mu_1,\mu_2)\in D(\pi)$. 
+We will see later the relation between $\D$ and $\D'$
+as well as $\sigma$ ad $\sigma'$.
+
+Formally, the variables in our rewritten logic will be pairs $(X,\rho)\in \X\times\C$.
+Formulas of the form $X$ are simply rewritten as follows.
+\[
+X/\rho = (X,\rho)
+\]
+where the $X/\rho$ on the left hand side denotes the transformation (as in
+Section~\ref{sec:decomp_hml}) and the pair on the right hand side is the
+variable in our adapted logic. When there is no risk of ambiguity, we will
+simply use the notation $X/\rho$ to represent {\em the variable} $(X,\rho)$.
+
+\subsubsection{Transformation of declarations}
+
+Generating the transformed declaration $\D'$
+from a declaration $\D$ is straightforward as well. For any variable $X/\rho$
+encountered in any rewritten formula
+\[
+\D'(X/\rho) = \D(X)/\rho
+\]
+Note that the rewritten formula on the right hand side may introduce more variables
+which obtain their values in $\D'$ in the same manner.
+
+\subsubsection{Transformation of models}
+
+To each model $\sigma$ for a declaration $\D$ over the set of variables $\X$,
+there corresponds a model $\sigma'$ for the declaration $\D'$ over the set of
+variables $\X\times\C$, where $\D'$ is defined as above, such that the following
+holds.
+\[
+(p\parallel q, \pi) \vDash^\D_\sigma \phi
+\quad \Leftrightarrow \quad
+(p,\mu_1) \vDash^{\D'}_{\sigma'} \phi/(q,\mu_2)
+\]
+for all $(\mu_1,\mu_2)\in D(\pi)$.
+
+We represent the definition of $\sigma'$ with the function $\Phi$, which
+maps models over $\X$ to models over $\X\times\C$.
+\begin{align*}
+\sigma'(X/(q, \mu_2)) &= \Phi(\sigma)(X/(q, \mu_2))  \\
+& = \{ (p, \mu_1) \,|\, (p\parallel q, \pi) \in \sigma(X) \textrm{ for some $\pi$ with }
+(\mu_1,\mu_2) \in D(\pi) \}
+\end{align*}
+
+We intend to show the correspondence of minimal and maximal models, i.e. if $\sigma$
+is a minimal model for $\D$, then $\sigma'$ is a minimal model for $\D'$ and vice versa,
+and the same holds for maximal models. 
+In particular, we will show that there is a bijection on the two sets of models, based
+on the mapping $\Phi$. First we will attempt to define its inverse.
+Consider the function $\Psi$,
+which maps a model over $\X\times\C$ to a model over $\X$.
+\[
+\Psi(\sigma')(X) = \{ (p\parallel q, \pi) \,|\, 
+\forall(\mu_1,\mu_2) \in D(\pi) :
+(p,\mu_1) \in \sigma'(X/(q,\mu_2)) \}
+\]
+
+We can show that $\Psi\circ\Phi$ is the identity mapping on assignments over
+$\X\times\C$. However, for now we can only prove a weaker condition about
+$\Phi\circ\Psi$.
+
+\TODO{how do we make it clear that "`normal"' models only have processes of the
+form $p\parallel q$? do we need to}
+\begin{lemma}
+    \[ \Psi \circ \Phi = \id_{\M_\X}  \]
+and
+    \[ \forall \sigma' : (\Phi \circ \Psi)(\sigma') \sqsubseteq \sigma' \]
+where $\sqsubseteq$ is the point-wise partial ordering on functions of set
+generated by $\subseteq$.
+\end{lemma}
+\begin{proof}
+    Let $\sigma\in\M_\X$. Then for any $X\in\X$
+    \begin{align*}
+        \phantom{\Leftrightarrow}\quad  &
+        (p\parallel q, \pi) \in (\Psi(\Phi(\sigma))(X) \\
+        %        
+        \Leftrightarrow\quad &
+        \forall (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1)\in \Phi(\sigma)(X/(q,\mu_2)) \\
+        %
+        \Leftrightarrow\quad &
+        \forall (\mu_1,\mu_2) \in D(\pi) : \exists \pi' :
+             (p\parallel q, \pi') \in \sigma(X) \land (\mu_1,\mu_2)\in D(\pi')
+        %
+        \intertext{By lemma~\ref{thm:paths_compose_uniquely} we have that in the last 
+        line, $\pi=\pi'$,
+        which allows us to continue,}
+        %
+        \Leftrightarrow\quad &
+        \forall (\mu_1,\mu_2) \in D(\pi) : (p\parallel q, \pi) \in \sigma(X) \\
+        %
+        \Leftrightarrow\quad &
+        (p\parallel q, \pi) \in \sigma(X)
+    \end{align*}
+    This shows that the sets $\sigma(X)$ and $(\Psi(\Phi(\sigma)))(X)$ are equal.
+
+    Now let $\sigma'\in \M_{\X\times\C}$. For any $X/(q,\mu_2) \in \X\times\C$
+    \begin{align*}
+        \phantom{\Leftrightarrow}\quad  &
+        (p,\mu_1) \in (\Phi(\Psi(\sigma'))(X/(q,\mu_2)) \\
+        %
+        \Leftrightarrow\quad &
+        \exists \pi : (\mu_1,\mu_2) \in D(\pi) \land
+                (p\parallel q, \pi) \in \Psi(\sigma')(X) \\
+        %
+        \Leftrightarrow\quad &
+        \exists \pi : (\mu_1,\mu_2) \in D(\pi) \land
+                \left( \forall (\mu_1', \mu_2')\in D(\pi) : 
+                    (p,\mu_1') \in \sigma'(X/(q,\mu_2')) \right) \\
+        %
+        \Rightarrow\quad &
+        \exists \pi : (p,\mu_1) \in \sigma'(X/(q,\mu_2)) \\
+        %
+        \Leftrightarrow\quad &
+        (p,\mu_1) \in \sigma'(X/(q,\mu_2))
+    \end{align*}
+    This shows that for any variable $X/(q,\mu_2)$, $(\Phi(\Psi(\sigma')))(X/(q,\mu_2))
+    \subseteq \sigma'(X/(q,\mu_2))$.
+\end{proof}

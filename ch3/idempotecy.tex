@@ -1,0 +1,317 @@
+\documentclass{llncs}
+
+\usepackage{stmaryrd, amssymb, ifthen, mdwlist, amsmath, graphicx}
+\usepackage[usenames]{color}
+
+\def\blfootnote{\xdef\@thefnmark{}\@footnotetext}
+
+
+\newcommand{\assocdesim}{\textsf{ASSOC-De Simone}}
+\newcommand{\Implies}{\mathrel{\Rightarrow}}
+\newcommand{\Iff}{\mathrel{\Leftrightarrow}}
+\newcommand{\defs}{\mathrel{\doteq}}
+\newcommand{\id}[1]{\mathit{#1}}
+\newcommand{\MAR}[1]{\textbf{\underline{Michel says}: #1}}
+\newcommand{\MRM}[1]{\textbf{\underline{Mohammad says}: #1}}
+\newcommand{\AB}[1]{\textbf{\underline{Arnar says}: #1}}
+
+
+\newcommand{\sosrule}[3][0]{
+\ifthenelse{\equal{#1}{0}}
+  {\begin{array}[c]{c}
+   #2\vspace{0.1em}\\\hline\rule[1em]{0pt}{0.1em}#3
+   \end{array}}
+  {\displaystyle\frac{#2}{#3}\ifthenelse{\equal{#1}{}}{}{,\quad}#1}
+}
+\newcommand{\sosproof}[3][0]{
+\ifthenelse{\equal{#1}{0}}
+  {\begin{array}[b]{c}
+   #2\vspace{0.1em}\\\hline\hline\rule[1em]{0pt}{0.1em}#3
+   \end{array}}
+  {\begin{array}[c]{c}
+   #2\vspace{0.1em}\\\hline\hline\rule[1em]{0pt}{0.1em}#3
+   \end{array}\ifthenelse{\equal{#1}{}}{}{,\quad}#1}
+}
+
+\newcommand{\eqidem}{\mathrel{\simeq_f}}
+\newcommand{\isomorphic}{\mathrel{\sim_i}}
+
+%\newcommand{\assocrules}{\mathcal{R}_\textrm{a}}
+%\newcommand{\assocrulest}{\mathcal{R}_\textrm{a\term}}
+\newcommand{\tss}{\mathcal{T}}
+\newcommand{\trans}[1]{\,{\stackrel{{#1}}{\rightarrow}}\,}
+\newcommand{\cando}[1]{\mathrel{\mbox{ can}_{#1}\,}}
+\newcommand{\after}[1]{\mathrel{\mbox{ after}_{#1}\,}}
+
+\newcommand{\ntrans}[1]{\,{\stackrel{{#1}}{\nrightarrow}}\,}
+\newcommand{\bisim}{\mathbin{\mbox{$\underline{\leftrightarrow}$}}}
+\newcommand{\rel}{\mathcal{R}}
+\newcommand{\Rel}{\,\mathcal{R}\,}
+\newcommand{\cond}[1]{\textbf{Condition: }#1}
+\newcommand{\term}{\checkmark}
+\newcommand{\interrupt}{\vartriangleright}
+\newcommand{\disrupt}{\blacktriangleright}
+\newcommand{\DR}[1]{\ensuremath \mathrm{(#1)}}
+\newcommand{\DRn}[1]{\ensuremath \mathrm{#1}}
+
+\newcommand{\prem}[1]{\ensuremath \id{prem}(#1)}
+\newcommand{\conc}[1]{\ensuremath \id{conc}(#1)}
+
+\newcommand{\ntyft}{\textsf{Ntyft}}
+
+\newcommand{\Terms}[1]{\mathbb{T}(#1)}
+\newcommand{\CTerms}[1]{\mathbb{C}(#1)}
+
+\newcommand{\vars}[1]{\mathit{vars}(#1)}
+
+
+
+\newenvironment{bullets}{\begin{list}{$\bullet$}{\itemsep 0em\topsep 0em}\labelwidth 3mm}{\end{list}}
+
+\definecolor{darkgreen}{rgb}{0,.6,0}
+%\newcommand{\leaveout}[1]{{\color{cyan}{#1}}}
+\newcommand{\leaveout}[1]{}
+
+\def\lastname{Aceto et.al.}
+
+\title{Rule Formats for Determinism and Idempotency\thanks{The work of Aceto, Birgisson and Ingolfsdottir has been
+partially supported by the projects ``The Equational Logic of Parallel
+Processes'' (nr.~060013021), and ``New Developments in Operational
+Semantics'' (nr.~080039021) of the Icelandic Research Fund. Birgisson
+has been further supported by a research-student grant nr.~080890008
+of the Icelandic Research Fund.}}
+\author{Luca Aceto\inst{1}
+\and Arnar Birgisson\inst{1}
+\and Anna Ingolfsdottir\inst{1} \and \\
+MohammadReza Mousavi\inst{2}
+\and Michel A. Reniers\inst{2}
+}
+\institute{
+School of Computer Science, Reykjavik University,
+\\ Kringlan 1, IS-103 Reykjavik, Iceland
+\and
+Department of Computer Science, Eindhoven University of Technology,
+\\ {P.O.~Box~513}, NL-5600~MB~~Eindhoven, The Netherlands
+}
+
+\bibliographystyle{plain}
+%\pagestyle{plain} % for page numbers
+
+\begin{document}
+\begin{frontmatter}
+
+\maketitle
+
+\begin{abstract}
+Determinism is a semantic property of (a  fragment of) a language
+that specifies that a program cannot evolve operationally in several different ways.
+Idempotency is a property of binary composition operators requiring
+that the composition of two identical specifications or programs
+will result in a piece of specification or program that is equivalent to the original components.
+In this paper, we propose two (related) meta-theorems for
+guaranteeing determinism and idempotency of binary operators.
+These meta-theorems are formulated in terms of syntactic templates
+for operational semantics, called rule formats.
+We show the applicability of our formats by applying them to various operational semantics
+from the literature.
+\end{abstract}
+
+\end{frontmatter}
+
+%\pagenumbering{arabic}
+
+\input{Introduction}
+\input{Preliminaries}
+\input{Determinism}
+\input{Format}
+%\input{Extensions}
+%\input{Isomorphism}
+\input{Conclusions}
+
+
+%\bibliography{lit}
+\begin{thebibliography}{10}
+
+\bibitem{Aceto01}
+L.~ Aceto, W.J.~Fokkink, and C.~Verhoef.
+\newblock Structural operational semantics.
+\newblock In {\em  Handbook of Process Algebra, {Chapter} 3}, pages 197--292. Elsevier, 2001.
+
+\bibitem{Baeten02}
+J.C.M.~Baeten and C.A.~Middelburg.
+\newblock {\em Process Algebra with Timing}.
+\newblock EATCS Monographs. Springer-Verlag, Berlin, Germany, 2002.
+
+\bibitem{Baeten90}
+J.C.M.~Baeten and W.P.~Weijland.
+\newblock {\em Process Algebra}, volume~18 of {\em Cambridge Tracts in
+  Theoretical Computer Science}.
+\newblock Cambridge University Press, 1990.
+
+\bibitem{BaetenMauw94}
+J.C.M.~Baeten and S.~Mauw.
+\newblock Delayed choice: An operator for joining {M}essage {S}equence
+  {C}harts.
+\newblock In {\em Proceedings of Formal Description Techniques}, volume~6 of {\em
+  IFIP Conference Proceedings}, pages 340--354. Chapman {\&} Hall, 1995.
+
+\bibitem{Bergstra84}
+J.A.~ Bergstra and J.W.~ Klop.
+\newblock Process algebra for synchronous communication.
+\newblock {\em Information and Control}, 60(1-3):109--137, 1984.
+
+\bibitem{Mousavi08-CONCUR}
+S.~ Cranen, M.R.~ Mousavi, and M.A.~ Reniers.
+\newblock A rule format for associativity.
+\newblock In {\em Proceedings  of CONCUR'08},
+  volume 5201 of {\em Lecture Notes in Computer Science}, pages 447--461,
+   Springer-Verlag, 2008.
+
+\bibitem{dArgenio95}
+P.R.~ D'Argenio.
+\newblock $\tau$-angelic choice for process algebras (revised version).
+\newblock Technical report, LIFIA, Depto. de Inform\'{a}tica, Fac. de Cs. Exactas, Universidad Nacional de La Plata. March 1995.
+
+\bibitem{Fokkink03a}
+W.J.~Fokkink and T.~Duong Vu.
+\newblock Structural operational semantics and bounded nondeterminism.
+\newblock {\em Acta Informatica}, 39(6--7):501--516, 2003.
+
+\bibitem{Groote93}
+J.F.~Groote.
+\newblock Transition system specifications with negative premises.
+\newblock {\em Theoretical Computer Science (TCS)}, 118(2):263--299, 1993.
+
+\bibitem{Hennessy87}
+M.~ Hennessy and G.D.~ Plotkin.
+\newblock Finite conjuncitve nondeterminism.
+\newblock In {\em Concurrency and Nets, Advances in Petri Nets}, pages 233--244.
+  Springer, 1987.
+
+\bibitem{Hoare85}
+C.A.R.~Hoare.
+\newblock {\em Communicating Sequential Processes}.
+\newblock Prentice Hall, 1985.
+
+\bibitem{Lanotte05}
+R.~ Lanotte and S.~Tini.
+\newblock Probabilistic congruence for semistochastic generative processes.
+\newblock In {\em Proceedings of FOSSACS'05}, volume 3441 of {\em Lecture Notes in Computer
+  Science}, pages 63--78. Springer, 2005.
+
+\bibitem{Mousavi06-FSTTCS}
+M.R.~ Mousavi, I.C.C.~ Phillips, M.A.~ Reniers, and I.~
+  Ulidowski.
+\newblock The meaning of ordered {SOS}.
+\newblock In {\em Proceedings of FSTTCS'06}, volume 4337 of {\em Lecture Notes in Computer Science},
+  pages 334--345, Springer, 2006.
+
+\bibitem{Mousavi05-IPL}
+M.R.~ Mousavi, M.A.~ Reniers, and J.F.~Groote.
+\newblock A syntactic commutativity format for {SOS}.
+\newblock {\em Information Processing Letters}, 93:217--223, 2005.
+
+\bibitem{Mousavi05-ICALP}
+M.R.~ Mousavi and M.A.~ Reniers.
+\newblock Orthogonal extensions in structural operational semantics.
+\newblock In {\em Proceedings of the ICALP'05}, volume 3580 of {\em Lecture Notes in
+  Computer Science}, pages 1214--1225. Springer, 2005.
+
+\bibitem{Mousavi07-TCS}
+M.R.~ Mousavi, M.A.~ Reniers, and J.F.~Groote.
+\newblock {SOS} formats and meta-theory: 20 years after.
+\newblock {\em Theoretical Computer Science}, (373):238--272, 2007.
+
+\bibitem{Nicollin94}
+X.~ Nicollin and J.~Sifakis.
+\newblock The algebra of timed processes {ATP}: Theory and application.
+\newblock {\em Information and Computation}, 114(1):131--178,  1994.
+
+\bibitem{Plotkin04a}
+G.D.~ Plotkin.
+\newblock A structural approach to operational semantics.
+\newblock {\em Journal of Logic and Algebraic Progamming}, 60:17--139,
+  2004.
+\newblock This article first appeared as Technical Report DAIMI FN-19, Computer Science Department, Aarhus
+  University.
+
+\bibitem{Tini04}
+S.~Tini.
+\newblock Rule formats for compositional non-interference properties.
+\newblock {\em Journal of Logic and Algebraic Progamming}, 60:353--400,
+  2004.
+
+\bibitem{Ulidowski97b}
+I.~Ulidowski and S.~Yuen.
+\newblock Extending process languages with time.
+\newblock In {\em Proceedings of {AMAST}'97},
+  volume 1349 of {\em Lecture Notes in Computer Science}, pages 524--538.
+  Springer, 1997.
+
+\bibitem{Reniers08}
+M. van Weerdenburg and M.A.~ Reniers.
+\newblock Structural operational semantics with first-order logic.
+\newblock In  {\em Pre-proceedings of SOS'08}, pages 48--62, 2008.
+
+\bibitem{Verhoef95}
+C. Verhoef.
+\newblock A congruence theorem for structured operational semantics with
+  predicates and negative premises.
+\newblock {\em Nordic Journal of Computing}, 2(2):274--302, 1995.
+
+\end{thebibliography}
+
+
+%\appendix
+%\input{Appendix}
+
+\end{document}
+
+
+\begin{definition}[De Simone format \cite{deSimone85}]
+A deduction rule is in the \emph{De Simone format} if it is of the form
+$$\sosrule[P]{\{x_i\trans[l_i]y_i~|~i\in I\}}{f(x_1, \ldots, x_n)\trans[l]t}$$
+where $f \in \Sigma$ has arity $n$, $I \subseteq \{1, \ldots, n\}$ is a finite set of indices, $P$ is a predicate on the labels in the deduction rule and moreover,
+
+\begin{bullets}
+\item for $1 \leq i < j \leq n$, $x_i$ and $x_j$ are different variables and for $1 \leq i \leq n$ and $j \in I$, $x_i$ and $y_j$ are distinct variables,
+%There are no duplicates in the set $\{x_i~|~i \in I\} \cup \{y_i~|~i \in I\}$
+\item $t$ is a term in which the variables from $\{ x_i ~|~i \not\in I\} \cup \{y_i~|~i\in I\}$ occur at most once.
+\end{bullets}
+A TSS is in the De Simone format if and only if all of its deduction rules are.
+\end{definition}
+
+
+
+\begin{definition}[Bisimulation]
+\label{def:bisim}
+Let $\tss$ be a TSS with signature $\Sigma$.
+A relation $\rel \subseteq \CTerms{\Sigma} \times \CTerms{\Sigma}$ is a \emph{bisimulation relation}
+if and only if $\rel$ is symmetric
+%\leaveout{(i.e.\ $\forall_{p_0,p_1 \in \CTerms{\Sigma}}~p_0 \rel  p_1 \Leftrightarrow p_1\rel p_0$)}
+and for all $p_0,p_1,p'_0 \in \CTerms{\Sigma}$ and $l \in L$
+$$(p_0 \Rel p_1 \wedge \tss \vdash p_0 \trans[l] p_0') \Rightarrow \exists_{p_1' \in \CTerms{\Sigma}} (\tss \vdash p_1 \trans[l] p_1'\wedge p_0' \Rel p_1' ).$$
+Two terms $p_0, p_1 \in \CTerms{\Sigma}$ are called \emph{bisimilar}, denoted by $p_0 \bisim p_1$ when there exists a bisimulation relation $\Rel$ such that
+$p_0 \rel p_1$.
+\end{definition}
+
+
+It is easy to check that bisimilarity is indeed an equivalence.
+Bisimilarity can be extended to open terms by requiring that $t_0 \bisim t_1$
+when $\sigma(t_0) \bisim \sigma(t_1)$ for all closing substitutions $\sigma: V \rightarrow \CTerms{\Sigma}$.
+In the remainder of this paper, we restrict our attention to the notions of equivalence on \emph{closed terms}
+that contain strong bisimilarity. However, all our results carry over (without any change)
+to the notions on \emph{open terms} that contain strong bisimilarity on open terms in the above sense.
+Another notion of equivalence that we use in the remainder of this paper is isomorphism, as defined below.
+
+%\Michel{Of definitie isomorphism weglaten en alleen omschrijven in tekst, of een duidelijke definitie geven. Dan dus ook duidelijker uitleggen wat de %LTS is die geassocieerd kan worden met een closed term.}
+%\Mohammad{Herformuleert en verplaatst naar hier; check of dat goed is.}
+
+\begin{definition}(Isomorphism)
+\label{def::isomorphism}
+Two closed terms $p$ and $q$ are \emph{isomorphic}, denoted by $p \isomorphic q$, when
+there exists a bijective function $h: reach(p) \rightarrow reach(q)$
+such that $h(p) = q$ and if $h(p_0) = q_0$ and $h(p_1) = q_1$, then $p_0 \trans[l]{p_1}$ if and only if $q_0 \trans[l]{q_1}$,
+where $reach(p)$ is the smallest set satisfying $p \in reach(p)$ and if $p' \in reach(p)$ and $p' \trans[l] q'$, then $q' \in reach(p)$ (i.e., the set of closed terms reachable from $p$).
+\end{definition}
+

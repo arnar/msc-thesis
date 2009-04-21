@@ -1,0 +1,69 @@
+\section{Introduction} % (fold)
+\label{sec:introduction}
+
+The implementation of security enforcement mechanisms requires special care,
+as any flaw may open the door to malicious attacks. This is especially true
+in the case of multithreaded software, as the designer must consider all possible
+interleavings of code paths. In~\cite{tmi} we presented Transactional Memory Introspection
+(TMI), an architecture that greatly simplifies the implementation of correct
+reference monitors on 
+mechanisms that
+implement Software Transactional Memory (STM)~\cite{harrisFraserSTM,hm93} support.
+%
+In this paper we present a formal semantics for TMI,
+    as well as a reference TMI implementation over the Haskell STM.
+These specifications clarify the TMI architecture
+    and helps identify and resolve ambiguities 
+    in its implementation.
+
+
+STM systems provide many useful guarantees that make the implementation of multithreaded
+software easier and less error-prone. In particular, STM offers 
+atomicity and isolation
+through optimistically executing concurrent code and monitoring
+for conflicting accesses to resources.
+By providing
+rollback mechanisms, STM systems can resolve conflicting accesses by undoing the work of a transaction
+and retrying that transaction again, from the beginning.
+
+All STM implementations must perform bookkeeping of accesses (such as reads and writes)
+to shared resources. By interposing on 
+this bookkeeping, and the necessary monitoring and validation steps,
+TMI provides facilities to support the creation of robust and correct
+enforcement mechanisms. 
+TMI provides \emph{complete mediation} by enhancing the STM
+runtime checks against conflicting, concurrent accesses, and TMI
+adds the requirement that all accesses must have been successfully
+authorized before a transaction is committed.
+TMI also \emph{simplifies error handling}. When unauthorized accesses are detected in a transaction,
+the transaction is rolled back and not retried. 
+This saves the programmer from the onerous and error-prone task of performing clean-up after
+a failed authorization.
+
+Another common problem in traditional authorization is {\em time of check to time of use} bugs.
+Such bugs arise when an authorization check is used to decide if a
+dangerous operation should be performed, and when the interleaving
+of code execution may cause state changes that invalidate that
+decision, before the dangerous operation is actually performed.
+TMI resolves this problem, by making use of STM mechanisms to
+execute both the authorization check and the dangerous operation
+within a single transaction.
+
+In~\cite{tmi} we give a comprehensive, informal overview of the TMI architecture and also evaluate 
+a Java TMI implementation built on the DSTM2 library~\cite{hlm06}.
+In order to provide clear, well-defined semantics for TMI, this paper provides a more
+formal treatment and defines a structural operational semantics~\cite{plotkin_04_structural} 
+for the TMI architecture.
+For this we need an STM system with equally well founded semantics. This is provided by the Haskell
+STM, whose semantics is given in~\cite{haskellstm}. Our semantics of TMI builds on this foundation
+and is also accompanied by an implementation over the Haskell STM system. We believe having formal
+semantics for TMI is important to guide possible implementations and disambiguate design choices.
+
+The structure of the paper is as follows. In section 2 we give the necessary background, including
+STM systems and how TMI makes use of their mechanisms, as well as an overview of the Haskell STM
+implementation. Section 3 covers TMI in greater detail and describes its Haskell implementation
+from the user standpoint. Section 4 defines the formal semantics of TMI, building on existing
+semantics for STM Haskell. Section 5 describes the key elements of our Haskell implementation
+and section 6 discusses future work.
+
+% section introduction (end)
