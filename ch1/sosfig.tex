@@ -4,59 +4,6 @@
 
 \color{old}
 
-\center{\framebox{I/O transitions $\qquad P;\,\Theta \stackrel{a}{\tarrow} Q;\,\Theta'$}}
-\begin{gather*}
-\begin{array}{rcll}
-    \PP[\prg{putChar } c];\, \Theta & \stackrel{!c}{\tarrow}
-                                       & \PP[\prg{return ()}];\, \Theta
-                                       & \soslbl{PUTC} \\
-    \PP[\prg{getChar }];\, \Theta& \stackrel{?c}{\tarrow}
-                                       & \PP[\prg{return } c];\, \Theta
-                                       & \soslbl{GETC} \\
-    \PP[\prg{forkIO } M];\, \Theta& \tarrow
-                                       & (\PP[\prg{return } t] \,|\, M_t);\, \Theta
-                                            \quad t\notin \PP, \Theta, M
-                                       & \soslbl{FORK} \\
-    \PP[\prg{catch }(\prg{return }M)\, N];\,\Theta& \tarrow 
-                                       & \PP[\prg{return } M];\,\Theta
-                                       & \soslbl{CATCH1} \\
-    \PP[\prg{catch }(\prg{throw }M)\, N];\,\Theta& \tarrow 
-                                      & \PP[N\,M];\,\Theta
-                                      & \soslbl{CATCH2}
-\end{array}
-\\
-\sos{M \tarrow N}
-    {\PP[M];\, \Theta \tarrow \PP[N];\, \Theta}
-\quad\soslbl{ADMIN}
-\\
-%
-% <<< Atomic
-%
-\sos{M;\,\Theta,\emptyset
-     \stackrel{*}{\tdarrow}
-     \prg{return }N;\, \Theta',\Delta'}
-   {\PP[\prg{atomically }M];\,\Theta \tarrow
-    \PP[\prg{return }N];\,\Theta'}
-  \quad\soslbl{ARET}
-\qquad
-\sos{M;\,\Theta,\emptyset
-     \stackrel{*}{\tdarrow}
-     \prg{throw }N;\, \Theta',\Delta'}
-   {\PP[\prg{atomically }M];\,\Theta \tarrow
-    \PP[\prg{throw }N];\,\Theta\cup\Delta'}
-  \quad\soslbl{ATHROW}
-%\\
-%\sos{M;\,\Theta,\emptyset
-%     \stackrel{*}{\tdarrow}
-%     \prg{abort }N;\, \Theta',\Delta',\Sigma'}
-%   {\PP[\prg{atomically }M];\,\Theta \tarrow
-%    \PP[\prg{throw }N];\,\Theta\cup\Delta'}
-%  \quad\soslbl{ATHROW1}
-% >>>
-\end{gather*}
-
-\rule{0.95\linewidth}{0.5pt}
-
 \center{\framebox{STM transitions $\qquad M;\,\Theta, \Delta\new{,\Sigma}
                                  \tdarrow N;\,\Theta',\Delta'\new{,\Sigma'}$}}
 \begin{gather*}
@@ -65,20 +12,23 @@
    \SS[\prg{readTVar } r];\,\Theta,\Delta\new{,\Sigma}
  & \tdarrow
  & \SS[\prg{return }\Theta_1(r)];\,\Theta,\Delta\new{,\Sigma}
- & \textrm{if $r\in \dom(\Theta)$ \new{and $\Theta_2(s) = \bot$}}
- & \soslbl{READ} \\
+ & \\ & & \hspace{1cm}
+   \textrm{if $r\in \dom(\Theta)$ \new{and $\Theta_2(s) = \bot$}}
+   \hspace{.7cm} \soslbl{READ} \\[.7em]
 %
    \SS[\prg{writeTVar } r\;M];\,\Theta,\Delta\new{,\Sigma}
  & \tdarrow
  & \SS[\prg{return ()}];\,\Theta[r\mapsto \new{(}M\new{,\bot)}],\Delta\new{,\Sigma}
- & \textrm{if $r\in \dom(\Theta)$ \new{and $\Theta_2(s) = \bot$}}
- & \soslbl{WRITE} \\
+ & \\ & & \hspace{1cm}
+   \textrm{if $r\in \dom(\Theta)$ \new{and $\Theta_2(s) = \bot$}}
+   \hspace{.7cm} \soslbl{WRITE} \\[.7em]
 %
    \SS[\prg{newTVar } M];\,\Theta,\Delta\new{,\Sigma}
  & \tdarrow
  & \SS[\prg{return }r];\,\Theta[r\mapsto \new{(}M\new{,\bot)}],\Delta[r\mapsto \new{(}M\new{,\bot)}]\new{,\Sigma}
- & \textrm{$r\notin \dom(\Theta)$}
- & \soslbl{NEW} \\
+ & \\ & & \hspace{1cm}
+   \textrm{$r\notin \dom(\Theta)$}
+   \hspace{2.9cm} \soslbl{NEW} \\[.7em]
 %
 \end{array}
 %
@@ -190,7 +140,7 @@
 \end{gather*}
 
 \end{minipage}}
-\caption{Operational semantics for IO and STM actions}
+\caption{Operational semantics for STM actions}
 \label{fig:sos1}
 \end{figure*}
 

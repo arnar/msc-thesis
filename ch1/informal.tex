@@ -18,7 +18,7 @@ The programmer marks certain variables as security
 sensitive. This implicitly indicates to the STM system that these variables are shared,
 and ensures that the STM system will protect against race conditions in accesses to the variables.
 TMI enhances the monitoring of these security sensitive variables
-by ensuring that a access-control reference monitor is invoked every time
+by ensuring that an access-control reference monitor is invoked every time
 that the variables are accessed.
 
 \paragraph{\emph{Time of policy evaluation with TMI:}} % Changed proposed header
@@ -29,8 +29,9 @@ can be \emph{eager} or \emph{lazy}.
 With {\em eager} enforcement,
 every access to a variable triggers the reference monitor, which immediately checks it against the
 relevant policy. If authorization is denied, the transaction is immediately aborted. With lazy enforcement,
-accesses to variables are simply logged (often they are already logged by the STM) and only at the end
-of the transaction, the logs are inspected by the reference monitor. If any of the logged accesses
+accesses to variables are simply logged (often they are already logged by the STM) and 
+the logs are inspected by the reference monitor only at the end
+of the transaction. If any of the logged accesses
 are invalid, the whole transaction is aborted. 
 
 % Applied some, not all, changes in below para
@@ -51,7 +52,7 @@ that those variables should be protected against race conditions.
 This means the values held by these variables can only
 be read or modified within a transaction, and that the STM system takes care of resolving conflicting accesses
 by concurrent transactions. 
-This also means that upon every variable access,
+This also means that, upon every variable access,
 TMI appends information identifying the variable in 
 question to a transaction-specific {\em introspection log}. 
 In particular, the introspection log will contain information about the creation, reading, and writing
@@ -95,7 +96,7 @@ if the security manager finds the transaction in violation of policy,
 all state changes are rolled back---including changes to the security manager state,
 in the case of history-based policies---and,
 instead of retrying the transaction,
-an exception is raised to invoker of the atomic block.
+an exception is raised to the invoker of the atomic block.
 
 \paragraph{\emph{A simple example:}} 
 The following pseudo code shows what software
@@ -132,8 +133,8 @@ Second, in the case of
 authorization failure (e.g. a withdrawal from a different user's account), the error handler 
 need only consider how to indicate the error to the user.
 The error handler need not clean up any mess:
-any state changes that happened during the
-transaction
+the state changes that happened during the
+transaction (if any)
 have already been rolled back when the error handler starts execution. 
 Although perhaps not apparent in this simplified example, 
 there is ample evidence that writing correct cleanup code is difficult,
@@ -157,7 +158,7 @@ would be guaranteed to see the same owner throughout its execution.
 \label{ssub:tmi_in_haskell}
 
 We saw earlier how Concurrent Haskell uses the type system to confine operations on shared variables to
-STM actions, and provided a single function to wrap STM actions into an atomic I/O action.
+STM actions, and provides a single function to wrap STM actions into an atomic I/O action.
 For TMI, we do something very similar. We confine operations on security sensitive variables to {\em TMI
 actions}, and provide a single function to turn a TMI action into an STM action and associating it with a
 security manager at the same time. 
@@ -165,7 +166,7 @@ security manager at the same time.
 Figure~\ref{fig:syntax2} shows the extensions of STM Haskell with the TMI extensions (highlighted).
 We define a new monad that represents TMI actions and operations on sensitive variables. In addition,
 we lift all standard STM functions to their TMI counterparts. This is done so that an existing Haskell STM program can
-be easily adapted to TMI with minimal changes to code. The TMI monad also encapsulates state, namely the
+be easily adapted to TMI with minimal changes to their code. The TMI monad also encapsulates state, namely the
 introspection log of a transaction. The introspection log contains entries which specify the access type (create,
 read or write) of a variable and the {\em security descriptor} of a variable. Security descriptors are provided by the
 programmer when she creates sensitive variables and contain the metadata about the variable 

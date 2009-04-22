@@ -1,7 +1,8 @@
 \section{Implementation}
 \label{sec:implementation}
 
-Our Haskell implementation is comprised of one module, \verb+TMI+. Most important are the
+Our Haskell implementation is comprised of one module, \verb+TMI+. 
+The most important components are the
 monad \lstinline+TMI d a+ and the type for TMI variables, \lstinline+TMIVar d a+. 
 Both are parameterized on the descriptor type \lstinline+d+, which is chosen by the user
 of this module. A TMI variable is represented by a descriptor value and an STM \lstinline+TVar+,
@@ -76,19 +77,17 @@ retryTMI = liftSTM T.retry
 
 runTMI = runWriterT . unwrapTM   -- helper
 
-orElseTMI t1 t2 = 
-    TM . WriterT (runTMI t1 `T.orElse` runTMI t2)
+orElseTMI t1 t2 = TM . WriterT (runTMI t1 `T.orElse` runTMI t2)
 \end{lstlisting}
 
 What is left is to define the crucial \lstinline+authorized+ function. This function
 accepts an authorization function with the type \lstinline+TMILog d -> Bool+
-and a TMI action; and it should return an STM action that performs the operation
+and a TMI action; it should return an STM action that performs the operation
 of the TMI action, validates the resulting log with the authorization function and
 either returns the result or throws an exception. With this description in mind,
 the implementation is pretty straight-forward.
 \begin{lstlisting}[style=small]
-authorized :: (TMILog d -> Bool) -> TMI d a 
-                                 -> T.STM a
+authorized :: (TMILog d -> Bool) -> TMI d a -> T.STM a
 authorized auth act =  do
    (result, log) <- runTMI act
    if not (auth log)

@@ -52,7 +52,7 @@ errors~\cite{errorHandlingMistakes}.
 For a formal treatment, we build our semantics and implementation on those of the Haskell STM~\cite{haskellstm},
 which in turn is built on Concurrent Haskell~\cite{concurrenthaskell}. Concurrent Haskell is an extension to Haskell 98,
 a lazy (i.e. call-by-name), pure, functional language. It supports concurrent threads and communications
-between them. Non-pure computations are modelled with {\em monads}~\cite{monads}, this includes computations
+between them. Non-pure computations are modelled with {\em monads}~\cite{monads}; this includes computations
 with side-effects such as input/output and mutable state.
 
 The main entry to a Haskell program is an instantiation of the I/O monad, i.e. a value that represents an
@@ -64,13 +64,13 @@ sequencing. For example the composed I/O action
 \begin{lstlisting}[style=small]
 main = do { c <- getChar; putChar c; putChar c }
 \end{lstlisting}
-defines an action, that when executed will perform the three actions listed in sequence.
+defines an action that, when executed, will perform the three actions listed in sequence.
 
 In general a value of type \lstinline+IO a+ represents an action that when executed, may perform some
 I/O operations as defined by the Haskell libraries and then result in a value of type \lstinline+a+.
 Pure functions cannot execute such actions without jeopardizing their purity and this is neatly enforced
 by the Haskell type system. Naturally, I/O actions are however free to run pure computations. Thus
-the only way to get at the value of an action, is if it is a part of a bigger I/O action. The Haskell
+the only way to get at the value of an action is if it is a part of a bigger I/O action. The Haskell
 runtime bootstraps the whole process by executing the special I/O action called \lstinline+main+.
 
 In addition to conventional input and output, I/O actions can perform reads and updates of mutable memory
@@ -97,7 +97,7 @@ of another kind of memory cells, which have the type \mbox{\lstinline+TVar a+}, 
 where \lstinline+a+ is the type of
 value that the cell holds. The actions are \lstinline+newTVar+, \lstinline+readTVar+ and \lstinline+writeTVar+,
 so they have the same power as their I/O counterparts. The important thing to note is that sets of \lstinline+IORef+s
-and \lstinline+TVar+s are kept separate, one can only be used in I/O actions and the other in STM actions.
+and \lstinline+TVar+s are kept separate; one can only be used in I/O actions and the other in STM actions.
 
 STM actions can be composed. Similar to I/O actions, the most common composition is sequencing,
 but in addition Haskell STM provides the basic STM action \lstinline+retry+ and a combinator
@@ -123,8 +123,8 @@ For an example how the above can be used for synchronization primitives such as 
 
 While the basic STM actions and their compositions give us a way to build larger STM actions, we have not
 discussed how those actions can be run or how they relate to transactions. For this, STM Haskell provides us
-with the \lstinline+atomically+ function\footnote{While~\cite{haskellstm} uses the name \lstinline+atomic+, the actual implementation
-of the Glasgow Haskell Compiler uses \lstinline+atomically+.}. This function has the type
+with the \lstinline+atomically+ function,\footnote{While~\cite{haskellstm} uses the name \lstinline+atomic+, the actual implementation
+of the Glasgow Haskell Compiler uses \lstinline+atomically+.} whose type is
 \begin{lstlisting}[style=small]
 atomically :: STM a -> IO a
 \end{lstlisting}

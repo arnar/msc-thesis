@@ -43,8 +43,6 @@ implementation detail. For simplicity though, we only model the log for security
 they are the only ones relevant to the semantics of TMI.
 
 \input{ch1/sosadminfig}
-\input{ch1/sosfig}
-\input{ch1/sosfig2}
 
 \subsection{Syntax, states and evaluation contexts} % (fold)
 \label{sub:syntax}
@@ -79,7 +77,7 @@ is a list monoid of pairs $(t,d)$ where $t$ is an access type and $d$ is a descr
 list and $\oplus$ for concatenation, and in the semantics we use $[\cdot]$ as a constructor.
 Other symbols are conventional and taken from~\cite{haskellstm}.
 
-For a (partial) function $f$ whose co-domain is a cross-product of two or more sets, and an integer $i$;
+For a (partial) function $f$ whose co-domain is a cross-product of two or more sets, and an integer $i$,
 we write $f_i$ instead of $\pi_i \circ f$ where $\pi_i$ is the standard $i$-th projection function.
 For convenience, we introduce the following notation for filtering logs. If $\Delta$ is a store and $\Sigma$ is
 an introspection log, we define the \emph{$\Delta$-restriction of $\Sigma$}, indicated by $\Sigma |_\Delta$, thus
@@ -100,12 +98,15 @@ Interleaving of operations is modelled with the evaluation context $\mathbb{P}$,
 a {\em thread soup}. Through this evaluation context the semantics can non-deterministically choose a
 term for reduction from the parallel construct, each term representing a thread. Haskell terms are usually
 reduced according to the evaluation context $\mathbb{E}$, which allows for reductions of the right
-hand side of the \lstinline+>>=+ operator as well as the body of a \lstinline+catch+ term. However,
+hand side of the \lstinline+>>=+ operator as well as within the body of a \lstinline+catch+ term. However,
 since we want to handle exceptions in a specific manner for STM and TMI actions, we will use the
 simpler context $\mathbb{S}$ which requires the operational semantics rules to specify explicitly
 how \lstinline+catch+ terms are handled.
 
 % subsection syntax (end)
+
+\input{ch1/sosfig}
+\input{ch1/sosfig2}
 
 \subsection{Operational semantics} % (fold)
 \label{sub:operational_semantics}
@@ -115,7 +116,9 @@ Figures~\ref{fig:sosadmin} and \ref{fig:sos1} are mostly the same as in the sema
 of~\cite{haskellstm}, parts added for TMI are indicated with a darker ink. 
 The semantics uses several different
 transition systems that are layered such that a sequence of reductions in one layer becomes one reduction
-in the next layer above. Namely, there are three main layers - the top level I/O context, the STM context
+in the next layer above. This makes a sequence of transitions in a lower layer appear as 
+one atomic transition at the higher level.
+There are three main layers - the top level I/O context, the STM context
 and the TMI context. An auxiliary transition system is used to reduce authorization functions.
 
 \paragraph{\emph{Values and I/O transitions:}}
@@ -128,7 +131,8 @@ The top level I/O actions are described
 by the labelled $\tarrow$ relation. They 
 operate on the $\mathbb{P}$ context, which allows for picking any program
 term from the thread soup for reduction. The first two rules are I/O primitives. The rule {\em FORK} is used
-to create a new thread and enter it into the thread soup. The rules {\em CATCH1} and {\em CATCH2} 
+to create a new thread and enter it into the thread soup, choosing a fresh thread id $t$.
+The rules {\em CATCH1} and {\em CATCH2} 
 deal with exception
 handling as described in the appendix of the post-publication, extended version of the Haskell
 semantics~\cite{haskellstm}.
@@ -148,7 +152,7 @@ are discarded but any new allocations are retained. This is necessary as the exc
 to newly allocated variables.
 
 \paragraph{\emph{STM transitions:}}
-The STM transitions define the behavior of STM actions. The states used in this transitions is extended
+The STM transitions define the behaviour of STM actions. The states used in these transitions are extended
 from the I/O transitions by adding a separate store for new allocations $\Delta$, and an introspection log
 $\Sigma$. A transition of the form
 \[
@@ -177,14 +181,14 @@ A key TMI addition to the STM transitions is the handling of \lstinline+authoriz
 The rules {\em AURETn} and {\em AUTHROWn} specify that for a term of the form {\tt (authorized}
 $N\;M${\tt )}
 if $M$ evaluates to a \lstinline+return+ or \lstinline+throw+ value, then that value is propagated only
-if $N$ evaluates to a \lstinline+return+ value under the authorization relation (see later) 
+if $N$ evaluates to a \lstinline+return+ value under the authorization relation (see later).
 If evaluation of the {\em authorization term} $N$ raises an exception, a fixed exception containing
 no information about the local transaction state is thrown. This triggers a rollback of any updates
 performed during that invocation of \lstinline+authorized+.
 
 We should note that in the case of an exception, including authorization failure, new allocations
 are retained for the reason described above. In the implementation, this is not done explicitly
-as deallocation of references are handled by the garbage collector. Any new allocations that are
+as deallocation of references is handled by the garbage collector. Any new allocations that are
 actually referenced by exception values are thus retained, but others are discarded. Thus, since
 we don't allow any variable references in our special exception for authorization failures, no
 new allocations will leak in practice.
@@ -209,7 +213,7 @@ a transition of the form
 \[
 \Sigma \vdash M \leadsto N
 \]
-represents the reduction term $M$ to term $N$, under the context of an introspection log $\Sigma$.
+represents the reduction of term $M$ to term $N$, under the context of an introspection log $\Sigma$.
 The reason for this notation is that the introspection log is fixed, i.e. read-only, for these
 transitions.
 This system only allows pure operations and monad binding via the administrative transitions, the
@@ -234,8 +238,8 @@ As the resulting log is non-empty, the authorization term
 \lstinline+assert (isEmpty getlog)+ will throw an exception. Thus, for the \lstinline+authorized+
 term, rule $\soslbl{AURET2}$ is the only applicable one, so that term evaluates to
 \lstinline+throw UnauthorizedError+. The \lstinline+atomically+ term is therefore evaluated to
-the same via rule $\soslbl{ATHROW}$, but this rule does not preserve updates to the store $\Theta$,
-meaning the transaction has been aborted.
+the same result via rule $\soslbl{ATHROW}$, but this rule does not preserve updates to the store $\Theta$,
+meaning that the transaction has been aborted.
 
 \paragraph{\emph{Nested TMI actions:}} As we mentioned in the previous section, the capability
 of lifting STM actions up to the TMI levels allows us to nest TMI actions. An inner TMI action
@@ -265,19 +269,17 @@ own grade as well as the average grades of all students.
 gradeInformation :: Student -> TMI (Grade, Grade)
 gradeInformation s =
   do own <- readGrade s
-     avg <- liftSTM (authorized allGradesRead
-                                averageGrades)
+     avg <- liftSTM (authorized allGradesRead averageGrades)
      return (own, avg)
 \end{lstlisting}
-Now this function may be called used with the appropriate authorization function,
+This function may be called with the appropriate authorization function,
 namely one that only allows a student access to her own grades.
 \begin{lstlisting}[style=small]
-atomically (authorized (ownGradesRead s)
-                       (gradeInformation s))
+atomically (authorized (ownGradesRead s) (gradeInformation s))
 \end{lstlisting}
 
 By applying the operational semantics rules to this term, one can find that the innermost action
-\lstinline+averageGrades+ will by authorized by \lstinline+allGradesRead+ {\em before}
+\lstinline+averageGrades+ will by authorized be \lstinline+allGradesRead+ {\em before}
 turning it into an STM transition. This may, for example, happen through rule $\soslbl{AURET1}$.
 Note that such a rule does not keep the log entries of already authorized actions, i.e.
 the $\Sigma$ is not affected in the $\Rightarrow$ transition below the line. 

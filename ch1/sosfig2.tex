@@ -8,25 +8,25 @@
 \begin{array}{rcll}
 %
    \SS[\prg{readTMIVar } r];\,\Theta,\Delta,\Sigma
- & \tddarrow
+ & \!\!\tddarrow\!\!
  & \SS[\prg{return }\Theta_1(r)];\,\Theta,\Delta,\Sigma\oplus[(\textsc{read},\Theta_2(r))]
- & \\ & & \hspace{4cm}
+ & \\ & & \hspace{1cm}
    \textrm{if $r\in \dom(\Theta)$ and $\Theta_2(r)) \ne \bot$}
- & \soslbl{TMIREAD} \\[.7em]
+   \hspace{.7cm} \soslbl{TMIREAD} \\[.7em]
 %
    \SS[\prg{writeTMIVar } r\;M];\,\Theta,\Delta,\Sigma
- & \tddarrow
+ & \!\!\tddarrow\!\!
  & \SS[\prg{return ()}];\,\Theta[r\mapsto (M,\Theta_2(r))],\Delta,\Sigma\oplus[(\textsc{write},\Theta_2(r))]
- & \\ & & \hspace{4cm}
+ & \\ & & \hspace{1cm}
    \textrm{if $r\in \dom(\Theta)$ and $\Theta_2(r)) \ne \bot$}
- & \soslbl{TMIWRITE} \\[.7em]
+   \hspace{.7cm} \soslbl{TMIWRITE} \\[.7em]
 %
    \SS[\prg{newTMIVar }N\;M];\,\Theta,\Delta,\Sigma
- & \tddarrow
+ & \!\!\tddarrow\!\!
  & \SS[\prg{return }r];\,\Theta[r\mapsto (M,N)],\Delta[r\mapsto (M,N)],\Sigma\oplus[(\textsc{create},N)]
- & \\ & & \hspace{4cm}
+ & \\ & & \hspace{1cm}
    \textrm{$r\notin \dom(\Theta)$}
- & \soslbl{TMINEW} \\[.7em]
+   \hspace{.7cm} \soslbl{TMINEW} \\[.7em]
 %
 \end{array}
 %
@@ -34,7 +34,7 @@
 \sos{M \tarrow N}
     {\SS[M];\,\Theta,\Delta\new{,\Sigma} \tddarrow \SS[N];\,\Theta,\Delta\new{,\Sigma}}
     \quad\soslbl{TADMIN}
-\qquad
+\\[5pt]
 \sos{M;\,\Theta,\Delta,\Sigma \stackrel{*}{\tdarrow} N;\,\Theta',\Delta',\Sigma'}
     {\SS[\prg{liftSTM }M];\,\Theta,\Delta,\Sigma \tddarrow
      \SS[N];\,\Theta',\Delta',\Sigma'}
@@ -83,14 +83,14 @@
     \quad\soslbl{XTMI3}
 \end{gather*}
 
-\rule{0.95\linewidth}{0.5pt}
+\rule{0.95\linewidth}{0.33pt}
 
 \center{\framebox{Authorization transitions $\qquad \Sigma \vdash M \leadsto N$}}
 \begin{gather*}
 \sos{M\tarrow N}
     {\Sigma \vdash \EE[M] \,\leadsto\, \EE[N]}
 \quad\soslbl{AUADMIN}
-\qquad\qquad
+\\[0.5em]
 \Sigma \vdash \EE[\prg{getlog}] \,\leadsto\, \EE[\prg{return } hs(\Sigma)]
 \quad\soslbl{GETLOG}
 \\[0.5em]
@@ -98,7 +98,7 @@
     \,\leadsto\,
     \EE[\prg{return } M]
     \quad\soslbl{ACATCH1}
-\\
+\\[0.5em]
 \Sigma \vdash \EE[\prg{catch }(\prg{throw }M)\, N]
     \,\leadsto\,
     \EE[N\,M]

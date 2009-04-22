@@ -19,8 +19,8 @@
 \newcommand{\abs}[1]{|#1|}
 \newcommand{\dmnd}[1]{\mbox{\ensuremath{\langle #1 \rangle}}}
 \newcommand{\dmndback}[1]{\mbox{\ensuremath{\langle\leftarrow\! #1 \rangle}}}
-\newcommand{\pdmnd}[1]{\mbox{\ensuremath{\langle\stackrel{_{#1}}{\dashrightarrow}\rangle}}}
-\newcommand{\pdmndback}[1]{\mbox{\ensuremath{\langle\stackrel{_{#1}}{\dashleftarrow}\rangle}}}
+\newcommand{\pdmnd}[1]{\ifthenelse{\equal{#1}{}}{\mbox{\ensuremath{\langle\stackrel{_{#1}}{\dashrightarrow}\rangle}}}{\error}}
+\newcommand{\pdmndback}[1]{\ifthenelse{\equal{#1}{}}{\mbox{\ensuremath{\langle\stackrel{_{#1}}{\dashleftarrow}\rangle}}}{\error}}
 
 \newcommand{\bx}[1]{\mbox{\ensuremath{[#1]}}}
 \newcommand{\bxback}[1]{\mbox{\ensuremath{[\leftarrow\! #1]}}}

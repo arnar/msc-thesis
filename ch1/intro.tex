@@ -13,7 +13,7 @@ implement Software Transactional Memory (STM)~\cite{harrisFraserSTM,hm93} suppor
 In this paper we present a formal semantics for TMI,
     as well as a reference TMI implementation over the Haskell STM.
 These specifications clarify the TMI architecture
-    and helps identify and resolve ambiguities 
+    and help identify and resolve ambiguities 
     in its implementation.
 
 
@@ -27,7 +27,7 @@ rollback mechanisms, STM systems can resolve conflicting accesses by undoing the
 and retrying that transaction again, from the beginning.
 
 All STM implementations must perform bookkeeping of accesses (such as reads and writes)
-to shared resources. By interposing on 
+to shared resources. By imposing on 
 this bookkeeping, and the necessary monitoring and validation steps,
 TMI provides facilities to support the creation of robust and correct
 enforcement mechanisms. 
@@ -59,7 +59,7 @@ STM, whose semantics is given in~\cite{haskellstm}. Our semantics of TMI builds 
 and is also accompanied by an implementation over the Haskell STM system. We believe having formal
 semantics for TMI is important to guide possible implementations and disambiguate design choices.
 
-The structure of the paper is as follows. In section 2 we give the necessary background, including
+The structure of the paper is as follows. In Section 2 we give the necessary background, including
 STM systems and how TMI makes use of their mechanisms, as well as an overview of the Haskell STM
 implementation. Section 3 covers TMI in greater detail and describes its Haskell implementation
 from the user standpoint. Section 4 defines the formal semantics of TMI, building on existing

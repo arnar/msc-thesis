@@ -184,6 +184,19 @@
      {\def\@noitemerr
        {\@latex@warning{Empty `thebibliography' environment}}%
       \endlist}
+\renewcommand\@makefnmark{\@textsuperscript{\footnotesize\@thefnmark}}
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \hrule width \hsize height .33pt
+  \vspace{4pt}
+  \sbox\@tempboxa{#1: #2}%
+  \ifdim \wd\@tempboxa >\hsize
+    #1: #2\par
+  \else
+    \global \@minipagefalse
+    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
 \makeatother
 
 

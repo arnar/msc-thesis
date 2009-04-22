@@ -1,4 +1,4 @@
-\begin{figure}
+\begin{figure}[t]
 \flushleft{\begin{minipage}{\linewidth}
     \small
 \color{old}
@@ -41,7 +41,60 @@
 %
 \end{gather*}
 
-\end{minipage}}\caption{Evaluation of terms and monad operations}
+\rule{0.95\linewidth}{0.33pt}
+
+\center{\framebox{I/O transitions $\qquad P;\,\Theta \stackrel{a}{\tarrow} Q;\,\Theta'$}}
+\begin{gather*}
+\begin{array}{rcll}
+    \PP[\prg{putChar } c];\, \Theta & \stackrel{!c}{\tarrow}
+                                       & \PP[\prg{return ()}];\, \Theta
+                                       & \soslbl{PUTC} \\
+    \PP[\prg{getChar }];\, \Theta& \stackrel{?c}{\tarrow}
+                                       & \PP[\prg{return } c];\, \Theta
+                                       & \soslbl{GETC} \\
+    \PP[\prg{forkIO } M];\, \Theta& \tarrow
+                                       & (\PP[\prg{return } t] \,|\, M_t);\, \Theta
+                                            \quad t\notin \PP, \Theta, M
+                                       & \soslbl{FORK} \\
+    \PP[\prg{catch }(\prg{return }M)\, N];\,\Theta& \tarrow 
+                                       & \PP[\prg{return } M];\,\Theta
+                                       & \soslbl{CATCH1} \\
+    \PP[\prg{catch }(\prg{throw }M)\, N];\,\Theta& \tarrow 
+                                      & \PP[N\,M];\,\Theta
+                                      & \soslbl{CATCH2}
+\end{array}
+\\
+\sos{M \tarrow N}
+    {\PP[M];\, \Theta \tarrow \PP[N];\, \Theta}
+\quad\soslbl{ADMIN}
+\\
+%
+% <<< Atomic
+%
+\sos{M;\,\Theta,\emptyset
+     \stackrel{*}{\tdarrow}
+     \prg{return }N;\, \Theta',\Delta'}
+   {\PP[\prg{atomically }M];\,\Theta \tarrow
+    \PP[\prg{return }N];\,\Theta'}
+  \quad\soslbl{ARET}
+\\
+\sos{M;\,\Theta,\emptyset
+     \stackrel{*}{\tdarrow}
+     \prg{throw }N;\, \Theta',\Delta'}
+   {\PP[\prg{atomically }M];\,\Theta \tarrow
+    \PP[\prg{throw }N];\,\Theta\cup\Delta'}
+  \quad\soslbl{ATHROW}
+%\\
+%\sos{M;\,\Theta,\emptyset
+%     \stackrel{*}{\tdarrow}
+%     \prg{abort }N;\, \Theta',\Delta',\Sigma'}
+%   {\PP[\prg{atomically }M];\,\Theta \tarrow
+%    \PP[\prg{throw }N];\,\Theta\cup\Delta'}
+%  \quad\soslbl{ATHROW1}
+% >>>
+\end{gather*}
+
+\end{minipage}}\caption{Evaluation of terms and monad operations and IO actions}
 \label{fig:sosadmin}
 \end{figure}
 
