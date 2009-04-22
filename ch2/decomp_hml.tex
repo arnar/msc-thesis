@@ -12,11 +12,11 @@ The modal operators however need more attention. We start with $\dmnd{\alpha}\ph
 and consider separately the cases where $\alpha\in A$ and $\alpha = \tau$. In
 the following we assume $p' = \last(\rho)$.
 \begin{align*}
-    (\dmnd{a}\phi) / \rho &= \dmnd{a} \left(\phi / \rho(p'\ptrans{0} p')\right)
-        \lor \left(\bigvee_{\rho' : \rho\transshort{a}\rho'} \pdmnd{0} (\phi/\rho') \right)
+    (\dmnd{a}\phi) / \rho &= \dmnd{a} \left(\phi / \rho(p'\ptrans{} p')\right)
+        \lor \left(\bigvee_{\rho' : \rho\transshort{a}\rho'} \pdmnd{} (\phi/\rho') \right)
     \\[1em]
-    (\dmnd{\tau}\phi) / \rho &= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{0} p')\right)
-        \lor \left(\bigvee_{\rho' : \rho\transshort{\tau}\rho'} \pdmnd{0} (\phi/\rho') \right)
+    (\dmnd{\tau}\phi) / \rho &= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{} p')\right)
+        \lor \left(\bigvee_{\rho' : \rho\transshort{\tau}\rho'} \pdmnd{} (\phi/\rho') \right)
         \lor \left( \bigvee_{\rho',a : \rho \transshort{a} \rho'} \dmnd{\bar{a}} (\phi/\rho')  \right)
 \end{align*}
 Intuitively, the first case states that when we expect the composed computation to be
@@ -40,21 +40,15 @@ the empty path. In this case it is obvious that no backward step is possible.
 \]
 The second case to consider is when $\rho$ ends with a pseudo-transition, or a ``gap''.
 In this case the only possibility is that the other component (the one we are testing)
-is able to perform the backward transition, but only if the gap is tagged with $0$.
-Otherwise both components end with a gap with a matching tag, as can be seen from the
-definition of the decomposition function $D$. In this case the computation we are testing
-obviously cannot end with an $\alpha$ transition.
+is able to perform the backward transition.
 \[
-    (\dmndback{\alpha}\phi) / \rho'(p'\ptrans{i} p') =
-    \begin{cases}
-        \dmndback{\alpha} (\phi / \rho') & \textrm{if $i=0$} \\
-        \false & \textrm{if $i>0$} \\
-    \end{cases}
+    (\dmndback{\alpha}\phi) / \rho'(p'\ptrans{} p') =
+        \dmndback{\alpha} (\phi / \rho')
 \]
 The third case applies when $\rho$ does indeed end with the transition we look for.
 In this case the other component must end with a matching gap.
 \begin{equation}\label{eq:rewrite_back_dmnd_same}
-    (\dmndback{\alpha}\phi) / \rho'(p''\trans{\alpha} p') = \pdmndback{0} (\phi / \rho')
+    (\dmndback{\alpha}\phi) / \rho'(p''\trans{\alpha} p') = \pdmndback{} (\phi / \rho')
 \end{equation}
 The only remaining case to consider is when $\rho$ ends with a transition different from
 the one we look for. We split this case further and consider
@@ -74,19 +68,19 @@ covered by equation~\ref{eq:rewrite_back_dmnd_same}.
 \]
 This covers all possible cases for $\dmndback{\alpha}\phi / \rho$.
 
-For the new operators, $\pdmnd{i}$ and $\pdmndback{i}$, the transformation is simple.
-First, if a composed computation should satisfy $\pdmnd{i}\phi$, then it must be
-because the components can add a pseudo-step tagged with $i+1$. I.e.
+For the new operators, $\pdmnd{}$ and $\pdmndback{}$, the transformation is simple.
+First, if a composed computation should satisfy $\pdmnd{}\phi$, then it must be
+because both components are able to add a pseudo step and satisfy $\phi$. I.e.
 \[
-    (\pdmnd{i}\phi) / \rho = \pdmnd{i+1} \left( \phi / \rho(p'\ptrans{i+1} p') \right)
+    (\pdmnd{}\phi) / \rho = \pdmnd{} \left( \phi / \rho(p'\ptrans{} p') \right)
 \]
-where again $p' = \last(\rho)$. If the composition should end with a $\ptrans{i}$
-pseudo-transition, then both components must end with $\ptrans{i+1}$. Thus, we
+where again $p' = \last(\rho)$. If the composition should end with a $\ptrans{}$
+pseudo-transition, then both components must also end with $\ptrans{}$. Thus, we
 have to consider two cases, where $\rho$ does end with such a pseudo-transition
 and when it doesn't.
 \[
-    (\pdmndback{i}\phi) / \rho = \begin{cases}
-        \pdmndback{i+1} (\phi / \rho') & \textrm{if $\rho = \rho'(p' \ptrans{i+1} p')$} \\
+    (\pdmndback{}\phi) / \rho = \begin{cases}
+        \pdmndback{} (\phi / \rho') & \textrm{if $\rho = \rho'(p' \ptrans{} p')$} \\
         \false & \textrm{otherwise}
     \end{cases}
 \]
@@ -98,28 +92,24 @@ The complete quotienting transformation is summarised in the following table.
     (\phi_1 \land \phi_2)/\rho &= \phi_1/\rho  \land \phi_2 / \rho \\
     (\neg\phi)/\rho &= \neg(\phi/\rho) \\
     %
-    (\dmnd{a}\phi) / \rho &= \dmnd{a} \left(\phi / \rho(p'\ptrans{0} p')\right)
-        \lor \left(\bigvee_{\rho' : \rho\transshort{a}\rho'} \pdmnd{0} (\phi/\rho') \right)
+    (\dmnd{a}\phi) / \rho &= \dmnd{a} \left(\phi / \rho(p'\ptrans{} p')\right)
+        \lor \left(\bigvee_{\rho' : \rho\transshort{a}\rho'} \pdmnd{} (\phi/\rho') \right)
     \\[1em]
-    (\dmnd{\tau}\phi) / \rho &= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{0} p')\right)
-        \lor \left(\bigvee_{\rho' : \rho\transshort{\tau}\rho'} \pdmnd{0} (\phi/\rho') \right) \\
-        &\phantom{= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{0} p')\right)\;}
+    (\dmnd{\tau}\phi) / \rho &= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{} p')\right)
+        \lor \left(\bigvee_{\rho' : \rho\transshort{\tau}\rho'} \pdmnd{} (\phi/\rho') \right) \\
+        &\phantom{= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{} p')\right)\;}
         \lor \left( \bigvee_{\rho',a : \rho \transshort{a} \rho'} \dmnd{\bar{a}} (\phi/\rho')  \right) \\
     %
     (\dmndback{\alpha}\phi) / (p,\lambda) &= \false \\
-    (\dmndback{\alpha}\phi) / \rho'(p'\ptrans{i} p') &=
-    \begin{cases}
-        \dmndback{\alpha} (\phi / \rho') & \textrm{if $i=0$} \\
-        \false & \textrm{if $i>0$} \\
-    \end{cases} \\
-    (\dmndback{\alpha}\phi) / \rho'(p''\trans{\alpha} p') &= \pdmndback{0} (\phi / \rho') \\
+    (\dmndback{\alpha}\phi) / \rho'(p'\ptrans{} p') &= \dmndback{\alpha} (\phi / \rho') \\
+    (\dmndback{\alpha}\phi) / \rho'(p''\trans{\alpha} p') &= \pdmndback{} (\phi / \rho') \\
     (\dmndback{a}\phi) / \rho'(p'' \trans{\beta} p') &= \false \quad\textrm{where $a\ne \beta$} \\
     (\dmndback{\tau}\phi) / \rho'(p'' \trans{b} p') &= \dmndback{\bar{b}} (\phi/\rho') \\
     %
-    (\pdmnd{i}\phi) / \rho &= \pdmnd{i+1} \left( \phi / \rho(p'\ptrans{i+1} p') \right) \\
+    (\pdmnd{}\phi) / \rho &= \pdmnd{} \left( \phi / \rho(p'\ptrans{} p') \right) \\
     %
-    (\pdmndback{i}\phi) / \rho &= \begin{cases}
-        \pdmndback{i+1} (\phi / \rho') & \textrm{if $\rho = \rho'(p' \ptrans{i+1} p')$} \\
+    (\pdmndback{}\phi) / \rho &= \begin{cases}
+        \pdmndback{} (\phi / \rho') & \textrm{if $\rho = \rho'(p' \ptrans{} p')$} \\
         \false & \textrm{otherwise}
     \end{cases} \\
 \end{align*}
@@ -152,8 +142,8 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     then there exists a pair $(\mu_1', \mu_2')\in D(\pi')$ such that one of the following
     holds.
     \begin{enumerate}
-        \item $(p,\mu_1) \trans\alpha (p,\mu_1')$ and $(q,\mu_2) \ptrans0 (q,\mu_2')$,
-        \item $(p,\mu_1) \ptrans0 (p,\mu_1')$ and $(q,\mu_2) \trans\alpha (q,\mu_2')$ or
+        \item $(p,\mu_1) \trans\alpha (p,\mu_1')$ and $(q,\mu_2) \ptrans{} (q,\mu_2')$,
+        \item $(p,\mu_1) \ptrans{} (p,\mu_1')$ and $(q,\mu_2) \trans\alpha (q,\mu_2')$ or
         \item $\alpha = \tau$, $(p,\mu_1) \trans{a} (p,\mu_1')$ and $(q,\mu_2) \trans{\bar{a}} (q,\mu_2')$ for some $a\in A$.
     \end{enumerate}
 
@@ -161,11 +151,11 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \begin{enumerate}
         \item If there exists a $\mu_1'$ s.t. $(p, \mu_1) \trans\alpha (p,\mu_1')$
             then there exists a $\pi'$ s.t. $(p\parallel q, \pi) \trans\alpha
-            (p\parallel q, \pi')$ and $(\mu_1', \mu_2(q'\ptrans{0}q')) \in D(\pi')$
+            (p\parallel q, \pi')$ and $(\mu_1', \mu_2(q'\ptrans{}q')) \in D(\pi')$
             where $q' = \last(\mu_2)$.
         \item If there exists a $\mu_2'$ s.t. $(q, \mu_2) \trans\alpha (q,\mu_2')$
             then there exists a $\pi'$ s.t. $(p\parallel q, \pi) \trans\alpha
-            (p\parallel q, \pi')$ and $(\mu_1(p' \ptrans{0} p'), \mu_2') \in D(\pi')$
+            (p\parallel q, \pi')$ and $(\mu_1(p' \ptrans{} p'), \mu_2') \in D(\pi')$
             where $p' = \last(\mu_1)$.
         \item If there exist $\mu_1'$ and $\mu_2'$ s.t. $(p,\mu_1) \trans{a} (p,\mu_1')$
             and $(q,\mu_2) \trans{\bar{a}} (q,\mu_2')$ for some $a\in A$, then there
@@ -186,7 +176,7 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             $p''\parallel q' \trans{\alpha} p'\parallel q'$ was proven using the first
             rule for $\parallel$. Its only premise must hold, namely $p''\trans{\alpha} p'$.
             We therefore let $\mu_1' = \mu_1(p''\trans{\alpha}p')$ and $\mu_2' = \mu_2
-            (q' \ptrans{0} q')$. From the inductive definition of $D$ it is easy to see
+            (q' \ptrans{} q')$. From the inductive definition of $D$ it is easy to see
             that $(\mu_1',\mu_2') \in D(\pi')$.
         \item $p''\equiv p'$ and $q''\not\equiv q'$. This case is entirely symmetric
             to the previous one where the proof is based on the second rule for $\parallel$.
@@ -200,11 +190,9 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             Again it is clear from the definition of $D$ that $(\mu_1',\mu_2')\in D(\pi')$.
     \end{enumerate}
 
-    (ii) \todo{TBD.} Follows directly from definition of $D$ -- but perhaps we could introduce
-    some notation and tweak definitions to make this obvious. This is very similar to arguments
-    made in the main proof.. maybe just a matter of rewording/extending the lemma or using
-    a simpler notation.
-
+    (ii) The construction of $\pi'$ in all cases is straightforward and unique
+    (cfr. Lemma~\ref{thm:paths_compose_uniquely}). The rest is simple to check
+    with the definition of $D$.
 \end{proof}
 
 \begin{lemma}\label{lemma:removing_last_trans}
@@ -224,7 +212,7 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
         (p\parallel q, \pi) \vDash^* \phi  \quad\Rightarrow\quad
         \forall (\mu_1,\mu_2) \in D(\pi) : (p, \mu_1) \vDash^* \phi/(q, \mu_2)
     \end{equation}
-    and conversely,
+    and conversely (note the direction of the implication),
     \begin{equation}\label{eq:decomp_rtl}
         (p\parallel q, \pi) \vDash^* \phi
         \quad\Leftarrow\quad
@@ -280,7 +268,7 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \rtl Assume the right side of~\eqref{eq:decomp_rtl}, namely there exists a
     decomposition $(\mu_1,\mu_2)\in D(\pi)$ such that $(p,\mu_1)\vDash^* \neg\psi/(q,\mu_2)$.
     Assume, again towards a contradiction, that $(p\parallel q,\pi)\vDash^*\psi$.
-    By induction, \eqref{eq:decomp_ltr} now gives that for all $(\mu_1',\mu_2')\in D(\pi)$,
+    By induction, \eqref{eq:decomp_ltr} then gives that for all $(\mu_1',\mu_2')\in D(\pi)$,
     $(p,\mu_1')\vDash^* \neg\psi/(q,\mu_2')$. In particular, this holds for the
     decomposition $(\mu_1,\mu_2)$, which contradicts our assumption. Therefore
     we must have that $(p\parallel q,\pi) \vDash^* \neg\psi = \phi$.
@@ -301,14 +289,14 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \end{equation}
     Lemma~\ref{lemma:last_step_decomp} also states that one of the following three cases holds.
     \begin{enumerate}
-        \item $(p,\mu_1)\trans{\alpha}(p,\mu_1')$ and $(q,\mu_2)\ptrans{0}(q,\mu_2')$.
+        \item $(p,\mu_1)\trans{\alpha}(p,\mu_1')$ and $(q,\mu_2)\ptrans{}(q,\mu_2')$.
             %The first clause of $\phi/(q,\mu_2)$ is $\dmnd{\alpha}(\psi/(q,\mu_2')$.
             From~\eqref{eq:dmnd_psi} we have that $(p,\mu_1) \vDash^*
             \dmnd{\alpha}(\psi/(q,\mu_2'))$ and since that is the first clause of the
             disjunction $\phi/(q,\mu_2)$ then also $(p,\mu_1) \vDash^* \phi/(q,\mu_2)$.
-        \item $(p,\mu_1)\ptrans{0}(p,\mu_1')$ and $(q,\mu_2)\trans{\alpha}(q,\mu_2')$.
+        \item $(p,\mu_1)\ptrans{}(p,\mu_1')$ and $(q,\mu_2)\trans{\alpha}(q,\mu_2')$.
             Again from~\eqref{eq:dmnd_psi} we have that $(p,\mu_1) \vDash^*
-            \pdmnd{0}(\psi/(q,\mu_2'))$, and again this is a clause of the disjunction
+            \pdmnd{}(\psi/(q,\mu_2'))$, and again this is a clause of the disjunction
             $\phi/(q,\mu_2)$ so $(p,\mu_1) \vDash^* \phi/(q,\mu_2)$.
         \item $\alpha = \tau$, $(p,\mu_1) \trans{a} (p,\mu_1')$ and $(q,\mu_2)
             \trans{\bar{a}} (q,\mu_2')$ for some $a\in A$. Then the disjunction
@@ -326,11 +314,11 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     forms, and we analyze the possible cases.
     Let $\phi'$ be the clause that $(p,\mu_1)$ satisfies.
     \begin{enumerate}
-        \item $\phi' = \dmnd{\alpha} \left(\psi / (q,\mu_2)(q' \ptrans{0} q') \right)$
+        \item $\phi' = \dmnd{\alpha} \left(\psi / (q,\mu_2)(q' \ptrans{} q') \right)$
             where $q' = \last(q,\mu_2)$.
             Then there is a $\mu_1'$ such that $(p,\mu_1) \trans{\alpha} (p,\mu_1')$
-            and $(p,\mu_1') \vDash^* \psi/(q,\mu_2(q'\ptrans{0}q'))$. If
-            we let $\mu_2' = \mu_2(q' \ptrans{0} q')$ then 
+            and $(p,\mu_1') \vDash^* \psi/(q,\mu_2(q'\ptrans{}q'))$. If
+            we let $\mu_2' = \mu_2(q' \ptrans{} q')$ then 
             part (ii) of
             Lemma~\ref{lemma:last_step_decomp}
             gives that there exists a $\pi'$ with $(\mu_1',\mu_2')\in D(\pi')$ and
@@ -339,9 +327,9 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             \vDash^* \psi / (q,\mu_2')$ then by induction, since $\psi$ is smaller than
             $\phi$, $(p\parallel q, \pi') \vDash^* \psi$. This in turn means that
             $(p\parallel q, \pi) \vDash^* \dmnd{\alpha}\psi = \phi$.
-        \item $\phi' = \pdmnd{0} \left(\psi / (q,\mu_2')\right)$ for some $\mu_2'$
+        \item $\phi' = \pdmnd{} \left(\psi / (q,\mu_2')\right)$ for some $\mu_2'$
             such that $(q,\mu_2) \trans{\alpha} (q,\mu_2')$. Let $\mu_1' = \mu_1(p'
-            \ptrans{0} p')$ where $p' = \last(p,\mu_1)$. Lemma~\ref{lemma:last_step_decomp}
+            \ptrans{} p')$ where $p' = \last(p,\mu_1)$. Lemma~\ref{lemma:last_step_decomp}
             gives the existence of $\pi'$ with $(\mu_1',\mu_2')\in D(\pi')$ and $(p\parallel
             q,\pi) \trans{\alpha} (p\parallel q, \pi')$. Since $(p,\mu_1')\vDash^* \psi
             / (q,\mu_2')$ then by induction $(p\parallel q,\pi') \vDash^* \psi$ and thus
@@ -365,13 +353,13 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     $(\mu_1,\mu_2)\in D(\pi)$. Since \mbox{$(p\parallel q, \pi') \trans{\alpha} (p\parallel
     q, \pi)$} for some $\pi'$ such that $(p\parallel q,\pi') \vDash^* \psi$,
     there exist processes $p',q',p'',q''$ such that $\pi
-    = \pi'(p''\parallel q'' \trans{\alpha} p'\parallel q')$. By analyzing the definition
+    = \pi'(p''\parallel q'' \trans{\alpha} p'\parallel q')$. By analysing the definition
     of $D$, we can gain some information about $\mu_1$ and $\mu_2$, in particular by
     comparing $p''$ to $p'$ and $q''$ to $q'$. Since $p''\parallel q'' \not\equiv
     p'\parallel q'$ we must consider three cases.
     \begin{enumerate}
         \item $p''\not\equiv p'$ and $q''\equiv q'$. Then $(\mu_1,\mu_2) = (\mu_1'
-            (p'' \trans{\alpha} p'), \mu_2'(q' \ptrans{0} q'))$ for some $(\mu_1',\mu_2')
+            (p'' \trans{\alpha} p'), \mu_2'(q' \ptrans{} q'))$ for some $(\mu_1',\mu_2')
             \in D(\pi')$. Given this form of $\mu_2$ we also know that $(\dmndback{\alpha}
             \psi) / (q,\mu_2) = \dmndback{\alpha} \left( \psi / (q,\mu_2') \right)$. Since
             $(p\parallel q, \pi') \vDash^* \psi$, we get by induction that $(p,\mu_1')
@@ -380,12 +368,12 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             $\mu_2$ is a pseudo-step, $\dmndback{\alpha} \left(\psi / (q,\mu_2)\right)
             = (\dmndback{\alpha}\psi)/(q,\mu_2)$.
         \item $p''\equiv p'$ and $q''\not\equiv q'$. In this case $(\mu_1,\mu_2)
-            = (\mu_1'(p'\ptrans{0}p'), \mu_2'(q''\trans{\alpha}q'))$ where $(\mu_1',
+            = (\mu_1'(p'\ptrans{}p'), \mu_2'(q''\trans{\alpha}q'))$ where $(\mu_1',
             \mu_2') \in D(\pi')$. This form of $\mu_2$ means that $\dmndback{\alpha}
-            \psi / (q,\mu_2) = \pdmndback{0} \left( \psi / (q,\mu_2') \right)$.
+            \psi / (q,\mu_2) = \pdmndback{} \left( \psi / (q,\mu_2') \right)$.
             By induction, the fact that $(p\parallel q, \pi') \vDash^* \psi$ gives
             that $(p,\mu_1') \vDash^* \psi / (q,\mu_2')$, so $(p,\mu_1) \vDash^*
-            \pdmndback{0} \left( \psi / (q,\mu_2') \right) = (\dmndback{\alpha}\psi)
+            \pdmndback{} \left( \psi / (q,\mu_2') \right) = (\dmndback{\alpha}\psi)
             / (q,\mu_2)$.
         \item $p''\not\equiv p'$ and $q''\not\equiv q'$. By Lemma~\ref{lemma:both_step_means_tau}
             $\alpha$ must be equal to $\tau$. Thus we have that $(\mu_1,\mu_2) =
@@ -404,10 +392,8 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     $\alpha$ with the last transition  of $\mu_2$ we can infer the form of $(\dmndback{\alpha}
     \psi) / (q,\mu_2)$.
     \begin{itemize}
-        \item If the last transition of $\mu_2$ is a $\ptrans{i}$ transition, we first
-            observe that $i=0$. If $i>0$ then the last transition of $\mu_1$ must match
-            it which contradicts that it is $\trans{\alpha}$. This means that $\mu_2
-            = \mu_2' (q' \ptrans{0} q')$ for some $\mu_2$ and $q' = \last(q,\mu_2)$. Then
+        \item If the last transition of $\mu_2$ is a $\ptrans{}$ transition, i.e. $\mu_2
+            = \mu_2' (q' \ptrans{} q')$ for some $\mu_2$ and $q' = \last(q,\mu_2)$, then
             we know that $(\dmndback\alpha \psi) / (q,\mu_2) = \dmndback\alpha \left(
             \psi / (q,\mu_2') \right)$. By our assumption this is satisfied by $(p,\mu_1)$
             so there exists a $\mu_1'$ s.t. $(p,\mu_1') \trans\alpha (p,\mu_1)$ and
@@ -420,14 +406,14 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             \vDash^* \dmndback\alpha\psi$.
         \item If the last transition of $\mu_2$ is an $\trans\alpha$ transition, i.e. one
             having the same label as the formula is testing for, then $(\dmndback\alpha\psi)
-            /(q,\mu_2) = \pdmndback{0}\left( \psi/(q,\mu_2') \right)$ where $\mu_2'$ is $\mu_2$
+            /(q,\mu_2) = \pdmndback{}\left( \psi/(q,\mu_2') \right)$ where $\mu_2'$ is $\mu_2$
             without the last transition. Note that $(q,\mu_2')\trans\alpha(q,\mu_2)$. Since
-            $(p,\mu_1)$ satisfies this formula there is a $\mu_1'$ s.t. $(p,\mu_1')\ptrans{0}
+            $(p,\mu_1)$ satisfies this formula there is a $\mu_1'$ s.t. $(p,\mu_1')\ptrans{}
             (p,\mu_1)$ and $(p,\mu_1) \vDash^* \psi/(q,\mu_2')$. By
             Lemma~\ref{lemma:removing_last_trans} $(\mu_1',\mu_2')\in D(\pi')$ where $\pi'$
             is again $\pi$ without the last transition. Also again, we can see from the
             definition of $D$ that $(p\parallel q,\pi')\trans\alpha(p\parallel q,\pi)$.
-            By induction it thus holds that $(p\parallel q, \pi')\vDash^* \psi$ and so
+            By induction it thus holds that \mbox{$(p\parallel q, \pi')\vDash^* \psi$} and so
             $(p\parallel q,\pi) \vDash^* \dmndback{\alpha}\psi$.
         \item The only remaining case to consider is when $\mu_2$ ends with a transition
             $\trans{\beta}$ where $\beta \ne \alpha$. Then $\alpha$ can only be $\tau$,
@@ -454,58 +440,58 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     %cases.}
 
 
-    \proofcase{Case $\phi = \pdmnd{i}, i\in \mathbb{N}$}\par\nobreak
+    \proofcase{Case $\phi = \pdmnd{}\psi$}\par\nobreak
     %
-    \ltr First assume $(p\parallel q, \pi) \vDash^* \pdmnd{i}\psi$ and take $(\mu_1,\mu_2)
+    \ltr First assume $(p\parallel q, \pi) \vDash^* \pdmnd{}\psi$ and take $(\mu_1,\mu_2)
     \in D(\pi)$. This means there exists
-    a $\pi'$ s.t. $(p\parallel q, \pi) \ptrans{i} (p\parallel q, \pi')$ and $(p\parallel q,
+    a $\pi'$ s.t. $(p\parallel q, \pi) \ptrans{} (p\parallel q, \pi')$ and $(p\parallel q,
     \pi')\vDash^* \psi$. By definition
-    $(\pdmnd{i}\psi)/(q,\mu_2) = \pdmnd{i+1} \left( \psi / (q, \mu_2') \right)$,
+    $(\pdmnd{}\psi)/(q,\mu_2) = \pdmnd{} \left( \psi / (q, \mu_2') \right)$,
     where we let $(\mu_1',
-    \mu_2') = (\mu_1(p'\ptrans{i+1}p'),$ $\mu_2(q'\ptrans{i+1}q'))$ with $(p' \parallel q') =
+    \mu_2') = (\mu_1(p'\ptrans{}p'),$ $\mu_2(q'\ptrans{}q'))$ with $(p' \parallel q') =
     \last{(p\parallel q, \pi)}$. This is according to the definition of $D$ so $(\mu_1',\mu_2')
     \in D(\pi')$. Thus, by induction $(p,\mu_1') \vDash^* \psi / (q,\mu_2')$. Since $(p,\mu_1)
-    \ptrans{i+1} (p,\mu_1')$ we obtain that $(p,\mu_1) \vDash^* \pdmnd{i+1} \left(
-    \psi / (q,\mu_2') \right) = (\pdmnd{i}\psi)/(q,\mu_2)$.
+    \ptrans{} (p,\mu_1')$ we obtain that $(p,\mu_1) \vDash^* \pdmnd{} \left(
+    \psi / (q,\mu_2') \right) = (\pdmnd{}\psi)/(q,\mu_2)$.
 
-    \rtl Assume that $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmnd{i}
+    \rtl Assume that $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmnd{}
     \psi)/(q,\mu_2)$. 
-    We want to show that $(p\parallel q,\pi) \vDash^* \pdmnd{i}\psi$.
-    The formula is equal to $\pdmnd{i+1} \left( \psi / (q,\mu_2') \right)$
-    where $\mu_2' = \mu_2(q' \ptrans{i+1} q')$, $q' = \last(q,\mu_2)$. Let $\pi' = \pi
-    (p'\parallel q' \ptrans{i} p'\parallel q')$ and $\mu_1' = \mu_1(p'\ptrans{i+1} p')$
+    We want to show that $(p\parallel q,\pi) \vDash^* \pdmnd{}\psi$.
+    The formula is equal to $\pdmnd{} \left( \psi / (q,\mu_2') \right)$
+    where $\mu_2' = \mu_2(q' \ptrans{} q')$, $q' = \last(q,\mu_2)$. Let $\pi' = \pi
+    (p'\parallel q' \ptrans{} p'\parallel q')$ and $\mu_1' = \mu_1(p'\ptrans{} p')$
     where $p' = \last(p,\mu_1)$. Then, by definition of $D$, $(\mu_1',\mu_2') \in D(\pi')$.
-    Observe that $(p,\mu_1)\ptrans{i+1}(p,\mu_1')$ and that the $\ptrans{i+1}$ relation
+    Observe that $(p,\mu_1)\ptrans{}(p,\mu_1')$ and that the $\ptrans{}$ relation
     is deterministic. Therefore
     $(p,\mu_1')\vDash^* \psi/(q,\mu_2')$ for each $(\mu_1,\mu_2)$. 
     Induction gives that $(p\parallel q, \pi')
-    \vDash^* \psi$. Now it follows trivially that $(p\parallel q,\pi) \vDash^* \pdmnd{i}
-    \psi$ because $(p\parallel q, \pi)\ptrans{i}(p\parallel q, \pi')$.
+    \vDash^* \psi$. Now it follows trivially that $(p\parallel q,\pi) \vDash^* \pdmnd{}
+    \psi$ because $(p\parallel q, \pi)\ptrans{}(p\parallel q, \pi')$.
 
 
-    \proofcase{Case $\phi = \pdmndback{i}, i\in \mathbb{N}$}\par\nobreak
+    \proofcase{Case $\phi = \pdmndback{}\phi$}\par\nobreak
     %
-    \ltr Assume $(p\parallel q, \pi) \vDash^* \pdmndback{i}\psi$ and take $(\mu_1,\mu_2)
+    \ltr Assume $(p\parallel q, \pi) \vDash^* \pdmndback{}\psi$ and take $(\mu_1,\mu_2)
     \in D(\pi)$. It is obvious, from the definition of $D$ that $\mu_1$ and $\mu_2$ both
-    end with $\ptrans{i+1}$ since $\pi$ ends with $\ptrans{i+1}$. Let $\pi', \mu_1', \mu_2'$
+    end with $\ptrans{}$ since $\pi$ ends with $\ptrans{}$. Let $\pi', \mu_1', \mu_2'$
     be $\pi,\mu_1,\mu_2$ without their last transition respectively (note that our assumption
     guarantees that they are non-empty). By Lemma~\ref{lemma:removing_last_trans} we know
     that $(\mu_1',\mu_2') \in D(\pi')$. Since $(p\parallel q,\pi') \vDash^* \psi$, we have
     by induction that $(p,\mu_1')\vDash^* \psi/(q,\mu_2')$. Then $(p,\mu_1)\vDash^*
-    \pdmndback{i+1} \left( \psi/(q,\mu_2') \right) = (\pdmndback{i}\psi)/(q,\mu_2)$.
+    \pdmndback{} \left( \psi/(q,\mu_2') \right) = (\pdmndback{}\psi)/(q,\mu_2)$.
 
-    \rtl Now assume $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmndback{i}
-    \psi)/(q,\mu_2)$. Then the last step of $\mu_2$ is $\ptrans{i+1}$ since otherwise
+    \rtl Now assume $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmndback{}
+    \psi)/(q,\mu_2)$. Then the last step of $\mu_2$ is $\ptrans{}$ since otherwise
     the formula would be equal to $\false$, which could not be satisfied by $(p,\mu_1)$.
-    We see furthermore that the formula is $\pdmndback{i+1}\left(\psi/(q,\mu_2')\right)$ where
+    We see furthermore that the formula is $\pdmndback{}\left(\psi/(q,\mu_2')\right)$ where
     $\mu_2'$ is again $\mu_2$ without its last step. This means the last step of $\mu_1$
-    is also $\pdmnd{i+1}$ (a fact we could also have deduced from the definition of $D$),
+    is also $\pdmnd{}$ (a fact we could also have deduced from the definition of $D$),
     let $\mu_1'$ be $\mu_1$ with out this step. If we also let $\pi'$ be $\pi$ without the
     last step, and by Lemma~\ref{lemma:removing_last_trans} we have
     $(\mu_1',\mu_2')\in D(\pi')$. Since
     $(p,\mu_1')\vDash^* \psi/(q,\mu_2')$ induction gives that $(p\parallel q,\pi')\vDash^*
-    \psi$. By the definition of $D$ we see that the last step of $\pi$ can only be $\ptrans{i}$
-    so $(p\parallel q, \pi)\vDash^* \pdmndback{i} \psi$.
+    \psi$. By the definition of $D$ we see that the last step of $\pi$ can only be $\ptrans{}$
+    so $(p\parallel q, \pi)\vDash^* \pdmndback{} \psi$.
 
     \vspace{1em}
 

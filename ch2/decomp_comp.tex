@@ -103,52 +103,52 @@ is decomposed into the stuttering computations
     (b.0,b.0 \ptrans{} b.0 \trans{b} 0).\quad\phantom{\textrm{and}}
 \end{gather*}
 %
-However, we must be careful when decomposing computations that
-already involve stuttering steps.
-In this case we must tag the stuttering steps appropriately in order to prevent ambiguities.
-For example, consider the following computation.
-\[
-((a.0\parallel b.0) \parallel c.0,\
- (a.0\parallel b.0) \parallel c.0 \trans{a}
- (0 \parallel b.0) \parallel c.0 \trans{b}
- (0 \parallel 0) \parallel c.0 \trans{c}
- (0 \parallel 0) \parallel 0)
-\]
-We first decompose this into
-\begin{gather*}
-(a.0\parallel b.0,\
-a.0\parallel b.0 \trans{a}
-0\parallel b.0 \trans{b}
-0\parallel 0 \ptrans{}
-0\parallel 0)
-\\
-(c.0,\ c.0 \ptrans{} c.0 \ptrans{} c.0 \trans{c} 0)
-\end{gather*}
-Now we must decompose the first computation further, but it is already stuttering.
-To indicate at which decomposition step the stuttering steps are introduced,
-we tag them with a natural number. When decomposing a computation that is not
-stuttering, all stuttering steps get tagged with $0$, denoted by $\ptrans 0$. This is what
-we have simply called $\ptrans{}$ until now. When decomposing a computation that
-is already stuttering, new stuttering steps are also labelled with 
-$\ptrans 0$ but any existing
-stuttering steps coming from the composed computation
-have their tag increased by one.
-Returning to our example, which with tagged stuttering steps is
-\begin{gather*}
-(a.0\parallel b.0,\
-a.0\parallel b.0 \trans{a}
-0\parallel b.0 \trans{b}
-0\parallel 0 \ptrans{0}
-0\parallel 0),
-\\
-(c.0,\ c.0 \ptrans{0} c.0 \ptrans{0} c.0 \trans{c} 0).
-\end{gather*}
-Its decomposition is
-\begin{gather*}
-    (a.0,\ a.0 \trans{a} 0 \ptrans{0} 0 \ptrans{1} 0) \\
-    (b.0,\ b.0 \ptrans{0} b.0 \trans{b} 0 \ptrans{1} 0) \\
-    (c.0,\ c.0 \ptrans{1} c.0 \ptrans{1} c.0 \trans{c} 0)
-\end{gather*}
+% However, we must be careful when decomposing computations that
+% already involve stuttering steps.
+% In this case we must tag the stuttering steps appropriately in order to prevent ambiguities.
+% For example, consider the following computation.
+% \[
+% ((a.0\parallel b.0) \parallel c.0,\
+%  (a.0\parallel b.0) \parallel c.0 \trans{a}
+%  (0 \parallel b.0) \parallel c.0 \trans{b}
+%  (0 \parallel 0) \parallel c.0 \trans{c}
+%  (0 \parallel 0) \parallel 0)
+% \]
+% We first decompose this into
+% \begin{gather*}
+% (a.0\parallel b.0,\
+% a.0\parallel b.0 \trans{a}
+% 0\parallel b.0 \trans{b}
+% 0\parallel 0 \ptrans{}
+% 0\parallel 0)
+% \\
+% (c.0,\ c.0 \ptrans{} c.0 \ptrans{} c.0 \trans{c} 0)
+% \end{gather*}
+% Now we must decompose the first computation further, but it is already stuttering.
+% To indicate at which decomposition step the stuttering steps are introduced,
+% we tag them with a natural number. When decomposing a computation that is not
+% stuttering, all stuttering steps get tagged with $0$, denoted by $\ptrans 0$. This is what
+% we have simply called $\ptrans{}$ until now. When decomposing a computation that
+% is already stuttering, new stuttering steps are also labelled with 
+% $\ptrans 0$ but any existing
+% stuttering steps coming from the composed computation
+% have their tag increased by one.
+% Returning to our example, which with tagged stuttering steps is
+% \begin{gather*}
+% (a.0\parallel b.0,\
+% a.0\parallel b.0 \trans{a}
+% 0\parallel b.0 \trans{b}
+% 0\parallel 0 \ptrans{0}
+% 0\parallel 0),
+% \\
+% (c.0,\ c.0 \ptrans{0} c.0 \ptrans{0} c.0 \trans{c} 0).
+% \end{gather*}
+% Its decomposition is
+% \begin{gather*}
+%     (a.0,\ a.0 \trans{a} 0 \ptrans{0} 0 \ptrans{1} 0) \\
+%     (b.0,\ b.0 \ptrans{0} b.0 \trans{b} 0 \ptrans{1} 0) \\
+%     (c.0,\ c.0 \ptrans{1} c.0 \ptrans{1} c.0 \trans{c} 0)
+% \end{gather*}
 %
 However, the decomposition of a parallel computation 
 is not in general unique, there may be several possibilities.
@@ -170,13 +170,13 @@ The following function over paths is used in defining the decomposition of a com
 %we define the following function on paths.
 \begin{align*}
     D(\lambda) &= \{(\lambda,\lambda)\} \\
-    D(\pi'(p'\parallel q' \ptrans{i} p'\parallel q')) &=
-        \{(\mu_1(p'\ptrans{i+1}p'),\mu_2(q'\ptrans{i+1}q')) \alt (\mu_1,\mu_2)\in D(\pi')\} \\
+    D(\pi'(p'\parallel q' \ptrans{} p'\parallel q')) &=
+        \{(\mu_1(p'\ptrans{}p'),\mu_2(q'\ptrans{}q')) \alt (\mu_1,\mu_2)\in D(\pi')\} \\
     D(\pi'(p'\parallel q' \trans{\alpha} p''\parallel q'')) &=
         \begin{cases}
-            \{(\mu_1(p' \trans{\alpha} p''), \mu_2(q' \ptrans{0} q')) \\ \quad\quad
+            \{(\mu_1(p' \trans{\alpha} p''), \mu_2(q' \ptrans{} q')) \\ \quad\quad
                 \alt (\mu_1,\mu_2) \in D(\pi')\} & \textrm{if $q'\equiv q''$} \\[0.7em]
-            \{(\mu_1(p' \ptrans{0} p'), \mu_2(q'\trans{\alpha} q'')) \\ \quad\quad
+            \{(\mu_1(p' \ptrans{} p'), \mu_2(q'\trans{\alpha} q'')) \\ \quad\quad
                 \alt (\mu_1,\mu_2) \in D(\pi')\} & \textrm{if $p'\equiv p''$} \\[0.7em]
             \{(\mu_1(p'\trans{a}p''), \mu_2(q'\trans{\bar{a}}q'')) \\ \quad\quad
                 \alt (\mu_1,\mu_2) \in D(\pi'), a\in A, \\
@@ -234,7 +234,7 @@ this as a lemma which will come in handy later.
         \pi_1 &= \pi_1' (p_1' \parallel q_1' \ R_1\  p_1 \parallel q_1) \\
         \pi_2 &= \pi_2' (p_2' \parallel q_2' \ R_2\  p_2 \parallel q_2)
     \end{align*}
-    where $R_1,R_2$ are relations of the form $\trans\alpha$ or $\ptrans i$.
+    where $R_1,R_2$ are relations of the form $\trans\alpha$ or $\ptrans{}$.
     The induction hypothesis states that $\pi_1' = \pi_2'$, which also means
     that $p_1'=p_2'$ and $q_1'=q_2'$. Thus we need to show
     that the final steps coincide also, i.e. that $R_1=R_2$ and the processes
@@ -336,8 +336,8 @@ two operators.
                                 \alt \neg\phi
                                 \alt \dmnd{\alpha} \phi
                                 \alt \dmndback{\alpha} \phi
-                                \alt \pdmnd{i} \phi
-                                \alt \pdmndback{i} \phi
+                                \alt \pdmnd{} \phi
+                                \alt \pdmndback{} \phi
     \]
     where $i\in\mathbb{N}$ and $\alpha\in A$.
     We define the \emph{satisfaction relation} $\vDash^*\,\subseteq \C_\T^* \times \HMLpp$
@@ -350,10 +350,10 @@ two operators.
               $\rho'\in\C_\T^* : \rho\trans{\alpha}\rho'$ and $\rho'\vDash^*\phi$
         \item $\rho\vDash^*\dmndback{\alpha}\phi$ iff for some
               $\rho'\in\C_\T^* : \rho'\trans{\alpha}\rho$ and $\rho'\vDash^*\phi$
-        \item $\rho\vDash^*\pdmnd{i}\phi$ iff
-              $\rho(p\ptrans{i} p) \vDash^* \phi$ where $p=\last(\rho)$.
-        \item $\rho\vDash^*\pdmndback{i}\phi$ iff
-              $\rho' \vDash^* \phi$ where $\rho = \rho'(p \ptrans{i} p)$ for some $p$.
+        \item $\rho\vDash^*\pdmnd{}\phi$ iff
+              $\rho(p\ptrans{} p) \vDash^* \phi$ where $p=\last(\rho)$.
+        \item $\rho\vDash^*\pdmndback{}\phi$ iff
+              $\rho' \vDash^* \phi$ where $\rho = \rho'(p \ptrans{} p)$ for some $p$.
     \end{itemize}
     The satisfaction relation $\vDash^*\,\in P\times\HMLpp$ is defined by
     $p\vDash^*\phi$ if and only if $(p,\lambda)\vDash^* \phi$.
