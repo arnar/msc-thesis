@@ -219,36 +219,44 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
 \begin{theorem}\label{thm:decomposition}
     For CCS processes $p,q$ and a computation $(p \parallel q, \pi)\in \C(p\parallel q)$
     and a formula $\phi \in \HMLpp$ we have
-    \begin{equation}\label{eq:decomp}
-        (p\parallel q, \pi) \vDash^* \phi
-        \quad \Leftrightarrow \quad
-        \forall (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* \phi/(q,\mu_2).
+    %\sublabon{equation}
+    \begin{equation}\label{eq:decomp_ltr}
+        (p\parallel q, \pi) \vDash^* \phi  \quad\Rightarrow\quad
+        \forall (\mu_1,\mu_2) \in D(\pi) : (p, \mu_1) \vDash^* \phi/(q, \mu_2)
     \end{equation}
+    and conversely,
+    \begin{equation}\label{eq:decomp_rtl}
+        (p\parallel q, \pi) \vDash^* \phi
+        \quad\Leftarrow\quad
+        \exists (\mu_1,\mu_2) \in D(\pi) : (p, \mu_1) \vDash^* \phi/(q, \mu_2).
+    \end{equation}
+    %\sublaboff{equation}
 \end{theorem}
 \begin{proof}
-    We do induction on the structure of $\phi$. In the following text, the terms
+    We prove both implications simultaneously by induction on the structure of $\phi$. 
+    In the following text, the terms
     {\em ``the left-hand side''} and {\em ``the right-hand side''} refer respectively
-    to the left- and right-hand sides
-    of the bi-implication~\eqref{eq:decomp} of the theorem.
+    to the left- and right-hand sides of the above implications where the quantifier
+    used in the right-hand side will be made clear by the context.
 
     \proofcase{Case $\phi = \true$} Then $\phi/(q, \mu_2) = \true$ and both sides
-    of~\eqref{eq:decomp} are trivially satisfied.
+    of both~\eqref{eq:decomp_ltr} and~\eqref{eq:decomp_rtl} are trivially satisfied.
 
 
-    \proofcase{Case $\phi = \psi_1 \land \psi_2$}
-
+    \proofcase{Case $\phi = \psi_1 \land \psi_2$}\par\nobreak
+    %
     \ltr First assume $(p\parallel q, \pi)
-    \vDash^* \psi_1 \land \psi_2$ (i.e. the left side of~\eqref{eq:decomp})
+    \vDash^* \psi_1 \land \psi_2$
     and let $(\mu_1,\mu_2)\in D(\pi)$.
     Since both $\psi_1$ and $\psi_2$ are smaller than $\phi$ and both are satisfied by
     $(p\parallel q, \pi)$ we have by induction that $(p,\mu_1) \vDash^* \psi_i/(q, \mu_2)$
     for $i\in\{1,2\}$. Since $\phi/(q,\mu_2) = (\psi_1 \land \psi_2)/(q,\mu_2) =
     \psi_1 / (q, \mu_2) \land \psi_2 / (q,\mu_2)$ we obtain $(p,\mu_1) \vDash^*
-    \phi/(q,\mu_2)$ (i.e. the right side of~\eqref{eq:decomp}).
+    \phi/(q,\mu_2)$.
 
-    \rtl Now assume the right side, 
+    \rtl Now assume the right side of~\eqref{eq:decomp_rtl}, 
     \[
-        \forall (\mu_1,\mu_2)\in D(\pi) : (p,\mu_1)
+        \exists (\mu_1,\mu_2)\in D(\pi) : (p,\mu_1)
         \vDash^* (\psi_1 \land \psi_2)/(q, \mu_2).
     \] 
     By definition the formula is equal
@@ -256,24 +264,30 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     satisfies both $\psi_1$ and $\psi_2$ and thus also $\psi_1 \land \psi_2 = \phi$.
 
 
-    \proofcase{Case $\phi = \neg \psi$}
+    \proofcase{Case $\phi = \neg \psi$}\par\nobreak
+    %
+    \ltr First assume the left side $(p\parallel q, \pi) \vDash^* \neg\psi$.
+    %Since $\psi$ is smaller than $\phi$ the
+    %implication~\eqref{eq:decomp_rtl} holds for it by induction. 
+    Assume towards
+    contradiction that there does exist a decomposition $(\mu_1',\mu_2')\in D(\pi)$
+    such that $(p, \mu_1') \vDash^* \phi/(q, \mu_2')$. 
+    Then by induction~\eqref{eq:decomp_rtl} gives $(p\parallel q, \pi) \vDash^* \psi$,
+    which is in direct contradiction with our assumption. Since no such decomposition
+    can exist, it holds for all $(\mu_1,\mu_2)\in D(\pi)$ that
+    $(p,\mu_1) \vDash^* \neg\psi/(q,\mu_2) = \phi/(q,\mu_2)$.
 
-    \ltr First assume the left side $(p\parallel q, \pi) \vDash^* \neg\psi$ and
-    let $(\mu_1,\mu_2) \in D(\pi)$. Since $\psi$ is smaller than $\phi$ the
-    bi-implication~\eqref{eq:decomp} holds for it, in particular we have $(p,\mu_1)
-    \vDash^* \psi/(q,\mu_2) \Rightarrow (p \parallel q, \pi) \vDash^* \psi$. Since the
-    last part is in direct contradiction to our assumption, it cannot be that
-    $(p,\mu_1) \vDash^* \psi/(q,\mu_2)$. Thus we get that $(p,\mu_1) \vDash^*
-    \neg \psi/(q,\mu_2) = \phi/(q,\mu_2)$.
-
-    \rtl Assume the right side. By the same inductive argument we have that
-    $(p \parallel q, \pi) \vDash^* \psi \Rightarrow (p,\mu_1) \vDash^* \psi / (q,\mu_2)$.
-    Since the latter contradicts the right side, our assumption, the former cannot hold
-    and we obtain that $(p \parallel q, \pi) \vDash^* \neg\psi = \phi$.
+    \rtl Assume the right side of~\eqref{eq:decomp_rtl}, namely there exists a
+    decomposition $(\mu_1,\mu_2)\in D(\pi)$ such that $(p,\mu_1)\vDash^* \neg\psi/(q,\mu_2)$.
+    Assume, again towards a contradiction, that $(p\parallel q,\pi)\vDash^*\psi$.
+    By induction, \eqref{eq:decomp_ltr} now gives that for all $(\mu_1',\mu_2')\in D(\pi)$,
+    $(p,\mu_1')\vDash^* \neg\psi/(q,\mu_2')$. In particular, this holds for the
+    decomposition $(\mu_1,\mu_2)$, which contradicts our assumption. Therefore
+    we must have that $(p\parallel q,\pi) \vDash^* \neg\psi = \phi$.
 
 
-    \proofcase{Case $\phi = \dmnd\alpha\psi$}
-
+    \proofcase{Case $\phi = \dmnd\alpha\psi$}\par\nobreak
+    %
     \ltr Again, first assume the left side and take $(\mu_1,\mu_2)\in D(\pi)$. Then
     there exists a computation $(p\parallel q, \pi')$ s.t. $(p\parallel q, \pi) \trans{\alpha}
     (p\parallel q, \pi')$ and $(p\parallel q, \pi') \vDash^* \psi$.
@@ -305,8 +319,8 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     In all cases the result is the same, namely $(p,\mu_1) \vDash^* \phi / (q,\mu_2)$
     which is what we wanted to prove.
 
-    \rtl Now assume the right side of~\eqref{eq:decomp}, i.e. for each $(\mu_1,\mu_2)
-    \in D(\pi)$ it holds that $(p,\mu_1) \vDash^* \dmnd{\alpha}\psi / (q,\mu_2)$.
+    \rtl Now assume the right side of~\eqref{eq:decomp_rtl}, i.e. there exists a $(\mu_1,\mu_2)
+    \in D(\pi)$ such that that $(p,\mu_1) \vDash^* \dmnd{\alpha}\psi / (q,\mu_2)$.
     We know $\dmnd{\alpha}\psi / (q,\mu_2)$ is a disjunction of one or more clauses
     so $(p,\mu_1)$ must satisfy at least one of them. Each clause has one of three
     forms, and we analyze the possible cases.
@@ -320,7 +334,8 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             part (ii) of
             Lemma~\ref{lemma:last_step_decomp}
             gives that there exists a $\pi'$ with $(\mu_1',\mu_2')\in D(\pi')$ and
-            $(p\parallel q, \pi) \trans{\alpha} (p\parallel q, \pi')$. Since $(p,\mu_1')
+            $(p\parallel q, \pi) \trans{\alpha} (p\parallel q, \pi')$.
+            Since $(p,\mu_1')
             \vDash^* \psi / (q,\mu_2')$ then by induction, since $\psi$ is smaller than
             $\phi$, $(p\parallel q, \pi') \vDash^* \psi$. This in turn means that
             $(p\parallel q, \pi) \vDash^* \dmnd{\alpha}\psi = \phi$.
@@ -344,11 +359,11 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     In all cases we obtain what we wanted to prove, namely $(p\parallel q, \pi) \vDash^* \phi$.
 
 
-    \proofcase{Case $\phi = \dmndback\alpha\psi$}
-
+    \proofcase{Case $\phi = \dmndback\alpha\psi$}\par\nobreak
+    %
     \ltr Assume that $(p\parallel q, \pi) \vDash^* \dmndback{\alpha}\psi$ and take
-    $(\mu_1,\mu_2)\in D(\pi)$. Since $(p\parallel q, \pi') \trans{\alpha} (p\parallel
-    q, \pi)$ for some $\pi'$ such that $(p\parallel q,\pi') \vDash^* \psi$,
+    $(\mu_1,\mu_2)\in D(\pi)$. Since \mbox{$(p\parallel q, \pi') \trans{\alpha} (p\parallel
+    q, \pi)$} for some $\pi'$ such that $(p\parallel q,\pi') \vDash^* \psi$,
     there exist processes $p',q',p'',q''$ such that $\pi
     = \pi'(p''\parallel q'' \trans{\alpha} p'\parallel q')$. By analyzing the definition
     of $D$, we can gain some information about $\mu_1$ and $\mu_2$, in particular by
@@ -361,8 +376,9 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             \psi) / (q,\mu_2) = \dmndback{\alpha} \left( \psi / (q,\mu_2') \right)$. Since
             $(p\parallel q, \pi') \vDash^* \psi$, we get by induction that $(p,\mu_1')
             \vDash^* \psi / (q,\mu_2')$, which in turn means that $(p,\mu_1)\vDash^*
-            \dmndback{\alpha} \left(\psi / (q,\mu_2)\right) = \dmndback{\alpha}\psi)/
-            (q,\mu_2)$.
+            \dmndback{\alpha} \left(\psi / (q,\mu_2)\right)$ and since the last step of
+            $\mu_2$ is a pseudo-step, $\dmndback{\alpha} \left(\psi / (q,\mu_2)\right)
+            = (\dmndback{\alpha}\psi)/(q,\mu_2)$.
         \item $p''\equiv p'$ and $q''\not\equiv q'$. In this case $(\mu_1,\mu_2)
             = (\mu_1'(p'\ptrans{0}p'), \mu_2'(q''\trans{\alpha}q'))$ where $(\mu_1',
             \mu_2') \in D(\pi')$. This form of $\mu_2$ means that $\dmndback{\alpha}
@@ -383,7 +399,7 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     In all cases we obtain the same result, namely $(p,\mu_1) \vDash^* (\dmndback{\alpha}\psi)
     / (q,\mu_2) = \phi/(q,\mu_2)$.
 
-    \rtl Now assume that $\forall (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\dmndback{
+    \rtl Now assume that there is $(\mu_1,\mu_2) \in D(\pi)$ s.t. $(p,\mu_1) \vDash^* (\dmndback{
     \alpha}\psi)/(q,\mu_2)$. This means that $\mu_1$ and $\mu_2$ are non-empty. By comparing
     $\alpha$ with the last transition  of $\mu_2$ we can infer the form of $(\dmndback{\alpha}
     \psi) / (q,\mu_2)$.
@@ -433,26 +449,26 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \end{itemize}
     In all cases $(p\parallel q,\pi) \vDash^* \dmndback\alpha\psi = \phi$.
 
-    \todo{I think the last case analysis can be simplifed a lot by defining $\pi',\mu_1',\mu_2'$
-    in advance and invoking Lemma~\ref{lemma:removing_last_trans} before analyzing the
-    cases.}
+    %\todo{I think the last case analysis can be simplifed a lot by defining $\pi',\mu_1',\mu_2'$
+    %in advance and invoking Lemma~\ref{lemma:removing_last_trans} before analyzing the
+    %cases.}
 
 
-    \proofcase{Case $\phi = \pdmnd{i}, i\in \mathbb{N}$}
-
+    \proofcase{Case $\phi = \pdmnd{i}, i\in \mathbb{N}$}\par\nobreak
+    %
     \ltr First assume $(p\parallel q, \pi) \vDash^* \pdmnd{i}\psi$ and take $(\mu_1,\mu_2)
     \in D(\pi)$. This means there exists
     a $\pi'$ s.t. $(p\parallel q, \pi) \ptrans{i} (p\parallel q, \pi')$ and $(p\parallel q,
     \pi')\vDash^* \psi$. By definition
     $(\pdmnd{i}\psi)/(q,\mu_2) = \pdmnd{i+1} \left( \psi / (q, \mu_2') \right)$,
     where we let $(\mu_1',
-    \mu_2') = (\mu_1(p'\ptrans{i+1}p'),$ $\mu_2(q'\ptrans{i+1}q'))$ with $p' \parallel q' =
+    \mu_2') = (\mu_1(p'\ptrans{i+1}p'),$ $\mu_2(q'\ptrans{i+1}q'))$ with $(p' \parallel q') =
     \last{(p\parallel q, \pi)}$. This is according to the definition of $D$ so $(\mu_1',\mu_2')
     \in D(\pi')$. Thus, by induction $(p,\mu_1') \vDash^* \psi / (q,\mu_2')$. Since $(p,\mu_1)
     \ptrans{i+1} (p,\mu_1')$ we obtain that $(p,\mu_1) \vDash^* \pdmnd{i+1} \left(
     \psi / (q,\mu_2') \right) = (\pdmnd{i}\psi)/(q,\mu_2)$.
 
-    \rtl Assume that $\forall (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmnd{i}
+    \rtl Assume that $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmnd{i}
     \psi)/(q,\mu_2)$. 
     We want to show that $(p\parallel q,\pi) \vDash^* \pdmnd{i}\psi$.
     The formula is equal to $\pdmnd{i+1} \left( \psi / (q,\mu_2') \right)$
@@ -467,8 +483,8 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \psi$ because $(p\parallel q, \pi)\ptrans{i}(p\parallel q, \pi')$.
 
 
-    \proofcase{Case $\phi = \pdmndback{i}, i\in \mathbb{N}$}
-
+    \proofcase{Case $\phi = \pdmndback{i}, i\in \mathbb{N}$}\par\nobreak
+    %
     \ltr Assume $(p\parallel q, \pi) \vDash^* \pdmndback{i}\psi$ and take $(\mu_1,\mu_2)
     \in D(\pi)$. It is obvious, from the definition of $D$ that $\mu_1$ and $\mu_2$ both
     end with $\ptrans{i+1}$ since $\pi$ ends with $\ptrans{i+1}$. Let $\pi', \mu_1', \mu_2'$
@@ -478,7 +494,7 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     by induction that $(p,\mu_1')\vDash^* \psi/(q,\mu_2')$. Then $(p,\mu_1)\vDash^*
     \pdmndback{i+1} \left( \psi/(q,\mu_2') \right) = (\pdmndback{i}\psi)/(q,\mu_2)$.
 
-    \rtl Now assume $\forall (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmndback{i}
+    \rtl Now assume $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmndback{i}
     \psi)/(q,\mu_2)$. Then the last step of $\mu_2$ is $\ptrans{i+1}$ since otherwise
     the formula would be equal to $\false$, which could not be satisfied by $(p,\mu_1)$.
     We see furthermore that the formula is $\pdmndback{i+1}\left(\psi/(q,\mu_2')\right)$ where
@@ -495,4 +511,28 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
 
     This concludes the analysis of all structural forms for $\phi$. In each case we have
     shown by structural induction that each direction of the theorem holds.
+\end{proof}
+
+Theorem~\ref{thm:decomposition} uses the existential quantifier in the right-to-left
+direction. This makes it easy to show that a composed computation satisfies a
+formula, given only one witness of a decomposition with one component satisfying
+a rewritten formula. Note however that the set of decompositions of any given
+process is never empty, i.e. every parallel computation has a decomposition.
+This allows us to write the above theorem in a more symmetrical form.
+\begin{corollary}
+    For CCS processes $p,q$, a parallel computation $(p \parallel q, \pi)$
+    and a formula $\phi \in \HMLpp$ we have
+    %\sublabon{equation}
+    \begin{equation}\label{eq:decomp_bi}
+        (p\parallel q, \pi) \vDash^* \phi  \quad\Leftrightarrow\quad
+        \forall (\mu_1,\mu_2) \in D(\pi) : (p, \mu_1) \vDash^* \phi/(q, \mu_2)
+    \end{equation}
+\end{corollary}
+\begin{proof}
+    \ltr This case follows directly from the theorem.
+    
+    \rtl Assume that $\forall (\mu_1,\mu_2) \in D(\pi) : (p, \mu_1) \vDash^* \phi/(q, \mu_2)$.
+    Specifically, since there exists at least one decomposition $(\mu_1',\mu_2')\in D(\pi)$,
+    the above holds for that particular decomposition. By $\Leftarrow$ part of the
+    theorem, we thus have that \mbox{$(p\parallel q,\pi)\vDash^*\phi$}.
 \end{proof}
