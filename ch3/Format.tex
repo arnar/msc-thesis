@@ -63,10 +63,9 @@ Assume that  a TSS is complete and is in the idempotency format with respect to 
 any equivalence $\sim$ such that  $\bisim \subseteq{\sim}$.
 % I.e. for all $p\in\CTerms\Sigma$ it holds that $f(p,p) \sim p$.
 \end{theorem}
-
-%\begin{proof}
-%For review purposes the proof is given in Appendix \ref{proof:idempotent}. \hfill \qed
-%\end{proof}
+\begin{proof}
+\input{ch3/proof_idempotent}
+\end{proof}
 
 
 \subsection{Relaxing the restrictions} % (fold)
@@ -299,7 +298,8 @@ Delayed choice can be concluded to be idempotent in the restricted setting witho
 \sosrule{y \downarrow}{x \mp y \downarrow}
 \qquad
 \sosrule{x \trans{a} x' \quad y \trans{a} y'}{x \mp y \trans{a} x' \mp y'}
-\qquad
+\]
+\[
 \sosrule{x \trans{a} x' \quad y \ntrans{a}}{x \mp y \trans{a} x'}
 \qquad
 \sosrule{x \ntrans{a} \quad y \trans{a} y'}{x \mp y \trans{a} y'}

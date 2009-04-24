@@ -60,7 +60,7 @@ in the diamond operator, there is no way that the composed computation satisfies
     (\dmndback{a}\phi) / \rho'(p'' \trans{\beta} p') = \false \quad\textrm{where $a\ne \beta$}
 \]
 If however the diamond operator mentions a $\tau$ transition, then we must look for a
-transition in the other component that can synchronize the last one of $\rho$. Note that this
+transition in the other component that can synchronise with the last one of $\rho$. Note that this
 case does not include computations ending with a $\tau$ transition, as that case is
 covered by equation~\ref{eq:rewrite_back_dmnd_same}.
 \[
@@ -84,35 +84,39 @@ and when it doesn't.
         \false & \textrm{otherwise}
     \end{cases}
 \]
+%
+The complete quotienting transformation is summarised in the Table~\ref{tab:quotients}.
 
-\todo{Do we need this?}
-The complete quotienting transformation is summarised in the following table.
+\begin{table}[t]
     \begin{align*}
-    \true / \rho &= \true \\
-    (\phi_1 \land \phi_2)/\rho &= \phi_1/\rho  \land \phi_2 / \rho \\
-    (\neg\phi)/\rho &= \neg(\phi/\rho) \\
-    %
-    (\dmnd{a}\phi) / \rho &= \dmnd{a} \left(\phi / \rho(p'\ptrans{} p')\right)
-        \lor \left(\bigvee_{\rho' : \rho\transshort{a}\rho'} \pdmnd{} (\phi/\rho') \right)
-    \\[1em]
-    (\dmnd{\tau}\phi) / \rho &= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{} p')\right)
-        \lor \left(\bigvee_{\rho' : \rho\transshort{\tau}\rho'} \pdmnd{} (\phi/\rho') \right) \\
-        &\phantom{= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{} p')\right)\;}
-        \lor \left( \bigvee_{\rho',a : \rho \transshort{a} \rho'} \dmnd{\bar{a}} (\phi/\rho')  \right) \\
-    %
-    (\dmndback{\alpha}\phi) / (p,\lambda) &= \false \\
-    (\dmndback{\alpha}\phi) / \rho'(p'\ptrans{} p') &= \dmndback{\alpha} (\phi / \rho') \\
-    (\dmndback{\alpha}\phi) / \rho'(p''\trans{\alpha} p') &= \pdmndback{} (\phi / \rho') \\
-    (\dmndback{a}\phi) / \rho'(p'' \trans{\beta} p') &= \false \quad\textrm{where $a\ne \beta$} \\
-    (\dmndback{\tau}\phi) / \rho'(p'' \trans{b} p') &= \dmndback{\bar{b}} (\phi/\rho') \\
-    %
-    (\pdmnd{}\phi) / \rho &= \pdmnd{} \left( \phi / \rho(p'\ptrans{} p') \right) \\
-    %
-    (\pdmndback{}\phi) / \rho &= \begin{cases}
-        \pdmndback{} (\phi / \rho') & \textrm{if $\rho = \rho'(p' \ptrans{} p')$} \\
-        \false & \textrm{otherwise}
-    \end{cases} \\
-\end{align*}
+        \true / \rho &= \true \\
+        (\phi_1 \land \phi_2)/\rho &= \phi_1/\rho  \land \phi_2 / \rho \\
+        (\neg\phi)/\rho &= \neg(\phi/\rho) \\
+        %
+        (\dmnd{a}\phi) / \rho &= \dmnd{a} \left(\phi / \rho(p'\ptrans{} p')\right)
+            \lor \left(\bigvee_{\rho' : \rho\transshort{a}\rho'} \pdmnd{} (\phi/\rho') \right)
+        \\[1em]
+        (\dmnd{\tau}\phi) / \rho &= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{} p')\right)
+            \lor \left(\bigvee_{\rho' : \rho\transshort{\tau}\rho'} \pdmnd{} (\phi/\rho') \right) \\
+            &\phantom{= \dmnd{\tau} \left(\phi / \rho(p'\ptrans{} p')\right)\;}
+            \lor \left( \bigvee_{\rho',a : \rho \transshort{a} \rho'} \dmnd{\bar{a}} (\phi/\rho')  \right) \\
+        %
+        (\dmndback{\alpha}\phi) / (p,\lambda) &= \false \\
+        (\dmndback{\alpha}\phi) / \rho'(p'\ptrans{} p') &= \dmndback{\alpha} (\phi / \rho') \\
+        (\dmndback{\alpha}\phi) / \rho'(p''\trans{\alpha} p') &= \pdmndback{} (\phi / \rho') \\
+        (\dmndback{a}\phi) / \rho'(p'' \trans{\beta} p') &= \false \quad\textrm{where $a\ne \beta$} \\
+        (\dmndback{\tau}\phi) / \rho'(p'' \trans{b} p') &= \dmndback{\bar{b}} (\phi/\rho') \\
+        %
+        (\pdmnd{}\phi) / \rho &= \pdmnd{} \left( \phi / \rho(p'\ptrans{} p') \right) \\
+        %
+        (\pdmndback{}\phi) / \rho &= \begin{cases}
+            \pdmndback{} (\phi / \rho') & \textrm{if $\rho = \rho'(p' \ptrans{} p')$} \\
+            \false & \textrm{otherwise}
+        \end{cases}
+    \end{align*}
+    \caption{Quotienting transformations of formulas in \HMLpp}
+    \label{tab:quotients}
+\end{table}
 
 % subsection transformation_of_formulas (end)
 

@@ -9,9 +9,9 @@ The following definitions come mostly from~\cite{DeNicola:1990}.
         \item $P$ is a set of process names.
         \item $A$ is a finite set of action names, not including a \emph{silent action}
               $\tau$. We write $A_\tau$ for $A\cup \{\tau\}$.
-        \item $\trans{}\subseteq P\times A\times P$ is the \emph{transition
+        \item $\trans{}\subseteq P\times A_\tau \times P$ is the \emph{transition
               relation}, we call its elements \emph{transitions} and
-              usually write $p\trans{a}p'$ to mean that $(p,a,p')\in\trans{}$.
+              usually write $p\trans{\alpha}p'$ to mean that $(p,\alpha,p')\in\trans{}$.
     \end{itemize}
     We let $p,q,\dots$ range over $P$, $a,b,\dots$ over $A$ and $\alpha,\beta,\dots$
     over $A_\tau$.
@@ -87,7 +87,7 @@ The following definitions come mostly from~\cite{DeNicola:1990}.
     Let $\T=\langle P,A,\rightarrow \rangle$ be an LTS. The set $\HMLpast(A)$,
     or simply $\HMLpast$, of
     \emph{Hennessy-Milner logic formulas with past} is defined by the following grammar,
-    where $\alpha\in A$.
+    where $\alpha\in A_\tau$.
     \[
         \phi,\psi \,::=\, \true \alt \phi\land\psi
                                 \alt \neg\phi
@@ -111,6 +111,7 @@ The following definitions come mostly from~\cite{DeNicola:1990}.
 
 We will make use of some standard shorthands for Hennessy-Milner type logics.
 \begin{align*}
+    \false &= \neg\true \\
     \phi \lor \psi &= \neg(\neg\phi \land \neg\psi) \\
     \bx{\alpha}\phi &= \neg\dmnd{\alpha}(\neg\phi) \\
     \bxback{\alpha}\phi &= \neg\dmndback{\alpha}(\neg\phi) \\
@@ -146,10 +147,11 @@ operators symmetric in their view of the process graph. However, we are more
 interested in properties about the actual past of a computation, especially
 w.r.t. modelling epistemic properties, which rely on observations of some aspects
 of the computation so far. (We do not discuss such properties in the
-current paper.) We have thus reached the same conclusion as \cite{Laroussinie00},
-that the deterministic view is more appropriate for our purposes. They list two other
+current paper.) We have thus reached the same conclusion as \cite{Laroussinie00}
+that the deterministic view is more appropriate for our purposes.
+Laroussinie and Schnoebelen list two other
 properties of their model of the past in addition to being deterministic, namely that
-the past is finite (there is a fixed initial state) and that past is cumulative (each
+the past is finite (there is a fixed initial state) and that past is cumulative (at each
 transition the history gains information). We make implicit use of the latter property 
 in our proofs and find that the former is a natural property of the processes we
 want to model.

@@ -105,8 +105,8 @@ not too hard either.)
 \begin{definition}[Normalized TSSs]\label{def::normalized}
 A TSS is normalized w.r.t. $L$ if each deduction rule is $f$-defining for some function symbol $f$, and for each label $l \in L$, each function symbol $f$ and each pair of deduction rules of the form
 \[
-\DR{r} \sosrule{\Phi_r}{f(\overrightarrow{s}) \trans{l} s'} \quad
-\DR{r'} \sosrule{\Phi_{r'}}{f(\overrightarrow{t}) \trans{l} t'}
+\raisebox{1em }{\DR{r}}\;  \sosrule{\Phi_r}{f(\overrightarrow{s}) \trans{l} s'} \qquad
+\raisebox{1em }{\DR{r'}}\; \sosrule{\Phi_{r'}}{f(\overrightarrow{t}) \trans{l} t'}
 \]
 the following constraints are satisfied:
 \begin{enumerate}
@@ -157,10 +157,11 @@ The following theorem states that for normalized TSSs, Definition \ref{def::simp
 \begin{theorem}\label{th::simplifiedImpliesHard}
 Each normalized TSS in the syntactic determinism format w.r.t.\ $L$ is also in the determinism format w.r.t.\ $L$.
 \end{theorem}
+\begin{proof}
+\input{ch3/proof_simplifiedImpliesHard}
+\end{proof}
 
-For brevity, we omit the proof of Theorem \ref{th::simplifiedImpliesHard}.
-%(The proof is included for reviewers' convenience in Appendix \ref{proof::simpImpHard}.)
-The following statement is thus a corollary to Theorems \ref{th::simplifiedImpliesHard} and \ref{th::det}.
+The following statement is a corollary to Theorems \ref{th::simplifiedImpliesHard} and \ref{th::det}.
 
 \begin{corollary}
 Consider a normalized TSS with $(C, U)$ as its least three-valued stable model and a subset $L$ of its labels. If the TSS is in the (syntactic) determinism format w.r.t.\ $L$ (according to Definition \ref{def::simplifiedDet}), then $C$ is deterministic w.r.t.\ any $l\in L$.
@@ -293,7 +294,8 @@ The deduction rules for the time transition relation for this process algebra ar
 \sosrule{x \trans{1} x' \quad y \ntrans{1}}{x \cdot y \trans{1} x' \cdot y}
 \qquad
 \sosrule{x \trans{1} x' \quad x \downarrow \quad y \trans{1} y'}{x \cdot y \trans{1} x' \cdot y + y'}
-\qquad
+\]
+\[
 \sosrule{x \ntrans{1} \quad x \downarrow \quad y \trans{1} y'}{x \cdot y \trans{1} y'}
 \]
 Note that here we have an example of deduction rules, the first two deduction rules for time transitions of a sequential composition, for which the premises do not contradict each other. Still these deduction rules satisfy the determinism format since the targets of the conclusions are identical. In the syntactically richer framework of \cite{Reniers08}, where arbitrary first-order logic formulae over transitions are allowed, those two deduction rules are presented by a single rule with premise $x \trans{1} x' \land (x \not\downarrow \lor y \ntrans{1})$.

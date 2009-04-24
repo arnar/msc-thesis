@@ -1,0 +1,54 @@
+First define the relation $\eqidem \subseteq \CTerms\Sigma \times \CTerms\Sigma$ as follows.
+\[
+    \eqidem = \{ (p,p), (p,f(p,p)), (f(p,p),p) \,|\, p \in \CTerms\Sigma \}
+\]
+To prove the theorem it suffices to show that $\eqidem$ is a bisimulation relation. If it is, then $f(p,p)\bisim p$ for any closed term $p$ and since $\bisim \subseteq \sim$ we obtain the theorem.
+
+Let $(C,U)$ be the least three-valued stable model for the TSS under consideration.
+First consider a closed term $p$ s.t. $p \trans{l} p' \in C$ for some $l$ and $p'$ (note that $U=\emptyset$ since the TSS is complete).
+Next, we argue that $f(p,p) \trans{l} p''$ for some $p''$ such that  $p' \eqidem p''$.
+Since $p \trans{l} p' \in C$, there exists a provable transition rule of the form $\frac{N}{p \trans{l} p'}$ for some set of negative formulae $N$ such that $C \vDash N$.
+In particular, that means that $p \ntrans{l} \notin N$.
+In this case we make use of the requirement that there exists at least one rule of a starred form for label $l$. If there exists a
+rule of the form $1_l^*$, i.e.
+\[
+    \sosrule[i\in\{0,1\}]{x_i\trans{l}x'}{f(x_0,x_1)\trans{l}x'}
+\]
+then we can instantiate it to prove that $f(p,p)\trans{l}p'\in C$.
+In particular, it does not matter if $i=0$ or $i=1$.
+Since $\eqidem$ is reflexive, $p'\eqidem p'$ holds.
+If there exists a rule of the form $2_{l,l}^*$, we observe that $\gamma(l,l) = l$ so the transition rule becomes
+\[
+    \sosrule{x_0\trans{l}x_0' \quad x_1\trans{l}x_1'}{f(x_0,x_1) \trans{l} f(x_0',x_1')},
+\]
+where $x'_0 \equiv x'_1$ or $\trans{l}$ is deterministic.
+Now we can use the existence of $p\trans{l}p'$ to satisfy both premises and obtain that $f(p,p)\trans{l}f(p',p')$.
+By the definition of $\eqidem$ we also have that $p' \eqidem f(p',p')$.
+In either case, if $p \trans{l} p'\in C$, then there exists a $p''$ s.t. $f(p,p) \trans{l} p'' \in C$ and $p' \eqidem p''$.
+
+Now assume that $f(p,p) \trans{k} p' \in C$. Then there exists a provable transition rule $\frac{N}{f(p,p) \trans{k} p'}$
+for some set of negative formulae $N$ such that $C\vDash N$. Since all rules for $f$ are either of the form $1_l$ or $2_{l_0,l_1}$,
+this provable transition rule must be based on a rule of those forms. We analyze each possibility separately, showing that
+in each case $p \trans{k} p''$ for some $p''$ such that $p' \eqidem p''$.
+
+If the rule is based on a rule of form $1_l$, its positive premises must also be provable. In particular it must hold that
+$p\trans{k} p' \in C$ since both $x_0$ and $x_1$ in the rule are instantiated to $p$. The other premises are of no
+consequence to this conclusion and, again, we observe that $p'\eqidem p'$.
+
+Now consider the case where the transition is a consequence of a rule of the form $2_{l_0,l_1}$.
+If $t_0\equiv t_1$, say both are equal to $p''$, we must consider two cases, namely $k=l_0$ and $k=l_1$.
+If $k=l_0$ then the first premise of the rule actually states that $p\trans{k}p''$.
+If $k=l_1$ then the second premise similarly states that $p\trans{k}p''$.
+In either case, we note that $p'\equiv f(p'',p'')$ must hold and again by the definition of $\eqidem$ we have
+that $f(p'',p'')\eqidem p''$.
+
+If however $t_0\not\equiv t_1$ the side condition requires that $l_0=l_1 = k$, which also implies $\gamma(l_0,l_1)=l_0=k$,
+and that the transition relation $\trans{l_0}$ is deterministic.
+In this case it is easy to see that the right-hand sides of the first two premises, namely $t_0$ and $t_1$, evaluate to
+the same closed term in the proof structure, say $p''$.
+The conclusion then states that $k=l_0$ and $p'\equiv f(p'',p'')$.
+It must thus hold that $p\trans{k}p''\in C$ and $f(p'',p'')\eqidem p''$ as before.
+
+From this we obtain that if $f(p,p) \trans{k} p' \in C$ then there exists
+a $p''$ such that $p \trans{k} p'' \in C$ and $p' \eqidem p''$.
+Thus, $\eqidem$ is a bisimulation.

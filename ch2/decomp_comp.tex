@@ -1,7 +1,8 @@
 \section{Decomposing Computations} % (fold)
 \label{sec:decomp_comp}
 
-We seek a definition of a \emph{formula quotient w.r.t. a process/state}.
+We seek a definition of a \emph{formula quotient w.r.t. a process/state}
+following the work of~\cite{Larsen91}.
 This might be written as $\phi / p$ where $\phi$ is an \HMLpast{} formula
 and $p$ is a process. The theorem we then seek to prove is this:
 \[
@@ -15,7 +16,9 @@ a theorem of the form
 \[
     \rho \vDash \phi  \quad\Leftrightarrow\quad \rho_1 \vDash \phi / \rho_2
 \]
-where $\rho,\rho_1,\rho_2$ are computations such that $\rho$ is in some sense
+where $\rho,\rho_1,\rho_2$ are computations such that $\rho$ is 
+a computation of a process of the form $p \parallel q$ and that is,
+in some sense,
 the ``parallel composition'' of $\rho_1$ and $\rho_2$. In the 
 standard setting it is straightforward to identify the components of a
 parallel composition. In the case of computations, however, this is not so
@@ -34,15 +37,15 @@ and $\pi_q$ such that the computations
 \[
     (p, \pi_p) \quad\textrm{and}\quad (q, \pi_q)
 \]
-are in some sense the independent computations that run in parallel will
-yield $(p\parallel q, \pi)$.
+are in some sense independent computations that run in parallel will
+yield \mbox{$(p\parallel q, \pi)$}.
 
 % subsection the_theorem_we_seek (end)
 
 \subsection{Decomposition of computations} % (fold)
 \label{sub:decomposition_of_computations}
 
-In the regular setting, parallel composition may be defined 
+In the setting of HML without past, parallel composition may be defined 
 directly on LTSs independent
 of the syntax or semantics of the underlying process algebra. When dealing
 with computations, this does not provide enough information to find the two
@@ -85,12 +88,10 @@ by modelling the decomposition using {\em stuttering computations}. These are
 computations that are not only sequences of transition triplets, but may also involve
 pseudo steps labelled with $\ptrans{}$. Intuitively, $p\ptrans{} p$ means that
 process $p$ has remained idle in the last transition performed by a parallel process
-having $p$ as one of its parallel processes.
+having $p$ as one of its parallel components.
 We denote
 the set of stuttering computations with $\C_\T^*$ or simply $\C^*$.
-The meaning of these pseudo steps is that
-the computation containing it did not evolve, but some other component of the
-system performed a step. For example, the computation
+For example, the computation
 \[
 (a.0\parallel b.0,
 a.0\parallel b.0 \trans{a}
@@ -151,21 +152,22 @@ is decomposed into the stuttering computations
 % \end{gather*}
 %
 However, the decomposition of a parallel computation 
-is not in general unique, there may be several possibilities.
+is not in general unique, as there may be several possibilities
+stemming from different synchronisation patterns.
 For example consider a computation with the following trace.
 \[
      (a.0+b.0)\parallel(\bar{a}.0+\bar{b}.0) \trans{\tau} 0\parallel 0
 \]
 From this computation it is not possible to distinguish if the transition
-labelled with $\tau$ was the result of communication of $a$ and $\bar a$ actions,
-or of $b$ and $\bar b$ actions.
+labelled with $\tau$ was the result of communication of the $a$ and $\bar a$ actions,
+or of the $b$ and $\bar b$ actions.
 For our purposes, this is not necessarily a problem because no expression
-of our logic can differentiate between the two, given only the composed
+of our logic can differentiate between the two synchronisations, given only the composed
 computation. We thus consider all possibilities simultaneously,
 i.e. a decomposition of a computation will actually
 be \emph{a set} of pairs of components.
 
-The following function over paths is used in defining the decomposition of a computation.
+The following function over paths defines the decomposition of a computation.
 %To define the possible decompositions of a computation of the form $(p\parallel q, \pi)$
 %we define the following function on paths.
 \begin{align*}
@@ -185,20 +187,20 @@ The following function over paths is used in defining the decomposition of a com
         \end{cases}
 \end{align*}
 We should make a note of the fact that if $(\mu_1,\mu_2)$ is a decomposition
-of a computation $\pi$, then all three computations share the same length.
+of a computation $\pi$, then the three computations have the same length.
 Furthermore
-\[
+\begin{equation}\label{eq:last_equals_last}
     \last(\pi) = \last(\mu_1) \parallel \last(\mu_2).
-\]
+\end{equation}
 %
 Also of interest
-is that even though the above defines a set of decompositions of $\pi$, the only
+is that, even though the above definition yields a set of decompositions of $\pi$, the only
 case where multiple possibilities are generated is the last case where both components
 evolve, and where there is ambiguity in the processes as to which actions actually
 contributed to the communication. As we mentioned above, there is no expression
-of \HMLpast{} logic that can resolve such ambiguity only by looking at a composed
+of the \HMLpast{} logic that can resolve such ambiguity only by looking at a composed
 computation.
-Since our goal is to evaluate satisfiability of such expressions, the
+Since our goal is to model check of such expressions, the
 existence of multiple decompositions of one computation will not pose any problem.
 %Looking at a $\tau$ step in a composed computation, the computation does
 %may not contain enough information to see precisely which actions were performed
@@ -215,8 +217,8 @@ existence of multiple decompositions of one computation will not pose any proble
 %of \HMLpast{} logic can differentiate between the two ``realities'' only by looking
 %at a composed computation.
 
-Another notable property of path decomposition, is that its reverse is unique, i.e.
-a pair $(\mu_1,\mu_2)$ can only be the decomposition of a single path. We formalize
+Another notable property of path decomposition, is that its inverse is unique, i.e.
+a pair $(\mu_1,\mu_2)$ can only be the decomposition of a single path. We formalise
 this as a lemma which will come in handy later.
 \begin{lemma}\label{thm:paths_compose_uniquely}
     Let $\pi_1$ be a path of a parallel computation and $(\mu_1,\mu_2)\in D(\pi_1)$. 
@@ -236,26 +238,35 @@ this as a lemma which will come in handy later.
     \end{align*}
     where $R_1,R_2$ are relations of the form $\trans\alpha$ or $\ptrans{}$.
     The induction hypothesis states that $\pi_1' = \pi_2'$, which also means
-    that $p_1'=p_2'$ and $q_1'=q_2'$. Thus we need to show
-    that the final steps coincide also, i.e. that $R_1=R_2$ and the processes
-    $p_1, q_1$ are equal to $p_2,q_2$, respectively.
-    The proof proceeds by case analysis on the last steps of $\mu_1$ and $\mu_2$.
-
-    If both $\mu_1$ and $\mu_2$ end with a pseudo-step, then we see from the definition
-    of $D$ that both $R_1$ and $R_2$ must be pseudo-transitions. Since processes do
-    not evolve during such transitions, it is obvious that $p_1,q_1$ are respectively
-    equal to $p_2,q_2$.
-
-    If only one of $\mu_1$ and $\mu_2$ ends with a pseudo-step, then the action
-    of the other one must be the same as the last action of both $\pi$ and $\pi'$.
-    Since the transition system for CCS is deterministic for a fixed label, it
-    follows that the right hand sides of the last transitions are also equal.
-
-    If both $\mu_1$ and $\mu_2$ end with a proper transition, we note that by
-    the definition of $D$ the actions must complement each other. We also have
-    that the last step of both $\pi$ and $\pi'$ must thus be labelled with $\tau$
-    and by the same argument as before the right hand sides must match.
-
+    that $p_1'=p_2'$ and $q_1'=q_2'$. Property~\eqref{eq:last_equals_last} above
+    furthermore gives that $p_1=p_2$ and $q_1=q_2$.
+    Thus we only need to show
+    that the final steps coincide also, i.e. that $R_1=R_2$.
+    % and the processes
+    % $p_1, q_1$ are equal to $p_2,q_2$, respectively.
+    The proof proceeds by case analysis on the last steps of $\mu_1$ and $\mu_2$.    
+    \begin{itemize}
+        \item If both $\mu_1$ and $\mu_2$ end with a pseudo-step, then we see from the definition
+        of $D$ that both $R_1$ and $R_2$ must be pseudo-transitions. 
+        % Since processes do
+        %     not evolve during such transitions, it is obvious that $p_1,q_1$ are respectively
+        %     equal to $p_2,q_2$.
+        
+        \item If only one of $\mu_1$ and $\mu_2$ ends with a pseudo-step, then the action
+        of the other one must be the same as the last action of both $\pi$ and $\pi'$.
+        % Since the transition system for CCS is deterministic for a fixed label, it
+        % follows that the right hand sides of the last transitions are also equal.
+        
+        \item If both $\mu_1$ and $\mu_2$ end with a proper transition, we note that by
+        the definition of $D$ the actions must complement each other. Then
+        the last step of both $\pi$ and $\pi'$ must thus be labelled with $\tau$.
+        % and by the same argument as before the right hand sides must match.
+        
+        \item If both $\mu_1$ and $\mu_2$ end with a proper transition, we note that by
+        the definition of $D$ the actions must complement each other. Then
+        the last step of both $\pi$ and $\pi'$ must thus be labelled with $\tau$.
+        % and by the same argument as before the right hand sides must match.
+    \end{itemize}
     This covers all the cases and thus we have shown that $R_1=R_2$, $p_1=p_2$
     and $q_1=q_2$. Coupled with the induction hypothesis, this means that $\pi=\pi'$.
 \end{proof}
@@ -291,7 +302,7 @@ Note that the definition of $D$ relies on some properties of CCS specifically.
 %           then we can use the syntax of these components to deduce what were
 %           the actions of each side.
     \item The only possible result of a communication is $\tau$, and $\tau$
-          can never act as one partner of the communication. This is true in CSP
+          can never act as one partner of the communication. This is true in CSP~\cite{Hoare85}
           as well, where the result of communication is not tagged with $!$ or
           $?$, and only tagged actions can stand as components of communication.
 \end{enumerate}
@@ -303,7 +314,7 @@ form
     (p, \mu_1) \vDash \phi/(q, \mu_2)
 \]
 where $(\mu_1,\mu_2) \in D(\pi)$. However, since we are dealing with sets of
-decompositions, we need to quantify over these sets. It turns out that the most
+decompositions, we need to quantify over these sets. It turns out that a
 natural way that also gives a strong result is the following. Given that a composed
 computation satisfies a formula, we can prove that one component of {\em every}
 decomposition satisfies a formula quotiented with the other component,
@@ -322,7 +333,7 @@ computation satisfies the original one,
 
 Before defining the quotienting transformation we need define what $\vDash$ 
 means with respect to stuttering computations.
-We do this by extending \HMLpast{} to \HMLpp by adding
+We do this by extending \HMLpast{} to \HMLpp{} by adding
 two operators.
 
 \begin{definition}[Stuttering Hennessy Milner logic with past]
@@ -339,7 +350,7 @@ two operators.
                                 \alt \pdmnd{} \phi
                                 \alt \pdmndback{} \phi
     \]
-    where $i\in\mathbb{N}$ and $\alpha\in A$.
+    where $i\in\mathbb{N}$ and $\alpha\in A_\tau$.
     We define the \emph{satisfaction relation} $\vDash^*\,\subseteq \C_\T^* \times \HMLpp$
     as the least relation that satisfies the following,
     \begin{itemize}
@@ -388,11 +399,11 @@ two operators.
 
 One may ask why we need to extend both computations and the logic to include the
 notion of stuttering steps. The reason for doing so is to capture the information
-about interleaving order in component computations. This in turn is necessary because
+about the interleaving order in component computations. This in turn is necessary because
 the original logic can differentiate between different interleavings of parallel
 processes.
 
-For an example, let $p$ be a process that can not perform an $a$ action, but
+For an example, let $p$ be a process that cannot perform an $a$ action, but
 $p\trans{b} p'$ for some $p'$. Consider the computation $(a.0 \parallel p, \pi)$
 where
 \begin{equation}\label{eq:interleave1}

@@ -1,0 +1,54 @@
+Let $\tss$ be a normalized TSS in the syntactic determinism format w.r.t. $L$.
+Condition 1
+of Definition~\ref{def::detHard} is satisfied since $\tss$ is normalized. To
+see this, consider item 2 of Definition~\ref{def::normalized}, by taking $\DR{r}$ and $\DR{r'}$ to be the same rule.
+
+To prove condition 2 of Definition~\ref{def::detHard}
+let $(r) = \frac{\Phi_0}{t_0\trans{l}t_0'}$ and
+$(r') = \frac{\Phi_1}{t_1\trans{l}t_1'}$ be distinct rules of $\tss$ and $(\sigma,\sigma')$
+be a determinism-respecting pair of substitutions w.r.t. $(\Phi_0, \Phi_1)$ and $L$
+such that $\sigma(t_0) \equiv \sigma'(t_1)$. Since $\tss$ is normalized,
+both $\DR{r}$ and $\DR{r'}$ are $f$-defining for some function symbol $f$, i.e., $t_0 = f(\overrightarrow{s})$
+and $t_1 = f(\overrightarrow{t})$.
+Furthermore, since $f(\overrightarrow{s}) \equiv f(\overrightarrow{t})$ we have that
+$\sigma$ and $\sigma'$
+agree on all variables appearing
+in $f(\overrightarrow{s}) = f(\overrightarrow{t})$.
+
+For each variable $v \in \vars{r} \cap \vars{r'}$, we define
+its {\em common source distance} to be the source distance of $v$
+when only taking the formulae in $\Phi_0 \cap \Phi_1$ into account.
+Note that such a source distance exists since by constraint 3 of Definition \ref{def::normalized}
+all $v \in \vars{r} \cap \vars{r'}$ are source dependent via a subset of $\{ \trans{l} \mid l \in  L\}$ included in $\Phi_0 \cap \Phi_1$.
+
+We prove for each $v \in \vars{r} \cap \vars{r'}$ that $\sigma(v) \equiv \sigma'(v)$ by
+an induction on the common source distance of variables $v$.
+Suppose that we show the above claim, then we can prove the theorem as follows.
+It follows from Definition \ref{def::simplifiedDet} that either $t_0' \equiv t'_1$ or $\Phi_0$ contradicts $\Phi_1$.
+If $t'_0 \equiv t'_1$, then variables in $\vars{t'_0} = \vars{t'_1}$ are all source dependent via transitions in $L$
+that are common to both $\Phi_0$ and $\Phi_1$
+(by constraint 3 of Definition \ref{def::normalized}).
+By the above-mentioned claim, $\sigma(t'_0) \equiv \sigma'(t'_1)$, thus, constraint 2 of Definition \ref{def::detHard} follows, which was to be shown.
+If  $\Phi_0$ contradicts $\Phi_1$, then assume that the premises negating each other are $\phi_j \equiv s_j \trans{l_j} s'_j$ and $\phi_{j'} \equiv t_{j'} \ntrans{l_j}$ and it holds that $s_j \equiv t_{j'}$.
+All variables in $t_j \equiv s_j$ are source dependent via transitions in $L$ (by constraint 3   of Definition \ref{def::normalized}).
+It follows from the claim that $\sigma(s_j) \equiv \sigma'(t_{j'})$
+and thus, $\sigma(\phi_j)$ contradicts $\sigma'(\phi_{j'})$, which implies constraint 2 of Definition \ref{def::detHard}.
+
+
+Hence, it only remains to prove, by an induction on the common source distance of $v$, that $\sigma(v) \equiv \sigma'(v)$.
+If $v\in vars(f(\overrightarrow s))$ then we know that $\sigma(v) \equiv \sigma'(v)$ (since $t_0 \equiv t_1$ and $\sigma(t_0) \equiv \sigma'(t_1)$.
+Otherwise, since $v$ is source dependent in $(r)$
+via transitions with labels in $L$,
+there is a positive premise
+$u \trans{l} u'$ in $\Phi_0$ with $l\in L$
+such that $v\in vars(u')$ and all variables in $u$ are source
+dependent with a shorter common source distance.
+Furthermore,
+since $v$ appears in both rules, i.e., $v \in vars(r) \cap vars(r')$,
+this premise also appears in $\Phi_1$ according
+to item 3 of Definition~\ref{def::normalized} and thus $\vars{u} \subseteq vars(r) \cap vars(r')$.
+By the induction hypothesis we have that $\sigma(u)\equiv \sigma'(u)$ and since $(\sigma,\sigma')$
+is determinism-respecting w.r.t. $(\Phi_0, \Phi_1)$ and $L$, we know that
+$\sigma(u') \equiv \sigma'(u')$. Specifically, the substitutions
+must agree on the value of $v$, i.e.
+$\sigma(v) \equiv \sigma'(v)$.
