@@ -208,6 +208,10 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     Follows directly from the definition of $D$.
 \end{proof}
 
+We are now ready to prove the main theorem in this chapter, to the effect that
+the quotienting of a formula $\phi$ with respect to a computation $\rho$ is
+properly defined.
+
 \begin{theorem}\label{thm:decomposition}
     For CCS processes $p,q$ and a computation $(p \parallel q, \pi)\in \C(p\parallel q)$
     and a formula $\phi \in \HMLpp$ we have
@@ -263,7 +267,7 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     %implication~\eqref{eq:decomp_rtl} holds for it by induction. 
     Assume towards
     contradiction that there does exist a decomposition $(\mu_1',\mu_2')\in D(\pi)$
-    such that $(p, \mu_1') \vDash^* \phi/(q, \mu_2')$. 
+    such that $(p, \mu_1') \vDash^* \psi/(q, \mu_2')$. 
     Then by induction~\eqref{eq:decomp_rtl} gives $(p\parallel q, \pi) \vDash^* \psi$,
     which is in direct contradiction with our assumption. Since no such decomposition
     can exist, it holds for all $(\mu_1,\mu_2)\in D(\pi)$ that
@@ -273,7 +277,7 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     decomposition $(\mu_1,\mu_2)\in D(\pi)$ such that $(p,\mu_1)\vDash^* \neg\psi/(q,\mu_2)$.
     Assume, again towards a contradiction, that $(p\parallel q,\pi)\vDash^*\psi$.
     By induction, \eqref{eq:decomp_ltr} then gives that for all $(\mu_1',\mu_2')\in D(\pi)$,
-    $(p,\mu_1')\vDash^* \neg\psi/(q,\mu_2')$. In particular, this holds for the
+    $(p,\mu_1')\vDash^* \psi/(q,\mu_2')$. In particular, this holds for the
     decomposition $(\mu_1,\mu_2)$, which contradicts our assumption. Therefore
     we must have that $(p\parallel q,\pi) \vDash^* \neg\psi = \phi$.
 
@@ -284,10 +288,10 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     there exists a computation $(p\parallel q, \pi')$ s.t. $(p\parallel q, \pi) \trans{\alpha}
     (p\parallel q, \pi')$ and $(p\parallel q, \pi') \vDash^* \psi$.
     % This means that $\pi' = \pi (p''\parallel q'' \trans{\alpha}
-    % p' \parallel q')$ for some processes $p'', q'', p'$ and $q'$.
+    % p' \parallel q')$ for some processes $p'', q'', p'$ and $q'$.   xx
     By part (i) of
     Lemma~\ref{lemma:last_step_decomp} there exists a pair $(\mu_1',\mu_2')\in D(\pi')$.
-    Since $\psi$ is smaller than $\phi$ we have by induction that
+    Since $\psi$ is a subformula of $\phi$ we have by induction that
     \begin{equation}\label{eq:dmnd_psi}
         (p,\mu_1') \vDash^* \psi / (q,\mu_2')
     \end{equation}
@@ -296,11 +300,16 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
         \item $(p,\mu_1)\trans{\alpha}(p,\mu_1')$ and $(q,\mu_2)\ptrans{}(q,\mu_2')$.
             %The first clause of $\phi/(q,\mu_2)$ is $\dmnd{\alpha}(\psi/(q,\mu_2')$.
             From~\eqref{eq:dmnd_psi} we have that $(p,\mu_1) \vDash^*
-            \dmnd{\alpha}(\psi/(q,\mu_2'))$ and since that is the first clause of the
-            disjunction $\phi/(q,\mu_2)$ then also $(p,\mu_1) \vDash^* \phi/(q,\mu_2)$.
+            \dmnd{\alpha}(\psi/(q,\mu_2'))$ and since 
+            the formula $\dmnd\alpha(\psi/(q,\mu_2'))$
+            is the first clause of the
+            disjunction defining 
+            $\phi/(q,\mu_2)$ then also $(p,\mu_1) \vDash^* \phi/(q,\mu_2)$.
         \item $(p,\mu_1)\ptrans{}(p,\mu_1')$ and $(q,\mu_2)\trans{\alpha}(q,\mu_2')$.
             Again from~\eqref{eq:dmnd_psi} we have that $(p,\mu_1) \vDash^*
-            \pdmnd{}(\psi/(q,\mu_2'))$, and again this is a clause of the disjunction
+            \pdmnd{}(\psi/(q,\mu_2'))$, and again
+            the formula $\pdmnd{}(\psi/(q,\mu_2'))$
+            is a clause of the disjunction defining
             $\phi/(q,\mu_2)$ so $(p,\mu_1) \vDash^* \phi/(q,\mu_2)$.
         \item $\alpha = \tau$, $(p,\mu_1) \trans{a} (p,\mu_1')$ and $(q,\mu_2)
             \trans{\bar{a}} (q,\mu_2')$ for some $a\in A$. Then the disjunction
@@ -316,9 +325,9 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     We know $\dmnd{\alpha}\psi / (q,\mu_2)$ is a disjunction of one or more clauses
     so $(p,\mu_1)$ must satisfy at least one of them. Each clause has one of three
     forms, and we analyze the possible cases.
-    Let $\phi'$ be the clause that $(p,\mu_1)$ satisfies.
+    Let $\phi'$ be a clause that $(p,\mu_1)$ satisfies.
     \begin{enumerate}
-        \item $\phi' = \dmnd{\alpha} \left(\psi / (q,\mu_2)(q' \ptrans{} q') \right)$
+        \item Assume that $\phi' = \dmnd{\alpha} \left(\psi / (q,\mu_2)(q' \ptrans{} q') \right)$
             where $q' = \last(q,\mu_2)$.
             Then there is a $\mu_1'$ such that $(p,\mu_1) \trans{\alpha} (p,\mu_1')$
             and $(p,\mu_1') \vDash^* \psi/(q,\mu_2(q'\ptrans{}q'))$. If
@@ -331,14 +340,14 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             \vDash^* \psi / (q,\mu_2')$ then by induction, since $\psi$ is smaller than
             $\phi$, $(p\parallel q, \pi') \vDash^* \psi$. This in turn means that
             $(p\parallel q, \pi) \vDash^* \dmnd{\alpha}\psi = \phi$.
-        \item $\phi' = \pdmnd{} \left(\psi / (q,\mu_2')\right)$ for some $\mu_2'$
+        \item Assume that $\phi' = \pdmnd{} \left(\psi / (q,\mu_2')\right)$ for some $\mu_2'$
             such that $(q,\mu_2) \trans{\alpha} (q,\mu_2')$. Let $\mu_1' = \mu_1(p'
             \ptrans{} p')$ where $p' = \last(p,\mu_1)$. Lemma~\ref{lemma:last_step_decomp}
             gives the existence of $\pi'$ with $(\mu_1',\mu_2')\in D(\pi')$ and $(p\parallel
             q,\pi) \trans{\alpha} (p\parallel q, \pi')$. Since $(p,\mu_1')\vDash^* \psi
             / (q,\mu_2')$ then by induction $(p\parallel q,\pi') \vDash^* \psi$ and thus
             $(p\parallel q, \pi) \vDash^* \dmnd{\alpha}\psi = \phi$.
-        \item $\alpha = \tau$ and $\phi' = \dmnd{\bar{a}} \left( \psi / (q,\mu_2') \right)$
+        \item Assume that $\alpha = \tau$ and $\phi' = \dmnd{\bar{a}} \left( \psi / (q,\mu_2') \right)$
             for some $\mu_2'$ s.t. $(q,\mu_2)\trans{a}(q,\mu_2')$ and $a\in A$.
             This means there is a
             $\mu_1'$ with $(p,\mu_1) \trans{\bar{a}} (p,\mu_1')$.
@@ -376,12 +385,14 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             \mu_2') \in D(\pi')$. This form of $\mu_2$ means that $\dmndback{\alpha}
             \psi / (q,\mu_2) = \pdmndback{} \left( \psi / (q,\mu_2') \right)$.
             By induction, the fact that $(p\parallel q, \pi') \vDash^* \psi$ gives
-            that $(p,\mu_1') \vDash^* \psi / (q,\mu_2')$, so $(p,\mu_1) \vDash^*
+            that $(p,\mu_1') \vDash^* \psi / (q,\mu_2')$, so
+            since $\mu_2 = \mu_2'(q'' \trans\alpha q')$ holds,
+            $(p,\mu_1) \vDash^*
             \pdmndback{} \left( \psi / (q,\mu_2') \right) = (\dmndback{\alpha}\psi)
             / (q,\mu_2)$.
         \item $p''\not\equiv p'$ and $q''\not\equiv q'$. By Lemma~\ref{lemma:both_step_means_tau}
             $\alpha$ must be equal to $\tau$. Thus we have that $(\mu_1,\mu_2) =
-            (\mu_1'(p''\trans{a}p'), \mu_2'(q''\trans{a}q'))$ for some $a\in A$ and
+            (\mu_1'(p''\trans{a}p'), \mu_2'(q''\trans{\bar a}q'))$ for some $a\in A$ and
             $(\mu_1',\mu_2') \in D(\pi')$. This also means that $(\dmndback{\alpha}\psi)
             / (q,\mu_2) = \dmndback{a}\left( \psi / (q,\mu_2') \right)$. Since $(p\parallel q,
             \pi') \vDash^* \psi$ we again have by induction that $(p,\mu_1')\vDash^*\psi/(q,
@@ -426,14 +437,14 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
             that $(p,\mu_1)$ satisfies it. Since $\beta\ne\alpha = \tau$ we also know $\beta$
             must be some label $a\in A$. This means that $(\dmndback\alpha\psi)/(q,\mu_2)
             = \dmndback{\bar{a}} \left( \psi / (q, \mu_2') \right)$ where $\mu_2'$ is yet
-            again $\mu_2$ without the last transition. Since $(p,\mu_1)$ satisfies this,
+            again $\mu_2$ without the last transition. Since $(p,\mu_1)$ satisfies this formula,
             there is a $\mu_1'$ s.t. $(p,\mu_1')\trans{\bar{a}}(p,\mu_1)$ and $(p,\mu_1')
             \vDash^* \psi/(q,\mu_2')$. By
             Lemma~\ref{lemma:removing_last_trans}, $(\mu_1',\mu_2')\in D(\pi')$ where
             $\pi'$ is $\pi$ without the last transition. By induction, $(p\parallel q, \pi')
             \vDash^* \psi$ and from the definition of $D$ we can see that $(p\parallel q,\pi')
             \trans\tau (p\parallel q,\pi)$ is the only possible transition between the
-            two. In particular,
+            two computations. Therefore,
             $(p\parallel q,\pi) \vDash^* \dmndback\tau \psi
             = \dmndback{\alpha}\psi$.
     \end{itemize}
@@ -461,10 +472,12 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \rtl Assume that $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmnd{}
     \psi)/(q,\mu_2)$. 
     We want to show that $(p\parallel q,\pi) \vDash^* \pdmnd{}\psi$.
-    The formula is equal to $\pdmnd{} \left( \psi / (q,\mu_2') \right)$
-    where $\mu_2' = \mu_2(q' \ptrans{} q')$, $q' = \last(q,\mu_2)$. Let $\pi' = \pi
-    (p'\parallel q' \ptrans{} p'\parallel q')$ and $\mu_1' = \mu_1(p'\ptrans{} p')$
-    where $p' = \last(p,\mu_1)$. Then, by definition of $D$, $(\mu_1',\mu_2') \in D(\pi')$.
+    Let $p' = \last(\mu_1)$ and $q' = \last(\mu_2)$.
+    The formula $\pdmnd{} \psi)/(q,\mu_2)$ is equal to 
+    $\pdmnd{} \left( \psi / (q,\mu_2') \right)$
+    where $\mu_2' = \mu_2(q' \ptrans{} q')$. If we let $\pi' = \pi
+    (p'\parallel q' \ptrans{} p'\parallel q')$ and $\mu_1' = \mu_1(p'\ptrans{} p')$,
+    then, by definition of $D$, $(\mu_1',\mu_2') \in D(\pi')$.
     Observe that $(p,\mu_1)\ptrans{}(p,\mu_1')$ and that the $\ptrans{}$ relation
     is deterministic. Therefore
     $(p,\mu_1')\vDash^* \psi/(q,\mu_2')$ for each $(\mu_1,\mu_2)$. 
@@ -476,7 +489,10 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \proofcase{Case $\phi = \pdmndback{}\phi$}\par\nobreak
     %
     \ltr Assume $(p\parallel q, \pi) \vDash^* \pdmndback{}\psi$ and take $(\mu_1,\mu_2)
-    \in D(\pi)$. It is obvious, from the definition of $D$ that $\mu_1$ and $\mu_2$ both
+    \in D(\pi)$. 
+    This means that $\pi = \pi'(p'\parallel q' \ptrans{} p'\parallel q')$ and
+    $(p\parallel q,\pi')\vDash^*\psi$, where $p'\parallel q' = \last(\pi)$.
+    It is obvious, from the definition of $D$ that $\mu_1$ and $\mu_2$ both
     end with $\ptrans{}$ since $\pi$ ends with $\ptrans{}$. Let $\pi', \mu_1', \mu_2'$
     be $\pi,\mu_1,\mu_2$ without their last transition respectively (note that our assumption
     guarantees that they are non-empty). By Lemma~\ref{lemma:removing_last_trans} we know
@@ -487,11 +503,11 @@ Before we state and prove our main theorem, we establish a few useful lemmas.
     \rtl Now assume $\exists (\mu_1,\mu_2) \in D(\pi) : (p,\mu_1) \vDash^* (\pdmndback{}
     \psi)/(q,\mu_2)$. Then the last step of $\mu_2$ is $\ptrans{}$ since otherwise
     the formula would be equal to $\false$, which could not be satisfied by $(p,\mu_1)$.
-    We see furthermore that the formula is $\pdmndback{}\left(\psi/(q,\mu_2')\right)$ where
+    We see furthermore that the quotiented formula is $\pdmndback{}\left(\psi/(q,\mu_2')\right)$ where
     $\mu_2'$ is again $\mu_2$ without its last step. This means the last step of $\mu_1$
-    is also $\pdmnd{}$ (a fact we could also have deduced from the definition of $D$),
-    let $\mu_1'$ be $\mu_1$ with out this step. If we also let $\pi'$ be $\pi$ without the
-    last step, and by Lemma~\ref{lemma:removing_last_trans} we have
+    is also $\pdmnd{}$ (a fact we could also have deduced from the definition of $D$).
+    Let $\mu_1'$ be $\mu_1$ without this step. If we also let $\pi'$ be $\pi$ without the
+    last step, then by Lemma~\ref{lemma:removing_last_trans} we have
     $(\mu_1',\mu_2')\in D(\pi')$. Since
     $(p,\mu_1')\vDash^* \psi/(q,\mu_2')$ induction gives that $(p\parallel q,\pi')\vDash^*
     \psi$. By the definition of $D$ we see that the last step of $\pi$ can only be $\ptrans{}$
@@ -523,6 +539,6 @@ This allows us to write the above theorem in a more symmetrical form.
     
     \rtl Assume that $\forall (\mu_1,\mu_2) \in D(\pi) : (p, \mu_1) \vDash^* \phi/(q, \mu_2)$.
     Specifically, since there exists at least one decomposition $(\mu_1',\mu_2')\in D(\pi)$,
-    the above holds for that particular decomposition. By $\Leftarrow$ part of the
-    theorem, we thus have that \mbox{$(p\parallel q,\pi)\vDash^*\phi$}.
+    the above holds for that particular decomposition. By the $\Leftarrow$ part of
+    Theorem~\ref{thm:decomposition}, we thus have that \mbox{$(p\parallel q,\pi)\vDash^*\phi$}.
 \end{proof}
