@@ -1,9 +1,9 @@
-Among the most important and ubiquitous concepts in Computer Science are \emph{languages}.
+Languages are among the most important and ubiquitous concepts in Computer Science.
 In almost every sub-field of Computer Science, one can find specific languages for
 describing and reasoning about the concepts of that field. Programming languages
 are the best known example of course, but file formats, network protocols,
-instruction sets and even the various diagram techniques used in Software
-Engineering can be considered as languages. Theoretical Computer Science has
+instruction sets and even the various diagrammatic techniques used in Software
+Engineering can be considered as (visual) languages. Theoretical Computer Science has
 specification languages and various logics. Natural Language Processing has markup
 languages for describing voicing and sentence structure. Artificial Intelligence
 uses specific languages for describing behaviour, the rules of games and the
@@ -11,21 +11,24 @@ constraints of planning problems. Indeed, it seems to be common practice in
 Computer Science to invent formalisms for specific problems, and these formalisms
 very often involve some kinds of languages.
 
-Any language consists of two parts; its \emph{syntax} and its \emph{semantics}.
+Any language consists of two parts: its \emph{syntax} and its \emph{semantics}.
 The syntax defines what strings of symbols are valid, i.e. part of the language,
-while the semantics define the actual \emph{meaning} of any valid string
+while the semantics defines the actual \emph{meaning} of any valid string.
 Formal specification of syntax is very common, even in non-academic use of 
-Computer Science. However, one can argue that what really makes a language
+Computer Science. However, one can argue that what really 
+defines the true nature
+of a a language
 is its semantics. Different languages are much rather set apart by different
 semantics than different syntax.
-This thesis is a study, by way of example, of one certain technique of specifying
+This thesis is a study, by way of example, of one specific technique of specifying
 semantics formally, namely \emph{Structural Operational Semantics}. To put things
-in context, we'll start by an informal overview.
+in context, we'll start by an informal overview of this field.
 
 
 \section{Structural Operational Semantics}
 
-Structural Operational Semantics, SOS or simply Operational Semantics
+Structural Operational Semantics~\cite{Plotkin04a, Plotkin04b},
+SOS or simply Operational Semantics
 \footnote{The term Operational Semantics is sometimes used as a synonym for
 Structural Operational Semantics (\emph{small-step} semantics) and Natural
 Semantics (\emph{large-step} semantics). In this thesis we are mostly
@@ -38,39 +41,42 @@ verification as well as many others. By \emph{terms} we usually mean programs
 or specifications written in these languages.
 
 As the name indicates, SOS describes semantics in terms of program \emph{structure}
-and their \emph{operations}. An SOS specification of the semantics for a certain
+and the \emph{operations} a program carries out as it computes. 
+An SOS specification of the semantics for a certain
 language is a collection of rules. These rules specify how a term with a certain
-structure behaves, by specifying the operation that the next step of execution
+structure behaves, by describing the operation that the next step of execution
 of this term performs
 (often on a hypothetical machine), and what is the term that should be executed
 for the next step. An example of an SOS rule is
 \begin{equation}\label{eq:intro_rule1}
     \frac{t_1 \trans{a} t_1' \quad t_2 \trans{b} t_2'}{\textsf{op(}t_1,t_2\textsf{)}\trans{b} t_2'}
 \end{equation}
-This rule specifies how a term $\textsf{op(}t_1,t_2\textsf{)}$ behaves, where $t_1$
+This rule specifies how a term of the form $\textsf{op(}t_1,t_2\textsf{)}$ behaves, where $t_1$
 and $t_2$ can be any sub-terms as allowed by the syntax. This is seen by looking
 at the left-hand side of the \emph{conclusion}, the part appearing below the line. 
 The two expressions above
-the line are called \emph{premises}. These are operations of the sub-terms, and
-to this particular rule only applies if the operations in the premises can be
-deduced by the collection of rules. Naturally, this depends in each case on what
+the line are called \emph{premises}. These are operations of the sub-terms
+that describe when the rule is applicable to derive a step of computation
+of the composite program $\textsf{op(}t_1,t_2\textsf{)}$.
+This particular rule only applies if the operations in the premises can be
+deduced from the collection of rules. Naturally, this depends in each case on what
 the terms $t_1$ and $t_2$ actually are. If the operations in all the premises
-are valid for given sub-terms, the arrow and the right-hand side below the line
+are valid for given sub-terms, the label of the arrow and the right-hand side below the line
 specify what is the operation performed by executing $\textsf{op(}t_1,t_2\textsf{)}$
-and what is the term that results after doing so. As you can see, both of these may
+and what is the term that results after doing so. As one can see, both of these may
 be parameterised with information from the premises.
 
 The hypothetical execution of terms proceeds by finding a rule that matches the
 term to be executed and whose premises are met. This rule then specifies an operation,
-i.e. \emph{one single step} of execution, and the term to use for finding the
+i.e. \emph{a single step} of execution, and the term to use for finding the
 next step. This process is repeated to create a sequence of operations.
 It is important to note that execution in this context does not necessarily mean
-execution on a real machine, but rather as a useful metaphor for reasoning about
+execution on a real machine, but rather it is a useful abstract metaphor for reasoning about
 program behaviour. We say the sequences of operations are steps in the execution
-of a hypothetical machine.
+of a program on a hypothetical machine.
 
 Often it is useful to indicate when such a sequence may stop, i.e. when the
-program terminates. We do this by designating a specific set of terms as
+program terminates. We often do this by designating a specific set of terms as
 \emph{terminal}, meaning that when a sequence of operations reaches such a term,
 the application of rules stops.
 Sometimes this is the empty term, e.g. a program of the form
@@ -92,10 +98,10 @@ of the term $50 - 4 \times 2$ with the following sequence of operations.
 \]
 In this case, the term $42$ is terminal since it contains no operators.
 
-There is an important difference between the two; in the former case the natural meaning
+There is an important difference between the two approaches; in the former case the natural meaning
 of the program \textsf{print "Hello"; print "World"} is determined by the sequence
-of operations that it's execution goes through, while in the latter the meaning
-of the program $50 - 4 \times 2$ is much rather represented by the final value
+of operations that its execution goes through, while in the latter the meaning
+of the program $50 - 4 \times 2$ is represented by the final value
 that the sequence reaches. Which one we choose depends on the particular setting
 in which we are using SOS.
 
@@ -122,15 +128,17 @@ final value, if such non-determinism exists in the SOS specification, this meani
 is not well defined. A term might give rise to multiple sequences of operations and
 thus multiple final values. Thus, when this view of meaning is taken, which is
 common when dealing with functional languages, we often make the requirement that
-the specification of rules is \emph{deterministic}, i.e. for each unique term
-there is at most one operation and subsequent term that can be deduced by the
+the language's specification given by the rules is \emph{deterministic}, 
+i.e. for each term
+there is at most one operation and subsequent term that can be deduced from the
 collection of rules. Such collection of rules are the topic of Chapter~\ref{ch:formats}
 of this thesis.
 
 In the other setting, where meaning of a term is taken to be the sequence of
 operations it gives rise to, non-determinism is generally allowed. This is for example
 the case in Process Algebra, where the meaning of a term is simply taken to be
-the set of all possible sequences it may generate. Two terms might thus be considered
+determined, in some formal sense, by
+the set of all possible behaviours it may generate. Two terms might for instance be considered
 equal if they generate the same set of operation sequences.
 
 \vspace{1em}
@@ -142,7 +150,7 @@ one needs to know the value of $x$. In SOS specifications, this is solved by usi
 \emph{configurations} instead of terms in the rules. A configuration is a predefined
 structure which models the state of the execution completely. In the case of languages
 with variables, a common formulation is to represent the states as pairs of a
-term (with the same meaning as described above) and a \emph{variable store}, 
+term (with the same meaning as described above) and a \emph{variable store}, written
 $\langle t, \Theta \rangle$. The variable store is in turn a function from the
 set of variables to actual values.\footnote{Or terms in the case of lazy languages.}
 A typical rule in such a language might look like this.
@@ -150,19 +158,19 @@ A typical rule in such a language might look like this.
     \frac{}{\langle \textsf{x := }n, \Theta\rangle \trans{}
             \langle \epsilon, \Theta[x\mapsto n]\rangle} \qquad n\in \mathbb{N}
 \end{equation}
-Note that this rule has no premises, which means it applies whenever the term
-to be executed matches the left hand side of the conclusion.
+Note that this rule has no premises, which means that it applies whenever the term
+to be executed matches the left-hand side of the conclusion.
 The rule specifies that the operation of executing an assignment term, e.g.
 \textsf{x := 28}, under a store $\Theta$, results in a configuration with an
 empty term and a store that is identical to $\Theta$ except for its value in $x$,
 which is mapped to $28$ (this is the conventional meaning of the $[\cdot\mapsto\cdot]$ syntax).
-Formally there is nothing special about using configurations instead of terms,
+Formally there is nothing special about using configurations instead of terms;
 configurations can themselves be considered ``terms'' of an extended language.
 
 Another interesting thing to note about rule~\ref{eq:intro_rule3} is that it is
 in fact a \emph{rule schema}. In other words, it represents a countably infinite
-number of rules, indexed by the natural umber $n$. This is common when parts
-of the language's syntax come from a large domain such as $\mathbb{N}$.
+number of rules, indexed by the natural number $n$. This is common when a part
+of the syntax of the language comes from a large domain such as $\mathbb{N}$.
 
 \vspace{1em}
 
@@ -172,18 +180,18 @@ operational semantics in a central manner. Although familiarity with SOS helps, 
 informal introduction above should provide the reader with enough background to read
 Chapter~\ref{ch:tmi}, which exemplifies a fairly complex use case of SOS. 
 Chapters~\ref{ch:decomp} and especially~\ref{ch:formats} use semantics in a more
-formal way, these chapters will each introduce the necessary preliminaries needed
+formal way; these chapters will each introduce the necessary preliminaries needed
 for their discussion. The following section introduces each chapter and highlights
 their ties to operational semantics.
 
 
 \section{Thesis contributions}
 
-Over the course of 12 months, rather than working solely one one single MSc study project,
-I have participated in several research projects within
-Reykjavik University and Technical University of Eindhoven. The result of this work
+Over the course of 12 months, rather than working solely on one single MSc study project,
+I have participated in several research projects at
+Reykjavik University and at the Technical University of Eindhoven. The result of this work
 are research contributions made by me and my co-authors to a few different fields
-of Computer Science. Each of these projects have built on the theory of SOS, in fact
+of Computer Science. Each of these projects have built on the theory of SOS; in fact
 one of the projects (Chapter~\ref{ch:formats}) is only about the theory of SOS rule
 systems, independent of their use.
 
@@ -191,23 +199,24 @@ The papers are arranged in order of increasing abstraction. Chapter~\ref{ch:tmi}
 to specify the semantics of an authorisation framework in a functional programming language.
 The SOS specification presented is non-trivial, but is intended solely for clarifying
 the semantics of this particular framework. The specification is accompanied by a
-detailed discussion of the semantics as well as a implementation of the framework
+detailed discussion of the semantics as well as an implementation of the framework
 in question.
 
-Chapter~\ref{ch:decomp} is in the field of Process Algebra. It specifies extensions
-to the process specification language CCS and Hennessy-Milner logic. CCS has simple
+Chapter~\ref{ch:decomp} is in the field of Process Algebra. It 
+uses SOS to provide quotienting techniques a la~\cite{Larsen91} for extensions
+to the process specification language CCS and Hennessy-Milner logic. CCS has a simple
 operational semantics and the paper proves, using the semantics, a powerful theorem
 for studying properties that include past modalities in a decompositional manner.
 
-Finally, chapter~\ref{ch:formats} goes one abstraction level above SOS specifications
+Finally, Chapter~\ref{ch:formats} goes one abstraction level above SOS specifications
 and provides so-called \emph{meta-theorems} about rule systems that guarantee their
-determinacy and idempotency of certain operators. The meta-theorems consist of
+determinism and the idempotence of certain operators. The meta-theorems consist of
 syntactic conditions on the rules themselves, such conditions are generally referred
 to as \emph{SOS rule formats}.
 
 In order to give the reader enough background for each chapter, we will now describe
 the general field of each paper, its contributions as well as highlight the specific
-contributions of myself to each.
+contributions I made to each.
 
 
 \subsection{Semantics of Transactional Memory Introspection}
@@ -219,21 +228,22 @@ Memory has recently become a popular way of avoiding race conditions in concurre
 programs. Software Transactional Memory, or STM for short, tackles the issue of
 shared memory by replacing programmer managed locks with transactions. Where programmers
 would conventionally manage access to shared resources by careful lock placement,
-they may use STM to instead offload this responsibility to a machine controlled
+they may use STM instead to offload this responsibility to a machine controlled
 framework.
 
 When using STM, programmers do away with lock management and instead mark sections
 of code as \emph{atomic}. At run-time, an STM system will, as part of the program
 in question, ensure that the accesses a single thread makes to shared resources
-inside such atomic sections, appears atomic to other threads and moreover, is
+inside such atomic sections, appear atomic to other threads and moreover, are
 completely isolated from the effects concurrent threads may have on this shared
 state. Semantically this is equivalent to enforcing a rule which says that only
-one thread may be running in a atomic section at each time.
+one thread may be running in an atomic section at each time.
 
-The beauty of STM comes from the fact that the actual implementation is not that
-drastic, as that would hurt performance. Instead, multiple threads are allowed to
+The beauty of STM comes from the fact that the actual implementation 
+does not enforce such strict policies, 
+as that would hurt performance. Instead, multiple threads are allowed to
 execute simultaneously inside atomic sections. Meanwhile, the STM system will carefully
-monitor the actions of each one of such threads. Generally, the threads will be
+monitor the actions of each one of the threads. Generally, the threads will be
 accessing disjoint sets of resources, so most of the time this simultaneous execution
 poses no problems. However, in the cases where threads in atomic sections do conflict
 in their accesses, the STM system will notice and simply roll back some or all
@@ -295,11 +305,11 @@ Our previous work of~\cite{tmi} consists of an extended discussion of the above,
 accompanied by a proof-of-concept implementation based on a prototype STM framework
 for Java~\cite{hlm06}. However, while working with TMI and STM systems in general,
 we discovered that there are a great number of subtleties in the behaviour of
-unusual edge cases. An informal discussion and even an implementation did not
+unusual edge cases. An informal discussion, and even an implementation, did not
 provide a thorough understanding of the semantics of TMI. Thus the contribution
 presented in Chapter~\ref{ch:tmi} consists of the formal specification of the semantics
 of our architecture, in the form of an extension to the semantics of the Haskell
-STM system~\cite{haskellstm}. The semantics are accompanied by a matching implementation.
+STM system~\cite{haskellstm}. The semantics is accompanied by a matching implementation.
 
 My specific contributions to Chapter~\ref{ch:tmi} consist of most of the technical
 work involved. I built the extension of the Haskell STM semantics, which went
