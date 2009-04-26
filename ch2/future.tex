@@ -8,11 +8,11 @@ this theory to meaningful examples. Part of this work is well underway already
 although the details have not been worked out fully for this particular thesis
 submission. In particular, we have extended the decompositional theorem to a
 recursive logic $\HMLppf{\X}$, which allows a much wider class of interesting 
-properties to be specified as fix-points of systems of recursive logic equations.
+properties to be specified as fixed-points of systems of recursive logic equations.
 
 In the decomposition of computations, we rely on some specific properties of 
 CCS at the syntactic level, namely to detect which rule of the parallel operator
-was applied. By tagging transitions with their proofs~\cite{BoudolC94,DeganoP92}, 
+was applied. By tagging transitions with their proofs~\cite{BC88,DeganoP92}, 
 or even just the last
 proof used, we could eliminate this restriction and extend our approach to more
 general languages involving parallel composition. Another possibility is to construct
@@ -29,10 +29,10 @@ of model-checking problems is often due to use of the parallel construct, we
 deemed our approach as a useful step towards a full decompositional result, since
 the decomposition of computations will be more complex for general contexts.
 
-The initial motivation for this work was the application of epistemic
+The initial motivation for this work was the application of epistemic logic
 to behavioural models~\cite{Mousavi07-LPAR}. We would therefore like to extend
 our results to logics that include epistemic operators, reasoning about the knowledge
-of agents observing a running system. This work depends somewhat of our extensions
+of agents observing a running system. This work depends somewhat on our extensions
 to recursive formulae.
 
 Our work is based on many previous results, both in decompositional reasoning
@@ -44,6 +44,9 @@ to compare bisimulations, that consider both forwards and backward actions, to
 more conventional forward-only bisimulations. The backwards modality of \HMLpast
 comes from~\cite{HennessyS85}, which shares the same notion of computations
 as well.
-%
 Our methods for decompositional reasoning largely build on and adapt the methods
-from~\cite{anna87,Larsen91,Fokkink03b}. 
+from~\cite{anna87,Larsen91,Fokkink03b}.
+However, as the work presented in this chapter shows, the development of a theory 
+of decompositional reasoning in a setting with past modalities involves subtleties 
+and design decisions that do not arise in previous work on HML and Kozen's 
+$\mu$-calculus~\cite{Koz83}.

@@ -48,7 +48,7 @@ language is a collection of rules. These rules specify how a term with a certain
 structure behaves, by describing the operation that the next step of execution
 of this term performs
 (often on a hypothetical machine), and what is the term that should be executed
-for the next step. An example of an SOS rule is
+for the next step after that. An example of an SOS rule is
 \begin{equation}\label{eq:intro_rule1}
     \frac{t_1 \trans{a} t_1' \quad t_2 \trans{b} t_2'}{\textsf{op(}t_1,t_2\textsf{)}\trans{b} t_2'}
 \end{equation}
@@ -137,7 +137,7 @@ of this thesis.
 
 In the other setting, where meaning of a term is taken to be the sequence of
 operations it gives rise to, non-determinism is generally allowed. This is for example
-the case in Process Algebra, where the meaning of a term is simply taken to be
+the case in Process Algebra, where the meaning of a term is simply
 determined, in some formal sense, by
 the set of all possible behaviours it may generate. Two terms might for instance be considered
 equal if they generate the same set of operation sequences.
@@ -208,7 +208,7 @@ Chapter~\ref{ch:decomp} is in the field of Process Algebra. It
 uses SOS to provide quotienting techniques a la~\cite{Larsen91} for extensions
 to the process specification language CCS and Hennessy-Milner logic. CCS has a simple
 operational semantics and the paper proves, using the semantics, a powerful theorem
-for studying properties that include past modalities in a decompositional manner.
+for studying properties, that include past modalities, in a decompositional manner.
 
 Finally, Chapter~\ref{ch:formats} goes one abstraction level above SOS specifications
 and provides so-called \emph{meta-theorems} about rule systems that guarantee their
@@ -334,39 +334,44 @@ here.
 
 In \emph{model checking}, process specification languages are used to construct
 behavioural models of software and hardware systems, in particular reactive
-systems. These models are the used
+systems. These models are then used
 for detailed analysis of a system's behaviour. The process specification languages
 are usually accompanied by logic languages that allow the designer to specify an
-array of desirable, or non-desirable, properties. Such properties include liveness
-properties, guaranteeing that the system can always continue no matter the input
-it faces; safety properties such that the system will never perform certain critical
-operations unless it is in a state where it is safe to do so; and security properties
-such as ensuring operations are properly authorised; to name some examples.
+array of desirable, or non-desirable, properties. Such properties include 
+\begin{itemize}
+    \item \emph{liveness properties,} guaranteeing that the system can always 
+    continue no matter the input it faces;
+    \item \emph{safety properties} such that the system will never perform certain critical
+    operations unless it is in a state where it is safe to do so; and
+    \item \emph{security properties} such as ensuring operations are properly authorised.
+\end{itemize}
 
-In most cases, the semantics of the specification languages are given as Structural
+In most cases, the semantics of the specification languages is given as Structural
 Operational Semantics. A model is simply a term of the language, where the possible
-execution paths given by the semantics defines the behavioural capabilities of
+execution paths given by the semantics define the behavioural capabilities of
 the model. The properties to be checked are then described as logical expressions,
 often in logics which include modal operators (e.g. the model \emph{can} perform
 a particular operation) or operators on the possible sequences of operations (such
 as \emph{on each possible path there is a term with a particular property}).
-Examples of the former include Henessy-Milner logic~\cite{Hennessy85} 
+Examples of the former include Hennessy-Milner logic~\cite{Hennessy85} 
 and of the latter CTL~\cite{CE81} and LTL~\cite{Pnueli77}.
 
-Most specification languages, or \emph{process calculi}, contain an operator that
-allows for parallel composition of two or more. Usually this models interleaving
+Most specification languages, or \emph{process calculi}, 
+include an operator that allows one to describe a process resulting from the 
+parallel composition of two or more agents
+Usually this models interleaving
 concurrency, but in general a model of a process, which is composed of multiple
 parallel components, can exhibit the behaviour of any of the components in addition
-to certain synchronising behaviour where two of the components communicate.
+to certain synchronising behaviour where two or more of the components communicate.
 This means that the number of possible behaviours of a system grows exponentially
 in the number of parallel components.
 
 Model checking is the act of testing if a certain model satisfies a property
-described by a logical expression. The resource usage of the algorithms, that perform
-model checking, depends directly on the number of possible behaviours that the
+described by a logical expression. The resource usage of the algorithms that perform
+model checking depends directly on the number of possible behaviours that the
 model can exhibit, as the algorithms must exhaustively check every possible
 behaviour. Since many systems are best described as a number of smaller systems
-working in parallel, such state space explosion is one of the biggest hurdle that
+working in parallel such state space explosion is one of the biggest hurdles that
 must be overcome to make model checking practically useful.
 
 One way of addressing the problem of the great increase in possible behaviours
@@ -399,6 +404,16 @@ The property $\psi$ may thus be more complex than $\phi$, and the size of $Q$ ha
 a direct impact on the difference. However this kind of reasoning has been shown
 to be efficient in model checking composed systems~\cite{Andersen95,LaroussinieL98}.
 
+Another use of decompositional reasoning arises when coupling it with synthesis 
+of models from logical specifications. Suppose that a logical formula $\phi$ gives 
+the specification of the expected behaviour of the system to be built and that 
+our system has the form $P \parallel Q$. Assume furthermore that we have been given 
+component $Q$ off the shelf. A natural question to ask is whether we can we build 
+$P$ so that the resulting system will satisfy the specification $\phi$. Using 
+quotienting, this question can be reduced to whether we can build a model of the
+formula $\psi$. Such models can be constructed using known model construction 
+techniques for many logics of interest. 
+
 Decompositional reasoning in essence tries to describe global properties of
 composed systems in terms of the local properties of its components, 
 and dates back to the work of Larsen and Xinxin~\cite{Larsen91}.
@@ -414,9 +429,9 @@ SOS sense, these states are the terms (or configurations) of the transition syst
 generated by the semantic rules for the process calculus, starting from a designated
 initial state. The initial state is the term that represents the behavioural model
 of the system being described. Just as the initial state encodes the behavioural
-capabilities of the system, an intermediary state reached after performing some
+capabilities of the system, an intermediate state reached after performing some
 operations usually represents the behavioural capabilities of the system at that point.
-In particular, the intermediary states usually do not contain any information about
+In particular, the intermediate states usually do not contain any information about
 the \emph{past}, i.e. the operations performed by the system before reaching said state.
 
 For many properties that we want to check, this poses no problems. However,
@@ -429,18 +444,20 @@ knowledge gained by agents (partially) observing the system during execution
 As for decompositional reasoning, the literature is rich with studies of process systems
 that involve the past~\cite{HennessyS85,Phillips06,Laroussinie00,DeNicola:1990}.
 Our contribution in Chapter~\ref{ch:decomp} is combining the two fields. We build
-on an essential subset of the process calculus CCS~\cite{Milner80} and extend
+on a core subset of the process calculus CCS~\cite{Milner80} and extend
 the formalism based on its operational semantics to states that maintain full
 information about the execution history of processes. We similarly extend Hennessy--Milner
-Logic~\cite{HennessyM80} with modalities that look back in the history, similar
-how to the standard HML modalities look forward. The main theorem of the chapter
+Logic~\cite{HennessyM80} with modalities that look back in the history, 
+in contrast with the standard HML modalities that look forward to the possible
+future behaviours.
+The main theorem of the chapter
 proves that decompositional reasoning can be applied to parallel processes in this
 setting.
 
 The results presented here are however only a milestone towards a richer theory
 of decompositional reasoning about the past, albeit an important milestone. Work
 is currently underway to extend these results further, to include the ability to
-reason about recursive properties, which greatly improves the expressivity of
+reason about recursive properties, which greatly enhances the expressiveness of
 our extended logic.
 
 The technical work and writing of Chapter~\ref{ch:decomp} is for the most part
@@ -510,7 +527,7 @@ One guarantees the determinism of a transition system (or a subset thereof)
 and the other guarantees idempotency of a given operator.
 
 My contributions to this work include both technical developments and writing.
-This work has bee published in the 3rd International Conference on
+This work has been published in the 3rd International Conference on
 Fundamentals of Software Engineering (FSEN'09) in April 2009. The three proofs
 appearing in the chapter underwent peer-review through the FSEN program committee,
 but were omitted from the conference publication due to space constraints. Otherwise
@@ -533,11 +550,12 @@ Working with him has been a pleasure and an extremely valuable experience for wh
 I am very grateful.
 
 I would also like to thank {\'U}lfar Erlingsson who, besides being a great teacher,
-has also become to be a good friend through our long and enjoyable conversations.
+has also become a good friend of mine through our long and enjoyable conversations.
 He has taken it upon himself to be my mentor in many ways, well beyond his duty, 
 and from this I have benefited greatly.
-I owe {\'U}lfar a great debt for actively touting my horn to many of the world-leading
-experts, and for giving me a head-start with his praise. It is now upon me to live up to it.
+I owe {\'U}lfar a great debt for actively singing my praises to many of the world-leading
+experts, giving me a head-start in the research community.
+It is now up to me to live up to them.
 
 I thank MohammadReza Mousavi for generously hosting me for a visit
 to TU/e during the fall of 2008. Mohammad's drive is something I aspire for
