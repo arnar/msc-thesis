@@ -25,7 +25,8 @@ semantics formally, namely \emph{Structural Operational Semantics}. To put thing
 in context, we'll start by an informal overview of this field.
 
 
-\section{Structural Operational Semantics}
+\section{Structural Operational Semantics} % (fold)
+\label{sec:intro_sos}
 
 Structural Operational Semantics~\cite{Plotkin04a, Plotkin04b},
 SOS or simply Operational Semantics
@@ -179,18 +180,19 @@ While their topics are in essence not related to each other, they all make use o
 operational semantics in a central manner. Although familiarity with SOS helps, the
 informal introduction above should provide the reader with enough background to read
 Chapter~\ref{ch:tmi}, which exemplifies a fairly complex use case of SOS. 
-Chapters~\ref{ch:decomp} and especially~\ref{ch:formats} use semantics in a more
+Chapters~\ref{ch:decomp} and especially Chapter~\ref{ch:formats} use semantics in a more
 formal way; these chapters will each introduce the necessary preliminaries needed
 for their discussion. The following section introduces each chapter and highlights
 their ties to operational semantics.
 
+% (end)
 
-\section{Thesis contributions}
+\section{Thesis contributions} % (fold)
 
 Over the course of 12 months, rather than working solely on one single MSc study project,
 I have participated in several research projects at
 Reykjavik University and at the Technical University of Eindhoven. The result of this work
-are research contributions made by me and my co-authors to a few different fields
+are research contributions made by my co-authors and me to a few different fields
 of Computer Science. Each of these projects have built on the theory of SOS; in fact
 one of the projects (Chapter~\ref{ch:formats}) is only about the theory of SOS rule
 systems, independent of their use.
@@ -217,9 +219,9 @@ to as \emph{SOS rule formats}.
 In order to give the reader enough background for each chapter, we will now describe
 the general field of each paper, its contributions as well as highlight the specific
 contributions I made to each.
+% (end)
 
-
-\subsection{Semantics of Transactional Memory Introspection}
+\subsection{Semantics of Transactional Memory Introspection} % (fold)
 
 Chapter~\ref{ch:tmi} builds on previous work of \cite{tmi}. In that paper we present
 an authorisation architecture called Transactional Memory Introspection, or TMI.
@@ -318,10 +320,240 @@ parallel I wrote the implementation in Haskell, which provided a lot of insight
 into the design decisions behind the semantic specification. I wrote the initial
 versions of most of the text, except for the introduction and the background on
 STM and TMI. All sections underwent a rewriting phase carried out jointly by
-me and my co-author.
+my co-author and me.
 
 This work has been submitted to the ACM SIGPLAN Fourth Workshop on Programming
 Languages and Analysis for Security (PLAS 2009), scheduled for June 15th 2009
 in Dublin, Ireland. The author notification will arrive before the final version
 of this thesis is prepared. The submission is identical to the version presented
 here.
+
+% (end)
+
+\subsection{Decompositional Reasoning about the History of Parallel Processes} % (fold)
+
+In \emph{model checking}, process specification languages are used to construct
+behavioural models of software and hardware systems, in particular reactive
+systems. These models are the used
+for detailed analysis of a system's behaviour. The process specification languages
+are usually accompanied by logic languages that allow the designer to specify an
+array of desirable, or non-desirable, properties. Such properties include liveness
+properties, guaranteeing that the system can always continue no matter the input
+it faces; safety properties such that the system will never perform certain critical
+operations unless it is in a state where it is safe to do so; and security properties
+such as ensuring operations are properly authorised; to name some examples.
+
+In most cases, the semantics of the specification languages are given as Structural
+Operational Semantics. A model is simply a term of the language, where the possible
+execution paths given by the semantics defines the behavioural capabilities of
+the model. The properties to be checked are then described as logical expressions,
+often in logics which include modal operators (e.g. the model \emph{can} perform
+a particular operation) or operators on the possible sequences of operations (such
+as \emph{on each possible path there is a term with a particular property}).
+Examples of the former include Henessy-Milner logic~\cite{Hennessy85} 
+and of the latter CTL~\cite{CE81} and LTL~\cite{Pnueli77}.
+
+Most specification languages, or \emph{process calculi}, contain an operator that
+allows for parallel composition of two or more. Usually this models interleaving
+concurrency, but in general a model of a process, which is composed of multiple
+parallel components, can exhibit the behaviour of any of the components in addition
+to certain synchronising behaviour where two of the components communicate.
+This means that the number of possible behaviours of a system grows exponentially
+in the number of parallel components.
+
+Model checking is the act of testing if a certain model satisfies a property
+described by a logical expression. The resource usage of the algorithms, that perform
+model checking, depends directly on the number of possible behaviours that the
+model can exhibit, as the algorithms must exhaustively check every possible
+behaviour. Since many systems are best described as a number of smaller systems
+working in parallel, such state space explosion is one of the biggest hurdle that
+must be overcome to make model checking practically useful.
+
+One way of addressing the problem of the great increase in possible behaviours
+when systems are composed in parallel, is \emph{decompositional reasoning}. Say
+we have a system made of the components $P$ and $Q$ composed in parallel, 
+usually written as
+\[
+    \textsf{System} = P \parallel Q.
+\]
+We want to answer the following question: 
+\emph{Does \textsf{System} satisfies a given property described by a
+logic formula $\phi$?} 
+The number of behaviours we may need to
+examine can potentially be the product of the number of behaviours possible of $P$ and $Q$,
+and even if $P$ and $Q$ alone are of moderate size, this product can be unmanageably large.
+However, in many cases we can use our knowledge of the system $Q$ to construct
+another property (i.e. a logic formula) $\psi$ such that the following question
+of $P$
+is equivalent to our original one of \textsf{System}:
+\emph{Does $P$ satisfy the property $\psi$?} In other words, if we can prove the
+bi-implication
+\[
+    P\parallel Q \textrm{ satisfies } \phi \quad\Leftrightarrow\quad
+    P \textrm{ satisfies } \psi,
+\]
+we have reduced the size of the model checking problem to the size of $P$.
+%
+However, the property $\psi$ is constructed from $\phi$ \emph{and} the system $Q$.
+The property $\psi$ may thus be more complex than $\phi$, and the size of $Q$ has
+a direct impact on the difference. However this kind of reasoning has been shown
+to be efficient in model checking composed systems~\cite{Andersen95,LaroussinieL98}.
+
+Decompositional reasoning in essence tries to describe global properties of
+composed systems in terms of the local properties of its components, 
+and dates back to the work of Larsen and Xinxin~\cite{Larsen91}.
+It has been further developed by several studies~\cite{Giannakopoulou05,Xie05,Andersen95,LaroussinieL95}.
+Chapter~\ref{ch:decomp} of this thesis aims to extend and apply such techniques
+in a setting which, to the best of my knowledge, has not been attempted before,
+namely the setting where the models maintain a record of their execution history.
+
+\vspace{1em}
+
+In process calculus, one generally talks about \emph{states} of execution. In the
+SOS sense, these states are the terms (or configurations) of the transition system
+generated by the semantic rules for the process calculus, starting from a designated
+initial state. The initial state is the term that represents the behavioural model
+of the system being described. Just as the initial state encodes the behavioural
+capabilities of the system, an intermediary state reached after performing some
+operations usually represents the behavioural capabilities of the system at that point.
+In particular, the intermediary states usually do not contain any information about
+the \emph{past}, i.e. the operations performed by the system before reaching said state.
+
+For many properties that we want to check, this poses no problems. However,
+by enriching intermediary states with information about the past behaviour of 
+the system in reaching them, some kinds of properties become easier to reason
+about. This includes for example epistemic properties, where one looks at the
+knowledge gained by agents (partially) observing the system during execution
+\cite{Mousavi07-LPAR}.
+
+As for decompositional reasoning, the literature is rich with studies of process systems
+that involve the past~\cite{HennessyS85,Phillips06,Laroussinie00,DeNicola:1990}.
+Our contribution in Chapter~\ref{ch:decomp} is combining the two fields. We build
+on an essential subset of the process calculus CCS~\cite{Milner80} and extend
+the formalism based on its operational semantics to states that maintain full
+information about the execution history of processes. We similarly extend Hennessy--Milner
+Logic~\cite{HennessyM80} with modalities that look back in the history, similar
+how to the standard HML modalities look forward. The main theorem of the chapter
+proves that decompositional reasoning can be applied to parallel processes in this
+setting.
+
+The results presented here are however only a milestone towards a richer theory
+of decompositional reasoning about the past, albeit an important milestone. Work
+is currently underway to extend these results further, to include the ability to
+reason about recursive properties, which greatly improves the expressivity of
+our extended logic.
+
+The technical work and writing of Chapter~\ref{ch:decomp} is for the most part
+mine apart from the introduction.
+
+% section decompositional_reasoning_about_the_history_of_parallel_processes (end)
+
+\subsection{Rule Formats for Determinism and Idempotency} % (fold)
+
+When designing a language, or analysing the semantics of existing ones,
+one is often interested in certain algebraic properties. For example, the language
+might contain a operator $+$, which combines two subterms in some way. Naming
+an operator $+$ immediately signals to the user of the language that this operator
+possesses some properties of regular arithmetic addition, such as commutativity
+and associativity. These are algebraic properties described by the equations
+\[
+    x + y = y + x  \quad\textrm{and}\quad (x + y) + z = x + (y + z).
+\]
+Such properties are often desirable to have, both to simplify the mental model
+one has of a language and also for technical purposes. For example, associativity
+can be very useful for automatically distributing large computations across an
+array of processors.
+
+The properties we are are interested in are many. Besides commutativity and
+associativity, other useful properties include structural congruences, zero and
+unit elements of operators, determinism and idempotency. In Chapter~\ref{ch:formats}
+we are concerned with the last two; determinism of operators, which means that
+at most one operation and subsequent term can be produced by the execution of
+a given term; and idempotency of operators, which is best described by the algebraic
+equation
+\[
+    \forall x : f(x,x) = x
+\]
+where $f$ is an operator of the language. As noted in Section~\ref{sec:intro_sos}
+earlier in this introduction, determinism is often a very important property.
+Idempotency is also a very natural requirement to make of certain operators.
+
+Given an SOS specification of a language, such properties can be proven to hold.
+Such proofs generally consists of structural induction on the syntax of the language
+and/or on proof structures that arise when the SOS rules are used to deduce the
+operations that a term can afford. Often one has to consider a number of cases,
+and for real life languages, both the syntax and the number of rules can become
+reasonably large, so that often such proofs are tedious listings of a great
+number of cases. Such proofs are generally tedious to construct and check, as well
+as prone to errors. Furthermore such proofs must be made in the context of one
+language, and if the syntax or semantics of an evolving language change any existing
+proofs must be adapted and re-checked.
+
+This has given rise to the \emph{meta-theory of SOS}, in particular so-called
+\emph{rule formats}~\cite{Aceto01,Mousavi07-TCS}. By putting constraints on the
+SOS rules used for a language (or a part of a language), one can prove properties
+such as those above, in general for any language which as an SOS specification that
+meets the constraints. Often the constraints can be kept purely syntactical, in
+which case it becomes a relatively easy matter to check a certain specification
+against those constraints. Such constraints are called rule formats, and are
+accompanied by meta-theorems that state that any semantics that meets the constraints
+defines a language that has a particular property.
+
+Many rule formats exist already. There are rule formats for 
+commutativity \cite{Mousavi05-IPL} and 
+associativity \cite{Mousavi08-CONCUR} of operators, and congruence of behavioral 
+equivalences \cite{Verhoef95}, as well as for less algebraic properties such
+as non-interference \cite{Tini04} and stochasticity \cite{Lanotte05}.
+%
+In Chapter~\ref{ch:formats} we present two related formats. 
+One guarantees the determinism of a transition system (or a subset thereof) 
+and the other guarantees idempotency of a given operator.
+
+My contributions to this work include both technical developments and writing.
+This work has bee published in the 3rd International Conference on
+Fundamentals of Software Engineering (FSEN'09) in April 2009. The three proofs
+appearing in the chapter underwent peer-review through the FSEN program committee,
+but were omitted from the conference publication due to space constraints. Otherwise
+the published version is identical to the one that appears here.
+
+% (end)
+
+\section{Acknowledgements}
+
+The past year has been extremely interesting for me and has convinced me to 
+pursue a career in Computer Science research. I feel privileged for the opportunities
+I have been granted to work on difficult and interesting problems, aside world-class
+researchers in their respective fields.
+
+My sincerest thanks go to my supervisor, Luca Aceto, for sharing his great
+enthusiasm for computer science, and his extensive experience of research. 
+He has always been available for me and willing to answer all of my questions,
+no matter how many times I have asked them before.
+Working with him has been a pleasure and an extremely valuable experience for which
+I am very grateful.
+
+I would also like to thank {\'U}lfar Erlingsson who, besides being a great teacher,
+has also become to be a good friend through our long and enjoyable conversations.
+He has taken it upon himself to be my mentor in many ways, well beyond his duty, 
+and from this I have benefited greatly.
+I owe {\'U}lfar a great debt for actively touting my horn to many of the world-leading
+experts, and for giving me a head-start with his praise. It is now upon me to live up to it.
+
+I thank MohammadReza Mousavi for generously hosting me for a visit
+to TU/e during the fall of 2008. Mohammad's drive is something I aspire for
+and his advice and confidence in me has helped me achieve things that I am
+proud of.
+
+I also want to thank Anna Ing{\'o}lfsd{\'o}ttir and Michel Reniers for their
+support and enjoyable collaboration. I give special thanks to Maja Mei-Xin Aceto
+for commenting on the late drafts of this thesis with a drawing of a cheerful 
+guy with six legs.
+
+Thanks to Stef{\'a}n Freyr, Hilmar and P{\'a}lmi for their friendship and for
+tolerating my constant interruptions. Thanks to Gu\dh{}mundur Bjarni, for always
+being there with his support, friendship and honest opinion.
+
+My greatest thanks go to my dearest friend, Hanna Mar{\'i}a. Without your encouragement
+and endless support, I would never have started this in the first place.
+
+% subsubsection rule_formats_for_determinism_and_idempotency (end)

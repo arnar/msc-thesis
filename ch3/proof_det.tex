@@ -1,24 +1,39 @@
 Instead of proving that $C$ is deterministic for each $l \in L$, we establish the following more general result.
-We prove that, for each $l \in L$, if $p \trans{l} p' \in C \cup U$ and $p \trans{l} p'' \in C$, then $p' \equiv p''$.
+We prove that, for each $l \in L$, 
+\begin{equation}\label{eq:det_claim1}
+    \textrm{if} \;  p \trans{l} p' \in C \cup U   \;
+    \textrm{and} \; p \trans{l} p'' \in C      \quad
+    \textrm{then} \quad p' \equiv p''.
+\end{equation}
 
+Assume the first two statements.
 Since $p \trans{l} p' \in C \cup U$, then there exists a provable transition rule, such that
-$\tss \vdash \frac{N}{p \trans{l} p'}$, for some set $N$ of negative formulae such that $C \vDash N$.
-We show the claim by an induction on the proof structure
+$\tss \vdash \frac{N}{p \trans{l} p'},$
+for some set $N$ of negative formulae such that $C \vDash N$.
+We show the claim~\eqref{eq:det_claim1} by an induction on the proof structure
 for the transition rule $\frac{N}{p \trans{l} p'}$.
-Consider the last deduction rule $\DR{r}$ and substitution $\sigma$
+Let $\DR{r}$ be the last deduction rule, and $\sigma$ the substitution,
 used in the proof structure for $\frac{N}{p \trans{l} p'}$.
 
 %\AB{I need a little help in stating the induction hypothesis explicitly here, if needed.}
 
-Since $p \trans{l} p'' \in C$,
-there also exists a proof structure such that $\tss \vdash \frac{N'}{p \trans{l} p''}$
+Similarly, since $p \trans{l} p'' \in C$,
+there also exists a proof structure such that 
+$\tss \vdash \frac{N'}{p \trans{l} p''}$
 for some set $N'$ of negative formulae such that $C \cup U \vDash N'$.
-Again, consider the last deduction rule $\DR{r'}$ and substitution $\sigma'$ used in the proof structure for $\tss \vdash \frac{N'}{p \trans{l} p''}$.
+Let $\DR{r'}$ be the last deduction rule, and $\sigma'$ the substitution,
+used in the proof structure for $\tss \vdash \frac{N'}{p \trans{l} p''}$.
 
-We first consider the case when $\DR{r}$ and $\DR{r'}$ are the same rule, say $\frac{\Phi}{t\trans{l}t'}$.
+The proof is split in two main cases, the case when both proofs are based on the
+same rule ($\DR{r} = \DR{r'}$) and the case when they are based on two distinct
+rules ($\DR{r} \ne \DR{r'}$).
+
+\paragraph{Case $\DR{r} = \DR{r'}$.}
+%We first consider the case when $\DR{r}$ and $\DR{r'}$ are the same rule, 
+In this case, say the rules $\DR{r}$ and $\DR{r'}$ are both the rule $\frac{\Phi}{t\trans{l}t'}$.
 Obviously $\sigma(t)\equiv\sigma'(t)$ since both must be equal to $p$.
-Since $\sigma(t')$ and $\sigma'(t')$ are equal to $p'$ and $p''$ respectively, we need to
-show that $\sigma(t') \equiv \sigma'(t')$.
+Since $\sigma(t')$ and $\sigma'(t')$ are equal to $p'$ and $p''$ respectively, 
+to show our claim~\eqref{eq:det_claim1} we thus need to show that $\sigma(t') \equiv \sigma'(t')$.
 
 % If the proof structure for $\frac{N}{p\trans{l}p'}$ consists of only one rule,
 % $\DR{r}$ is an axiom and thus contains no premises. This means, since all variables
@@ -28,55 +43,92 @@ show that $\sigma(t') \equiv \sigma'(t')$.
 
 %If the proof structure is more complex, i.e. the set of premises $\Phi$ is non-empty.
 
-We define the distance of a source-dependent variable as the length of the shortest backward path from the variable, via premises with a label in $L$, to the variables in the source of conclusion. A variable in the source of the conclusion is thus of distance 0.
+We define the \emph{distance} of a source-dependent variable as the length of the shortest 
+backward path from the variable, via premises with a label in $L$, to the variables 
+in the source of conclusion. A variable in the source of the conclusion is thus 
+of distance $0$.
 
-For each variable $v$ that is source dependent via  a subset of $\{ \trans{l} \mid l \in  L\}$, we proceed with another induction
-on the distance of $v$ to show that $\sigma(v) \equiv \sigma'(v)$. If we show this, then it follows that $\sigma(t') \equiv \sigma'(t')$ since
-all variables in $t'$ are source dependent by the first constraint of our rule format.
+By induction on its distance, we now show that any variable $v$, which is
+source-dependent via a subset of $\{ \trans{l} \mid l \in  L\}$,
+is assigned the same value by $\sigma$ and $\sigma'$, i.e. $\sigma(v)\equiv\sigma'(v)$.
+The first constraint of our rule format dictates that any variable appearing in
+the target $t'$ of the rule, is source-dependent via this set. Therefore if
+$\sigma$ and $\sigma'$ agree on all such variables, they must also agree on $t'$.
 
-We consider the two possible reasons for $v$ being source dependent.
-\begin{enumerate}
-    \item Assume that $v$ appears in $t$. In this case, $\sigma(v)\equiv\sigma'(v)$ since $\sigma(t)\equiv\sigma'(t)$.
-    \item Assume that $v$ appears in the target of some premise $t_i \trans{l_i} t_i' \in \Phi$ where $l_i \in L$
-          and all variables in $t_i$ are source dependent via  a subset of $\{ \trans{l} \mid l \in  L\}$.
-          Each variable $w \in vars(t_i)$ has a distance smaller than that of $v$. Therefore, the induction
-          hypothesis (on the distance of variables) applies and we have that $\sigma(w) \equiv\sigma'(w)$.
-          This means that $\sigma(t_i)\equiv\sigma'(t_i)$. This allows
-          us to apply the induction hypothesis on the proof structure, since $\sigma(t_i \trans{l_i} t_i')$ has a proof structure
-          that is smaller than the one for $p \trans{l} p'$, to conclude that $\sigma(t'_i) \equiv \sigma'(t'_i)$.
-          Since $v$ appears in $t_i'$ it must hold that $\sigma(v)\equiv\sigma'(v)$.
-\end{enumerate}
-In either case, $\sigma$ and $\sigma'$ agree on the value of $v$. Since this holds for all variables of $t'$,
-we reach the conclusion we seek, namely that $\sigma(t')\equiv\sigma'(t')$.
+Let $v$ be a variable appearing in the rule, which is source-dependent via some
+subset of $\{ \trans{l} \mid l \in  L\}$. The base case of the induction is simple:
+If the distance of $v$ is zero, this means $v$ appears in the source $t$. Since
+$\sigma(t)\equiv\sigma'(t)$ it must be the case that $\sigma(v)\equiv\sigma'(v)$.
 
+For the inductive step, assume $v$ has a non-zero distance. According
+to Definition~\ref{def::varDepend} this means that $v$ appears in the target of some premise
+$t_i \trans{l_i} t_i' \in \Phi$ where $l_i\in L$, and all variables appearing
+in $t_i$ are also source dependent via the set $\{ \trans{l} \mid l \in L \}$.
+However, each variable $w\in vars(t_i)$ has a smaller distance than $v$. By the
+induction hypothesis (on variable distances), we thus have that $\sigma(w)\equiv\sigma'(w)$.
+
+At this point, we can invoke the outer induction hypothesis, namely that of our
+induction on the proof structure of $p \trans{l} p'$. Since $t_i\trans{l_i}t_i'$
+is a premise of the first rule used, it must be provable with a smaller proof structure,
+using either the substitution $\sigma$ or $\sigma'$.
+By the induction hypothesis, the claim~\eqref{eq:det_claim1} holds for it. In other words
+the target of the premise is the same whether we use $\sigma$ or $\sigma'$, i.e.
+$\sigma(t_i')\equiv\sigma'(t_i')$. Since the variable $v$ appears in $t_i'$, it
+must thus hold that $\sigma(v)\equiv\sigma'(v)$.
+
+% \begin{enumerate}
+%     \item Assume that $v$ appears in $t$. In this case, $\sigma(v)\equiv\sigma'(v)$ since $\sigma(t)\equiv\sigma'(t)$.
+%     \item Assume that $v$ appears in the target of some premise $t_i \trans{l_i} t_i' \in \Phi$ where $l_i \in L$
+%           and all variables in $t_i$ are source dependent via  a subset of $\{ \trans{l} \mid l \in  L\}$.
+%           Each variable $w \in vars(t_i)$ has a distance smaller than that of $v$. Therefore, the induction
+%           hypothesis (on the distance of variables) applies and we have that $\sigma(w) \equiv\sigma'(w)$.
+%           This means that $\sigma(t_i)\equiv\sigma'(t_i)$. This allows
+%           us to apply the induction hypothesis on the proof structure, since $\sigma(t_i \trans{l_i} t_i')$ has a proof structure
+%           that is smaller than the one for $p \trans{l} p'$, to conclude that $\sigma(t'_i) \equiv \sigma'(t'_i)$.
+%           Since $v$ appears in $t_i'$ it must hold that $\sigma(v)\equiv\sigma'(v)$.
+% \end{enumerate}
+We have thus showed that $\sigma$ and $\sigma'$ agree on the value of $v$ in all cases. 
+As noted above, this holds specifically for all variables of $t'$
+and we can conclude that $\sigma(t')\equiv\sigma'(t')$, or $p'\equiv p''$, 
+which proves the claim~\eqref{eq:det_claim1} in the case of $\DR{r}=\DR{r'}$.
+
+\paragraph{Case $\DR{r}\ne\DR{r'}$.}
 We now consider the case where the rules $\DR{r}$ and $\DR{r'}$ are distinct.
-We first show that $(\sigma, \sigma')$ is determinism-respecting w.r.t.\ $(\Phi, \Phi')$ and $L$.
+Let $\DR{r} = \frac{\Phi}{s\trans{l}s'}$ and $\DR{r'}=\frac{\Phi'}{t\trans{l}t'}$.
+We first show that the pair $(\sigma, \sigma')$ is 
+determinism-respecting w.r.t.\ $(\Phi, \Phi')$ and $L$.
 
-Assume,  towards a contradiction, that our claim concerning determinism-respecting substitutions does not hold.
-Then there exist  two positive formulae $s_i \trans{l} s'_i$ and $t_i \trans{l} t'_i$ for some $l \in L$ among the premises of $\DR{r}$ and
-$\DR{r'}$, respectively, such that
-$\sigma(s_i) \equiv \sigma'(t_i)$ but it does not hold that $\sigma(s'_i) \equiv \sigma'(t'_i)$.
-Since $s_i \trans{l} s'_i$  is a premise of $\DR{r}$ $\sigma(s_i \trans{l} s'_i) \in C \cup U$ and it has a smaller proof structure than $p \trans{l} p' \in C \cup U$. Following a similar reasoning, $\sigma'(t_i \trans{l} t'_i) \in C$.
-But the induction hypothesis (on the proof structure) applies and hence, we have $\sigma(s'_i) \equiv \sigma'(t'_i)$, which contradicts our earlier conclusion that $\sigma(s'_i) \equiv \sigma'(t'_i)$ does not hold. Hence, we conclude that  $(\sigma, \sigma')$ is determinism-respecting w.r.t.\ $(\Phi, \Phi')$ and $L$.
+Assume, towards a contradiction, that the pair is not determinism-respecting.
+Then there exist two positive formulae $s_i \trans{l'} s'_i$ and $t_i \trans{l'} t'_i$ 
+for some $l' \in L$ among the premises of $\DR{r}$ and$\DR{r'}$, respectively, such that
+$\sigma(s_i) \equiv \sigma'(t_i)$ but $\sigma(s'_i) \nequiv \sigma'(t'_i)$.
+Since $s_i \trans{l} s'_i$  is a premise of $\DR{r}$, we know that $\sigma(s_i \trans{l} s'_i) \in C \cup U$ 
+and it has a smaller proof structure than $p \trans{l} p' \in C \cup U$. 
+Following a similar reasoning, $\sigma'(t_i \trans{l} t'_i) \in C$.
+But the induction hypothesis (on the proof structure) applies and hence, we have $\sigma(s'_i) \equiv \sigma'(t'_i)$, 
+which contradicts our earlier conclusion that $\sigma(s'_i) \nequiv \sigma'(t'_i)$ does not hold. 
+Hence, we conclude that our assumption is false and that $(\sigma, \sigma')$ is 
+determinism-respecting w.r.t.\ $(\Phi, \Phi')$ and $L$.
 
 Since we have shown that $(\sigma, \sigma')$ is determinism respecting,
-it then follows from the second condition of the determinism format that either $\sigma(conc(r)) \equiv \sigma'(conc(r'))$,
+it then follows from the second condition of the determinism format that either $\sigma(s') \equiv \sigma'(t')$,
 which was to be shown, or
-there exist premises $\phi_i \equiv s_i \trans{l_i} s'_i$  in one deduction rule and
-$\phi'_i \equiv t_i \ntrans{l_i}$ in the other deduction rule such that
+there exist premises $\phi_i \equiv u_i \trans{l_i} u'_i$  in one deduction rule and
+$\phi'_i \equiv w_i \ntrans{l_i}$ in the other deduction rule such that
 $\sigma(\phi_i)$ contradicts $\sigma'(\phi'_i)$.
 We show that the latter possibility leads to a contradiction, thus completing the proof.
-Since $\sigma(\phi_i)$ contradicts $\sigma'(\phi'_i)$, we have that $\sigma(s_i) \equiv \sigma'(t_i)$.
-We distinguish the following two cases based on the status of the positive and negative contradicting premises with respect to $\DR{r}$ and $\DR{r'}$.
+Assume $\sigma(\phi_i)$ contradicts $\sigma'(\phi'_i)$, then we have that $\sigma(u_i) \equiv \sigma'(w_i)$.
+We distinguish the following two cases based on the status of the positive and negative contradicting 
+premises with respect to $\DR{r}$ and $\DR{r'}$.
 
 \begin{enumerate}
 \item
 Assume that the positive formula is a premise of $\DR{r}$.
-Then, $\sigma(s_i \trans{l_i} s'_i) \in C \cup U$ but  from $C \cup U \vDash N'$ and $\sigma'(\phi'_i) \in N'$, it follows that
-for no $p''$, we have that $\sigma(s_i) \equiv \sigma'(t_i) \trans{l_i} p'' \in C \cup U$, thus reaching a contradiction.
+Then, $\sigma(u_i \trans{l_i} u'_i) \in C \cup U$ but  from $C \cup U \vDash N'$ and $\sigma'(\phi'_i) \in N'$, it follows that
+for no $p''$, we have that $\sigma(u_i) \equiv \sigma'(w_i) \trans{l_i} p'' \in C \cup U$, thus reaching a contradiction.
 
 \item
 Assume that the positive formula is a premise of $\DR{r'}$.
-Then, $\sigma'(s_i) \trans{l_i} \sigma(s'_i) \in C$ but from $C \vDash N$ and $\sigma(\phi'_i) \in N$, it follows that
-for no $p_1$, we have that $\sigma(t_i) \equiv \sigma'(s_i) \trans{l_i} p_1 \in C$, hence reaching a contradiction. \qedhere
+Then, $\sigma'(u_i) \trans{l_i} \sigma(u'_i) \in C$ but from $C \vDash N$ and $\sigma(\phi'_i) \in N$, it follows that
+for no $p_1$, we have that $\sigma(w_i) \equiv \sigma'(u_i) \trans{l_i} p_1 \in C$, hence reaching a contradiction. \qedhere
 \end{enumerate}

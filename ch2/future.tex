@@ -9,3 +9,41 @@ although the details have not been worked out fully for this particular thesis
 submission. In particular, we have extended the decompositional theorem to a
 recursive logic $\HMLppf{\X}$, which allows a much wider class of interesting 
 properties to be specified as fix-points of systems of recursive logic equations.
+
+In the decomposition of computations, we rely on some specific properties of 
+CCS at the syntactic level, namely to detect which rule of the parallel operator
+was applied. By tagging transitions with their proofs~\cite{BoudolC94,DeganoP92}, 
+or even just the last
+proof used, we could eliminate this restriction and extend our approach to more
+general languages involving parallel composition. Another possibility is to construct
+a rule format that guarantees the properties we use at a more general level.
+
+In this work we have only considered parallel composition. However, decompositional
+results have been shown for the more general setting of \emph{process contexts}~\cite{Larsen91}.
+The two parts considered as components are then not confined to components
+of the parallel construction, but a context $C[\cdot]$ (a process term with a \emph{hole})
+and general process $p$ to instantiate the context with. A general property of the
+instantiated context $C[p]$ can the be transformed into an equivalent property
+of $p$, where the transformation depends on $C$. As the state space explosion
+of model-checking problems is often due to use of the parallel construct, we
+deemed our approach as a useful step towards a full decompositional result, since
+the decomposition of computations will be more complex for general contexts.
+
+The initial motivation for this work was the application of epistemic
+to behavioural models~\cite{Mousavi07-LPAR}. We would therefore like to extend
+our results to logics that include epistemic operators, reasoning about the knowledge
+of agents observing a running system. This work depends somewhat of our extensions
+to recursive formulae.
+
+Our work is based on many previous results, both in decompositional reasoning
+as well as history-based process systems. Yet, to the best of our knowledge, we
+are the first to combine the two.
+
+Our notion of computations comes from~\cite{DeNicola:1990}, where they are used
+to compare bisimulations, that consider both forwards and backward actions, to
+more conventional forward-only bisimulations. The backwards modality of \HMLpast
+comes from~\cite{HennessyS85}, which shares the same notion of computations
+as well.
+%
+Our methods for decompositional reasoning largely build on and adapt the methods
+from~\cite{anna87,Larsen91,Fokkink03b}. 
