@@ -51,19 +51,52 @@ within a single transaction.
 
 In~\cite{tmi} we give a comprehensive, informal overview of the TMI architecture and also evaluate 
 a Java TMI implementation built on the DSTM2 library~\cite{hlm06}.
-In order to provide clear, well-defined semantics for TMI, this paper provides a more
-formal treatment and defines a structural operational semantics~\cite{Plotkin04a} 
-for the TMI architecture.
-For this we need an STM system with equally well founded semantics. This is provided by the Haskell
-STM, whose semantics is given in~\cite{haskellstm}. Our semantics of TMI builds on this foundation
-and is also accompanied by an implementation over the Haskell STM system. We believe having formal
-semantics for TMI is important to guide possible implementations and disambiguate design choices.
+In this previous, companion paper,
+we also discuss the relationship between TMI and other approaches, 
+such as aspect-oriented and transactional 
+techniques for security enforcement.
 
-The structure of the paper is as follows. In Section 2 we give the necessary background, including
+In this current paper, we give a more
+formal treatment of TMI, and 
+provide a clear, well-defined 
+structural operational semantics~\cite{Plotkin04a} 
+for the TMI architecture.
+Our TMI semantics builds on the well founded semantics
+for the the Haskell
+STM system in~\cite{haskellstm},
+and is
+accompanied by an implementation over the Haskell STM system.
+
+
+We found that the development of a formal semantics 
+alongside an implementation 
+helped us us disambiguate design choices
+and resolve ambiguities.
+%
+In particular, 
+the formal semantics allowed us to
+safely combine
+multiple TMI actions and different security managers
+into a single, atomic authorization decision.
+%
+The implications
+of such compositionality are not clear, given only informal reasoning,
+and,
+indeed, some of our initial implementation strategies
+did not provide correct enforcement.
+%
+However, 
+as described further in Section~4,
+when combined with a formal semantics,
+we can establish that our TMI implementation
+correctly enforces the intended security policy.
+
+
+The structure of the paper is as follows. In Section~2 we give the necessary background, including
 STM systems and how TMI makes use of their mechanisms, as well as an overview of the Haskell STM
-implementation. Section 3 covers TMI in greater detail and describes its Haskell implementation
-from the user standpoint. Section 4 defines the formal semantics of TMI, building on existing
-semantics for STM Haskell. Section 5 describes the key elements of our Haskell implementation
-and section 6 discusses future work.
+implementation. Section~3 covers TMI in greater detail and describes its Haskell implementation
+from the user standpoint. Section~4 defines the formal semantics of TMI, building on existing
+semantics for STM Haskell. Section~5 describes the key elements of our Haskell implementation
+and Section~6 discusses future work.
 
 % section introduction (end)

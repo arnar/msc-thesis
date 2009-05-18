@@ -33,7 +33,7 @@ type TMILog d = [(TMIAccess, d)]
 For inserting entries in the log, we define the following shortcut, where \lstinline+tell+
 is the standard function that the writer monad uses to collect information.
 \begin{lstlisting}[style=small]
-log :: (TMIAccess, d) -> STM d ()
+log :: (TMIAccess, d) -> TMI d ()
 log entry = (TM . tell) [entry]
 \end{lstlisting}
 \lstinline+log+ returns an STM action which has the

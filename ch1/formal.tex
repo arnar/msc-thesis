@@ -11,15 +11,51 @@ we give a cursory
 explanation of the concepts of the semantics from~\cite{haskellstm} 
 so that a reader not familiar with it may understand our extensions.
 
+It is not obvious that the ideas presented in the previous section are indeed
+always safe. For example, we could not be sure that 
+the nesting of TMI actions inside an
+STM action --- in turn lifted to yet another TMI 
+action --- would result in a reasonable behavior.
+The construction of the following semantics greatly clarified our
+understanding of such subtleties. 
+Our first drafts of the semantics revealed
+several ambiguities that were later resolved.
+Furthermore, constructing semantics for our intermediate implementation ideas
+sometimes revealed cases where incorrect behavior was possible, 
+and the intended security guarantees of TMI were violated.
+Initially, for instance, a clear distinction of security-relevant data was missing
+and, while TMI actions naturally supported STM functionality, 
+we had to explore several options to find the support for flexible STM and TMI 
+combinations that is present in the final semantics. 
+
+In particular, the final semantics 
+provides a a clear separation between TMI and STM actions, 
+which allows STM actions to be lifted to the TMI level
+and ensures correct behavior when nesting TMI and STM actions, 
+or several TMI actions, 
+one within another.
+This nesting support provides powerful composability properties,
+and makes it possible to safely combine
+multiple TMI actions and different security managers
+into a single, atomic authorization decision.
+Without a formal semantics,
+the implications of such composability would have been unclear,
+and its correctness suspect.
+However, in our final semantics, given below,
+it is straightforward to see that
+the TMI security policy enforcement guarantees
+are always correctly maintained.
+
+
 Figures~\ref{fig:sosadmin} through \ref{fig:sos2} give the operational rules that describe the steps a program may
-take. At the top level, a program transforms a state of the form $P;\Theta$ via labelled transition.
+take. At the top level, a program transforms a state of the form $P;\Theta$ via a labelled transition.
 \[
     P;\,\Theta \stackrel{a}{\tarrow} Q;\,\Theta'
 \]
 $P$ represents a program term in the syntax of Figure~\ref{fig:syntax2} while $\Theta$ stands for a
 memory store, a partial function from variable names to annotated terms. An annotated value is a tuple
 $(t,d)$ where $t$ is a program term and $d$ is a value that holds the security relevant description of
-the relevant variable. The labels on transitions represent the programs input and output actions. $Q$
+the relevant variable. The labels on transitions represent the program's input and output actions. $Q$
 and $\Theta'$ represent the term that is left unevaluated and the updated store after a transition, 
 respectively.
 
@@ -68,8 +104,9 @@ used up until now is standard syntactic sugar for the monad bind and return oper
 Figure~\ref{fig:contexts} defines some symbols used in the semantics. The metavariable $D$ represents a set
 of terms used to describe the security properties of variables. We extend this set with an invalid value $\bot$ and
 write $D_\bot$ for the extended set. A state of a computation is a pair $(M,\Theta)$ of a term that remains
-to be evaluated and a store $\Theta$. The store maps variable names to terms and their variable descriptor. If
-a variable does not have a suitable descriptor, we use $\bot$ as a fill-in.
+to be evaluated and a store $\Theta$. The store maps variable names to terms and their variable descriptors. If
+a variable does not have a suitable descriptor, we use $\bot$ as a fill-in. This is used to distinguish
+security-relevant variables from other variables.
 
 The set of access types, $T$, consists of three constants, each
 representing an operation performed on variables. An introspection log $\Sigma$
@@ -170,7 +207,7 @@ This is what differentiates regular transactional variables from security sensit
 
 Other rules in the STM transition system define the behavior of STM combinators as described in
 Section~\ref{sub:haskell_stm}. We have used the revised semantics of exception handling from the
-later versions of~\cite{haskellstm}, namely the rule {\em XTM2} ensure that when a term reduction
+later versions of~\cite{haskellstm}, namely the rule {\em XTM2}, to ensure that when a term reduction
 results in a caught exception, all effects of that reduction are rolled back except for new 
 allocations.
 
@@ -182,7 +219,11 @@ The rules {\em AURETn} and {\em AUTHROWn} specify that for a term of the form {\
 $N\;M${\tt )}
 if $M$ evaluates to a \lstinline+return+ or \lstinline+throw+ value, then that value is propagated only
 if $N$ evaluates to a \lstinline+return+ value under the authorization relation (see later).
-If evaluation of the {\em authorization term} $N$ raises an exception, a fixed exception containing
+If evaluation of the {\em authorization term} $N$ raises an exception,
+\footnote{In the actual implementation the authorization term is simply a boolean
+function of the log. This difference exists to simplify both the semantics and the
+implementation.}
+a fixed exception containing
 no information about the local transaction state is thrown. This triggers a rollback of any updates
 performed during that invocation of \lstinline+authorized+.
 
@@ -279,7 +320,7 @@ atomically (authorized (ownGradesRead s) (gradeInformation s))
 \end{lstlisting}
 
 By applying the operational semantics rules to this term, one can find that the innermost action
-\lstinline+averageGrades+ will by authorized be \lstinline+allGradesRead+ {\em before}
+\lstinline+averageGrades+ will be authorized by \lstinline+allGradesRead+ {\em before}
 turning it into an STM transition. This may, for example, happen through rule $\soslbl{AURET1}$.
 Note that such a rule does not keep the log entries of already authorized actions, i.e.
 the $\Sigma$ is not affected in the $\Rightarrow$ transition below the line. 

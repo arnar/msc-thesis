@@ -51,6 +51,10 @@ behaviour should make such an implementation easier to construct and check.
 
 Future work in this context also involves writing or porting complex software to the
 architecture to obtain realistic performance measurements.
+Also, our semantics may still be simplified, while allowing the same behavior; 
+for example, the transaction log seems redundant in STM transitions, 
+and may possibly be eliminated.
+
 
 Most importantly, we think that having clear semantics for TMI and an implementation
 over a production-ready STM system, further validates our claim that TMI architecture
