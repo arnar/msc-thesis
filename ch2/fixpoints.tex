@@ -1,5 +1,7 @@
 \section{Extension to $\HMLpastf{\X}$ and $\HMLppf{\X}$}
 
+\cite{}
+
 In this section extend our logics to include variables. Satisfiability of 
 formulas with variables is determined by a declaration of equations,
 mapping variables to formulas, and depends on a model for the declaration,
@@ -11,8 +13,7 @@ example we can phrase the question ``Has the action $\alpha$ ever happened
 in the past?'' as a recursive logical property under a minimal model.
 
 \begin{definition}
-    Let $\T=\langle P,A,\rightarrow \rangle$ be an LTS and $\X$ a possibly
-    infinite
+    Let $\T=\langle P,A,\rightarrow \rangle$ be an LTS and $\X$ a
     set of identifiers. The set $\HMLpastf{\X}(A)$,
     or simply $\HMLpastf{\X}$, is defined by the grammar
     \[
@@ -29,7 +30,7 @@ in the past?'' as a recursive logical property under a minimal model.
 \end{definition}
 
 When reasoning about recursive formulae, it is useful to have their denotational
-semantics. For convenience we rephrase part of definiton \ref{dfn:hmlpast} in a 
+semantics. For convenience we rephrase part of definition \ref{dfn:hmlpast} in a 
 denotational setting.
 
 \begin{definition}[Denotational semantics of $\HMLpp$]
@@ -44,12 +45,12 @@ denotational setting.
         \den{\neg\phi} &=& \C_\T \setminus \den{\phi} \\
         \den{\dmnd{\alpha}\phi} &=& \dendmnd{\alpha}\den{\phi} \\
         \den{\dmndback{\alpha}\phi} &=& \dendmndback{\alpha}\den{\phi} \\
-        \den{\pdmnd{i}\phi} &=& \denpdmnd{i}\den{\phi} \\
-        \den{\pdmndback{i}\phi} &=& \denpdmndback{i}\den{\phi} \\
+        \den{\pdmnd{}\phi} &=& \denpdmnd{}\den{\phi} \\
+        \den{\pdmndback{}\phi} &=& \denpdmndback{}\den{\phi} \\
     \end{array}
     \]
     where the operators $\dendmnd{\alpha}, \dendmndback{\alpha},
-    \denpdmnd{i}, \denpdmndback{i} : \powerset{\C_\T} \rightarrow \powerset{\C_\T}$
+    \denpdmnd{}, \denpdmndback{} : \powerset{\C_\T} \rightarrow \powerset{\C_\T}$
     are defined with
     \[
     \begin{array}{r@{\quad}c@{\quad}l}
@@ -133,8 +134,8 @@ to one for $\HMLppf{\X}$.
         \den{\neg\phi}^\D_\sigma &=& \C_\T \setminus \den{\phi}^\D_\sigma \\[4pt]
         \den{\dmnd{\alpha}\phi}^\D_\sigma &=& \dendmnd{\alpha}\den{\phi}^\D_\sigma \\[4pt]
         \den{\dmndback{\alpha}\phi}^\D_\sigma &=& \dendmndback{\alpha}\den{\phi}^\D_\sigma \\[4pt]
-        \den{\pdmnd{i}\phi}^\D_\sigma &=& \denpdmnd{i}\den{\phi}^\D_\sigma \\[4pt]
-        \den{\pdmndback{i}\phi}^\D_\sigma &=& \denpdmndback{i}\den{\phi}^\D_\sigma \\[4pt]
+        \den{\pdmnd{}\phi}^\D_\sigma &=& \denpdmnd{}\den{\phi}^\D_\sigma \\[4pt]
+        \den{\pdmndback{}\phi}^\D_\sigma &=& \denpdmndback{}\den{\phi}^\D_\sigma \\[4pt]
         \den{X}^\D_\sigma &=& \sigma(X) \\
     \end{array}
     \]
@@ -258,9 +259,9 @@ can be expressed easily in $\HMLpp$, for which we define the following short-han
     Then the \HMLpp{} formula $\true_\pi$ is defined as follows.
     \[ \begin{array}{rcl}
         \true_\lambda &=& \bxback A \false \land \pbxback i \false \\
-        \true_{\pi'(p\trans \tau p')} &=& \pdmndback i \true_{\pi'} \\
-        \true_{\pi'(p\trans a p')} &=& \dmndback{\bar a} \true_{\pi'}  \lor \pdmndback i \true_{\pi'} \\
-        \true_{\pi'(p\ptrans i p')} &=& \dmndback A \true_{\pi'} \lor \pdmndback i \true_{\pi'} \\
+        \true_{\pi'(p\trans \tau p')} &=& \pdmndback{} \true_{\pi'} \\
+        \true_{\pi'(p\trans a p')} &=& \dmndback{\bar a} \true_{\pi'}  \lor \pdmndback{} \true_{\pi'} \\
+        \true_{\pi'(p\ptrans{} p')} &=& \dmndback A \true_{\pi'} \lor \pdmndback{} \true_{\pi'} \\
     \end{array} \]
 \end{definition}
 An astute reader will notice that this is a rewording of Definition~\ref{dfn:compatible},
@@ -356,8 +357,8 @@ We can show that $\Psi\circ\Phi$ is the identity mapping on assignments over
 $\X\times\C$. However, for now we can only prove a weaker condition about
 $\Phi\circ\Psi$.
 
-\TODO{how do we make it clear that "`normal"' models only have processes of the
-form $p\parallel q$? do we need to}
+%\TODO{how do we make it clear that "`normal"' models only have processes of the
+%form $p\parallel q$? do we need to}
 \begin{lemma}
     \[ \Psi \circ \Phi = \id_{\M_\X}  \]
 and

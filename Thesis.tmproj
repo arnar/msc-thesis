@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>ch2/decomp_comp.tex</string>
+	<string>ch3/Format.tex</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -23,70 +23,114 @@
 	<integer>244</integer>
 	<key>metaData</key>
 	<dict>
-		<key>ch1/background.tex</key>
+		<key>MS.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>11</integer>
+				<integer>27</integer>
 				<key>line</key>
-				<integer>86</integer>
+				<integer>241</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>69</integer>
+			<integer>211</integer>
 		</dict>
-		<key>ch2/decomp_comp.tex</key>
+		<key>ch1/preamble.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>45</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>405</integer>
+				<integer>113</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>343</integer>
+			<integer>67</integer>
 		</dict>
-		<key>ch2/decomp_hml.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>54</integer>
-				<key>line</key>
-				<integer>303</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>279</integer>
-		</dict>
-		<key>ch2/future.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>54</integer>
-				<key>line</key>
-				<integer>10</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>ch2/intro.tex</key>
+		<key>ch1/tmihaskell.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>29</integer>
+				<integer>133</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>118</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>132</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>133</integer>
+			</dict>
+		</dict>
+		<key>ch2/decomp_comp.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>60</integer>
+				<key>line</key>
+				<integer>304</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>274</integer>
+		</dict>
+		<key>ch2/decomp_hml.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>80</integer>
+				<key>line</key>
+				<integer>388</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>366</integer>
+		</dict>
+		<key>ch2/future.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>31</integer>
+				<key>line</key>
+				<integer>20</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>3</integer>
+		</dict>
+		<key>ch2/intro.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>74</integer>
+				<key>line</key>
+				<integer>27</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -98,53 +142,23 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>84</integer>
+				<integer>15</integer>
 				<key>line</key>
-				<integer>153</integer>
+				<integer>149</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>96</integer>
-		</dict>
-		<key>ch3/Appendix.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>46</integer>
-				<key>line</key>
-				<integer>260</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>205</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>207</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>46</integer>
-				<key>line</key>
-				<integer>260</integer>
-			</dict>
+			<integer>120</integer>
 		</dict>
 		<key>ch3/Conclusions.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>15</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>1</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -156,79 +170,51 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>74</integer>
 				<key>line</key>
-				<integer>310</integer>
+				<integer>87</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>239</integer>
+			<integer>63</integer>
 		</dict>
 		<key>ch3/Format.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>2</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>301</integer>
+				<integer>241</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>252</integer>
+			<integer>208</integer>
 		</dict>
-		<key>ch3/preamble.tex</key>
+		<key>ch3/Introduction.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>44</integer>
+				<integer>54</integer>
 				<key>line</key>
-				<integer>47</integer>
+				<integer>49</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>4</integer>
+			<integer>1</integer>
 		</dict>
-		<key>ch3/proof_det.tex</key>
+		<key>ch3/Preliminaries.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>82</integer>
+				<integer>146</integer>
 				<key>line</key>
-				<integer>17</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>ch3/proof_idempotent.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
 				<integer>34</integer>
-				<key>line</key>
-				<integer>53</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>ch3/proof_simplifiedImpliesHard.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>30</integer>
-				<key>line</key>
-				<integer>53</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -240,64 +226,62 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>5</integer>
+				<integer>19</integer>
 				<key>line</key>
-				<integer>316</integer>
+				<integer>522</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>259</integer>
+			<integer>498</integer>
 		</dict>
 		<key>master.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>56</integer>
+				<integer>20</integer>
 				<key>line</key>
-				<integer>278</integer>
+				<integer>301</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>258</integer>
-			<key>selectFrom</key>
+			<integer>230</integer>
+		</dict>
+		<key>references.bib</key>
+		<dict>
+			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>46</integer>
 				<key>line</key>
-				<integer>278</integer>
+				<integer>1912</integer>
 			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>56</integer>
-				<key>line</key>
-				<integer>278</integer>
-			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1892</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>ch3/Determinism.tex</string>
-		<string>ch3/Format.tex</string>
-		<string>ch3/proof_idempotent.tex</string>
-		<string>ch3/proof_simplifiedImpliesHard.tex</string>
-		<string>ch3/preamble.tex</string>
-		<string>ch3/proof_det.tex</string>
+		<string>master.tex</string>
 		<string>intro.tex</string>
 		<string>ch2/intro.tex</string>
-		<string>ch2/future.tex</string>
-		<string>ch2/decomp_hml.tex</string>
-		<string>ch2/decomp_comp.tex</string>
 		<string>ch2/preliminaries.tex</string>
+		<string>ch2/decomp_comp.tex</string>
+		<string>ch2/decomp_hml.tex</string>
+		<string>references.bib</string>
+		<string>ch2/future.tex</string>
+		<string>ch3/Introduction.tex</string>
+		<string>ch3/Preliminaries.tex</string>
+		<string>ch3/Determinism.tex</string>
+		<string>ch3/Format.tex</string>
 		<string>ch3/Conclusions.tex</string>
-		<string>ch1/background.tex</string>
-		<string>master.tex</string>
-		<string>ch3/Appendix.tex</string>
+		<string>MS.tex</string>
+		<string>ch1/preamble.tex</string>
+		<string>ch1/tmihaskell.tex</string>
 	</array>
 	<key>shellVariables</key>
 	<array>
@@ -313,6 +297,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{44, 915}, {929, 897}}</string>
+	<string>{{34, 4}, {982, 774}}</string>
 </dict>
 </plist>

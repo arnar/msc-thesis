@@ -96,6 +96,7 @@
 \bibpunct{[}{]}{,}{A}{}{,}
 \let \cite = \citep
 
+% Theorem environments (fold)
 \usepackage{amsthm}
 \usepackage{ifthen}
 
@@ -119,13 +120,14 @@
 \newtheorem{example}[theorem]{Example}
 
 \newtheorem*{remark}{Remark}
+% (end)
+% Chapter headers and other customizations (fold)
 
 % Put section numbers in the margin
 \makeatletter 
 \def\@seccntformat#1{\protect\makebox[0pt][r]{\csname the#1\endcsname\quad}} 
 \makeatother 
 
-% Chapter headers 
 \newcommand\jointwith\relax
 \newcommand{\TheAlphaChapter}{%
 \ifcase\number\thechapter\or one\or two\or three\or four\or five\fi}
@@ -198,7 +200,7 @@
   \fi
   \vskip\belowcaptionskip}
 \makeatother
-
+% (end)
 
 
 
@@ -227,7 +229,7 @@
 \renewcommand{\chaptermark}[1]{\markboth{\upshape\scshape chapter \thechapter. \MakeLowercase{#1}}{}}
 \renewcommand{\sectionmark}[1]{\markright{\upshape\scshape\MakeLowercase{#1}}{}}
 
-\frontmatter{}
+\frontmatter{} % (fold)
 
 \begin{titlepage}
 \setlength{\hoffset}{0mm}
@@ -284,8 +286,9 @@ requirements for the degree of }\\
 \null\vfill
 
 \tableofcontents
-
+%(end)
 \mainmatter{}
+
 
 \chapter{Introduction}
 \input{intro}
@@ -310,8 +313,8 @@ requirements for the degree of }\\
 \input{ch2/preliminaries}
 \input{ch2/decomp_comp}
 \input{ch2/decomp_hml}
+%\input{ch2/fixpoints}
 \input{ch2/future}
-
 
 \renewcommand{\trans}[1]{\,{\stackrel{{#1}}{\rightarrow}}\,}
 

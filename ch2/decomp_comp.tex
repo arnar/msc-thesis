@@ -73,7 +73,7 @@ with the following operational semantics
     \sosrule{q\trans{\alpha}q'}{p \parallel q \trans{\alpha} p \parallel q'} \qquad
     \sosrule{p\trans{a}p'\quad q\trans{\bar{a}}q'}{p \parallel q \trans{\tau} p' \parallel q'}
 \end{gather*}
-We write $p\trans{\alpha}q$ to mean simply that this transition is provable by
+We write $p\trans{\alpha}q$ to denote that this transition is provable by
 these rules. We assume also that $\bar{\cdot} : A\rightarrow A$ is a function on action names
 such that $\bar{\bar{a}} = a$.
 The LTS associated with a CCS process $p$ is the largest transition system 
@@ -302,12 +302,10 @@ Note that the definition of $D$ relies on some properties of CCS specifically.
 %           then we can use the syntax of these components to deduce what were
 %           the actions of each side.
     \item The only possible result of a communication is $\tau$, and $\tau$
-          can never act as one partner of the communication. This is true in CSP~\cite{Hoare85}
-          as well, where the result of communication is not tagged with $!$ or
-          $?$, and only tagged actions can stand as components of communication.
+          can never act as one partner of the communication.
 \end{enumerate}
 
-We now want to define quotient on \HMLpast-formulas such that a property of the
+We now want to define quotient on \HMLpast-formulae such that a property of the
 form
 \[
     (p\parallel q, \pi) \vDash \phi  \quad\Leftrightarrow\quad
@@ -340,7 +338,7 @@ two operators.
     \label{dfn:hmlpast}
     Let $\T=\langle P,A,\rightarrow \rangle$ be an LTS. The set $\HMLpp(A)$,
     or simply $\HMLpp$, of
-    \emph{stuttering Hennessy-Milner logic formulas with past}
+    \emph{stuttering Hennessy-Milner logic formulae with past}
     is defined by the grammar
     \[
         \phi,\psi \,::=\, \true \alt \phi\land\psi

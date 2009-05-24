@@ -118,8 +118,14 @@ rule.
 \end{equation}
 Presented with a term of the form $\textsf{op(}t_1,t_2\textsf{)}$, we can see
 that both rules may apply (depending on $t_1$ and $t_2$). If they do, we have
-a case of non-determinism where the term may either be executed according to
-rule~\ref{eq:intro_rule1} or rule~\ref{eq:intro_rule2}. In fact, an operator
+a case of non-determinism%
+\footnote{Here we use the term {\em non-determinism} loosely. In process algebra, 
+we only use this term if the labels in the conclusion of the two rules match. 
+The key point here is that
+often there is a choice of several rules that can be applied to a particular term.}
+where the term may either be executed according to
+rule~\ref{eq:intro_rule1} or rule~\ref{eq:intro_rule2}.
+In fact, an operator
 with this pair of rules is known as a \emph{choice operator}, i.e. the execution
 of the term $\textsf{op(}t_1,t_2\textsf{)}$ may choose whether it behaves like
 $t_1$ or like $t_2$.
@@ -128,7 +134,7 @@ It is not difficult to see that, when we take the meaning of a program to be its
 final value, if such non-determinism exists in the SOS specification, this meaning
 is not well defined. A term might give rise to multiple sequences of operations and
 thus multiple final values. Thus, when this view of meaning is taken, which is
-common when dealing with functional languages, we often make the requirement that
+common when dealing with purely functional languages, we often make the requirement that
 the language's specification given by the rules is \emph{deterministic}, 
 i.e. for each term
 there is at most one operation and subsequent term that can be deduced from the
@@ -153,7 +159,7 @@ structure which models the state of the execution completely. In the case of lan
 with variables, a common formulation is to represent the states as pairs of a
 term (with the same meaning as described above) and a \emph{variable store}, written
 $\langle t, \Theta \rangle$. The variable store is in turn a function from the
-set of variables to actual values.\footnote{Or terms in the case of lazy languages.}
+set of variables to actual values (or terms in the case of lazy languages).
 A typical rule in such a language might look like this.
 \begin{equation}\label{eq:intro_rule3}
     \frac{}{\langle \textsf{x := }n, \Theta\rangle \trans{}
@@ -236,10 +242,12 @@ framework.
 When using STM, programmers do away with lock management and instead mark sections
 of code as \emph{atomic}. At run-time, an STM system will, as part of the program
 in question, ensure that the accesses a single thread makes to shared resources
-inside such atomic sections, appear atomic to other threads and moreover, are
-completely isolated from the effects concurrent threads may have on this shared
-state. Semantically this is equivalent to enforcing a rule which says that only
-one thread may be running in an atomic section at each time.
+inside such atomic sections, appear atomic to other threads. Moreover, 
+STM provides an isolation guarantee, that threads running inside such atomic sections
+do not affect, nor are affected by the actions of, concurrent threads.
+Semantically this is equivalent to enforcing a rule which says that only
+one thread may be running in an atomic section at each time, sometimes referred
+to as the {\em serializability} of transactions.
 
 The beauty of STM comes from the fact that the actual implementation 
 does not enforce such strict policies, 
@@ -343,7 +351,7 @@ array of desirable, or non-desirable, properties. Such properties include
     continue no matter the input it faces;
     \item \emph{safety properties} such that the system will never perform certain critical
     operations unless it is in a state where it is safe to do so; and
-    \item \emph{security properties} such as ensuring operations are properly authorised.
+    \item \emph{security properties} such as ensuring that operations are properly authorised.
 \end{itemize}
 
 In most cases, the semantics of the specification languages is given as Structural
@@ -354,7 +362,8 @@ often in logics which include modal operators (e.g. the model \emph{can} perform
 a particular operation) or operators on the possible sequences of operations (such
 as \emph{on each possible path there is a term with a particular property}).
 Examples of the former include Hennessy-Milner logic~\cite{Hennessy85} 
-and of the latter CTL~\cite{CE81} and LTL~\cite{Pnueli77}.
+and of the latter Computation Tree Logic~\cite{CE81} and Linear Temporal
+Logic~\cite{Pnueli77}.
 
 Most specification languages, or \emph{process calculi}, 
 include an operator that allows one to describe a process resulting from the 
@@ -384,9 +393,10 @@ usually written as
 We want to answer the following question: 
 \emph{Does \textsf{System} satisfies a given property described by a
 logic formula $\phi$?} 
-The number of behaviours we may need to
-examine can potentially be the product of the number of behaviours possible of $P$ and $Q$,
-and even if $P$ and $Q$ alone are of moderate size, this product can be unmanageably large.
+The number of transitions that the parallel term can afford
+can potentially be the product of the transitions afforded by each of $P$ and $Q$,
+and even if $P$ and $Q$ alone are of moderate size, this product can be unmanageably 
+large since a model checker must examine all the possibilities.
 However, in many cases we can use our knowledge of the system $Q$ to construct
 another property (i.e. a logic formula) $\psi$ such that the following question
 of $P$
@@ -432,7 +442,8 @@ of the system being described. Just as the initial state encodes the behavioural
 capabilities of the system, an intermediate state reached after performing some
 operations usually represents the behavioural capabilities of the system at that point.
 In particular, the intermediate states usually do not contain any information about
-the \emph{past}, i.e. the operations performed by the system before reaching said state.
+the \emph{past}, i.e. the operations performed by the system before reaching 
+the aforementioned state.
 
 For many properties that we want to check, this poses no problems. However,
 by enriching intermediary states with information about the past behaviour of 
@@ -457,8 +468,8 @@ setting.
 The results presented here are however only a milestone towards a richer theory
 of decompositional reasoning about the past, albeit an important milestone. Work
 is currently underway to extend these results further, to include the ability to
-reason about recursive properties, which greatly enhances the expressiveness of
-our extended logic.
+reason about recursive properties, i.e. those containing fixed-point operators, 
+which greatly enhances the expressiveness of our extended logic.
 
 The technical work and writing of Chapter~\ref{ch:decomp} is for the most part
 mine apart from the introduction.
@@ -469,7 +480,7 @@ mine apart from the introduction.
 
 When designing a language, or analysing the semantics of existing ones,
 one is often interested in certain algebraic properties. For example, the language
-might contain a operator $+$, which combines two subterms in some way. Naming
+might contain an operator $+$, which combines two subterms in some way. Naming
 an operator $+$ immediately signals to the user of the language that this operator
 possesses some properties of regular arithmetic addition, such as commutativity
 and associativity. These are algebraic properties described by the equations
@@ -482,14 +493,14 @@ can be very useful for automatically distributing large computations across an
 array of processors.
 
 The properties we are are interested in are many. Besides commutativity and
-associativity, other useful properties include structural congruences, zero and
-unit elements of operators, determinism and idempotency. In Chapter~\ref{ch:formats}
+associativity, other useful properties include zero and
+unit elements of operators, and determinism and idempotency. In Chapter~\ref{ch:formats}
 we are concerned with the last two; determinism of operators, which means that
 at most one operation and subsequent term can be produced by the execution of
 a given term; and idempotency of operators, which is best described by the algebraic
 equation
 \[
-    \forall x : f(x,x) = x
+    f(x,x) = x
 \]
 where $f$ is an operator of the language. As noted in Section~\ref{sec:intro_sos}
 earlier in this introduction, determinism is often a very important property.
@@ -509,7 +520,7 @@ proofs must be adapted and re-checked.
 This has given rise to the \emph{meta-theory of SOS}, in particular so-called
 \emph{rule formats}~\cite{Aceto01,Mousavi07-TCS}. By putting constraints on the
 SOS rules used for a language (or a part of a language), one can prove properties
-such as those above, in general for any language which as an SOS specification that
+such as those given above, in general for any language which as an SOS specification that
 meets the constraints. Often the constraints can be kept purely syntactical, in
 which case it becomes a relatively easy matter to check a certain specification
 against those constraints. Such constraints are called rule formats, and are
@@ -566,6 +577,11 @@ I also want to thank Anna Ing{\'o}lfsd{\'o}ttir and Michel Reniers for their
 support and enjoyable collaboration. I give special thanks to Maja Mei-Xin Aceto
 for commenting on the late drafts of this thesis with a drawing of a cheerful 
 guy with six legs.
+
+The work presented here has been partly supported by the projects 
+``New Developments in Operational Semantics'' (nr.~080039021) and
+``Topics in Structural Operational Semantics'' (nr.~080890008) of 
+The Icelandic Research Fund.
 
 Thanks to Stef{\'a}n Freyr, Hilmar and P{\'a}lmi for their friendship and for
 tolerating my constant interruptions. Thanks to Gu\dh{}mundur Bjarni, for always

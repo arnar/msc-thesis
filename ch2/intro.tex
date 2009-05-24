@@ -2,7 +2,7 @@
 State-space explosion is a major obstacle in model-checking logical properties.
 One approach to combat this problem is compositional reasoning,
 where properties of a system as a whole are deduced from the properties of its components.
-Decompositional reasoning \cite{Giannakopoulou05,Xie05,Andersen95,LaroussinieL95} 
+Decompositional reasoning \cite{Giannakopoulou05,Xie05,Andersen95,LaroussinieL95,Larsen91} 
 often improves upon compositional reasoning by
 automatically decomposing the global property to be model checked
 into local properties of (possibly unknown) components.
@@ -13,9 +13,9 @@ in the 80's and early 90's \cite{Larsen91},
 which is further developed in \cite{anna87,Simpson04,Fokkink06}.
 However, we are not aware of any such decomposition technique which applies to reasoning about the ``past''.
 This is particularly interesting in the light of recent developments concerning reversible processes~\cite{Phillips06} and
-knowledge representation (epistemic aspects) inside process algebra~\cite{Mousavi07-LPAR},
+knowledge representation (epistemic aspects) inside process 
+algebra~\cite{Mousavi07-LPAR,borgstrom06,hommersom04,Raimondi2007,Halpern05},
 all of which involve some notion of specification and reasoning about the past.
-
 
 In this chapter, we tackle this problem and present a decomposition technique for Hennesy--Milner logic with past.
 As the specification language, we use a subset CCS with parallel composition, non-deterministic choice, action prefixing
@@ -25,6 +25,6 @@ The rest of the chapter is structured as follows. Section~\ref{sec:preliminaries
 introduces preliminary definitions and the extension of Hennessy--Milner logic
 with past. Section~\ref{sec:decomp_comp} discusses how parallel computations that maintain
 their history are decomposed into their parallel components. Section~\ref{sec:decomp_hml}
-presents the decompositional reasoning and the main theorem of the paper, and
+presents the decompositional reasoning and the main theorem of the chapter, and
 Section~\ref{sec:decomp_future} discusses related work and possible extensions to our results.
 

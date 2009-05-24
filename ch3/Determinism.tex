@@ -38,6 +38,9 @@ a pair of sets of formulae $(\Phi, \Phi')$ and $L$ when for all two positive for
 
 %\MAR{Would it be possible to avoid the term ``format'' for the following constraint. It is not syntactic and thus should not be called a format.}
 
+We now have all the necessary ingredients to define a rule format that guarantees
+determinism.
+
 \begin{definition}[\label{def::detHard}Determinism Format]
 A TSS $\tss$ is in the determinism format w.r.t.\ a set of labels $L$,
 when for each $l \in L$ the following conditions hold.
@@ -82,7 +85,7 @@ Consider a complete TSS with $L$ as a subset of its labels. If the TSS is in the
 
 Constraint 2 in Definition \ref{def::detHard} may seem difficult to verify,
 since it requires checks for all possible (determinism-respecting) substitutions.
-However, in practical cases, to be quoted in the remainder of this paper,
+However, in practical cases, to be quoted in the remainder of this chapter,
 variable names are chosen in such a way that constraint 2
 can be checked syntactically.
 For example, consider the following two deduction rules.

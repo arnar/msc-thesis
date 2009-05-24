@@ -70,7 +70,8 @@ any equivalence $\sim$ such that  $\bisim \subseteq{\sim}$.
 
 \subsection{Relaxing the restrictions} % (fold)
 
-In this section we consider the constraints of the idempotency rule format and show that they cannot be dropped without jeopardizing the meta-theorem.
+In this section we consider the constraints of the idempotency rule format (Definition~\ref{def::format}) and 
+show that they cannot be dropped without jeopardizing the meta-theorem.
 
 % Rule forms $1_l$ and $2_l$ only allow for variables in the targets. To see why arbitrary terms are not allowed, consider the
 % following rule where $a$ is a process term.
@@ -226,11 +227,11 @@ Clearly, these are in the idempotency format w.r.t.\ $+$.
 The well-known external choice operator $\Box$ from CSP \cite{Hoare85} has the following deduction rules
 \[
 \sosrule{x_0 \trans{a} x'_0}{x_0 \Box x_1 \trans{a} x'_0}
-\qquad
+\quad
 \sosrule{x_1 \trans{a} x'_1}{x_0 \Box x_1 \trans{a} x'_1}
-\qquad
+\quad
 \sosrule{x_0 \trans{\tau} x'_0}{x_0 \Box x_1 \trans{\tau} x'_0 \Box x_1}
-\qquad
+\quad
 \sosrule{x_1 \trans{\tau} x'_1}{x_0 \Box x_1 \trans{\tau} x_0 \Box x'_1}
 \]
 Note that the third and fourth deduction rule are not instances of any of the allowed types of deduction rules.
@@ -254,7 +255,7 @@ $\trans{\chi}$ is deterministic.
 \end{example}
 
 \begin{example}[Weak time-deterministic choice]
-The choice operator $+$ that is used in most ACP-style timed process algebras has the following deduction rules:
+The choice operator $+$ that is used in most ACP-style timed process algebras~\cite{Baeten02} has the following deduction rules:
 \[
 \sosrule{x_0 \trans{a} x_0'}{x_0 + x_1 \trans{a} x_0'} \qquad
 \sosrule{x_1 \trans{a} x_1'}{x_0 + x_1 \trans{a} x_1'}\]
