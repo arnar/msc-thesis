@@ -11,3 +11,7 @@ master.pdf
 .DS_Store
 *.pdfsync
 *.toc
+Thesis.tmproj
+front-material
+signature*.pdf
+copyrightrelease.pdf
